@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  name            String
+  password_hash   String
+  location        String?
+  experience_level String  @default("beginner")
+  barks_points    Int      @default(0)
+  is_premium      Boolean  @default(false)
+  preferred_language String @default("en")
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  
+  dogs            Dog[]
+  questions       Question[]
+  answers         Answer[]
+  health_logs     HealthLog[]
+}
+
+model Dog {
+  id                      String   @id @default(cuid())
+  user_id                 String
+  name                    String
+  breed                   String
+  age_months              Int
+  weight_kg               Float
+  gender                  String
+  photo_url               String?
+  medical_history         String?
+  health_id               String?  @unique
+  kennel_club_registration String?
+  emergency_contact       String?
+  emergency_phone         String?
+  medical_notes           String?
+  personality_traits      String?
+  vaccination_status      String   @default("up_to_date")
+  spayed_neutered         Boolean  @default(false)
+  microchip_id            String?
+  location                String?
+  created_at              DateTime @default(now())
+  
+  user            User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  health_logs     HealthLog[]
+}
+
+model Question {
+  id           String   @id @default(cuid())
+  user_id      String
+  dog_id       String?
+  title        String
+  content      String
+  category     String
+  is_urgent    Boolean  @default(false)
+  upvotes      Int      @default(0)
+  answer_count Int      @default(0)
+  created_at   DateTime @default(now())
+  
+  user         User     @relation(fields: [user_id], references: [id])
+  answers      Answer[]
+}
+
+model Answer {
+  id                  String   @id @default(cuid())
+  question_id         String
+  user_id             String
+  content             String
+  upvotes             Int      @default(0)
+  is_expert_verified  Boolean  @default(false)
+  created_at          DateTime @default(now())
+  
+  question            Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  user                User     @relation(fields: [user_id], references: [id])
+}
+
+model HealthLog {
+  id                  String   @id @default(cuid())
+  dog_id              String
+  user_id             String
+  log_date            DateTime
+  food_amount         String?
+  water_intake        String?
+  exercise_minutes    Int?
+  bathroom_frequency  Int?
+  mood                String?
+  notes               String?
+  created_at          DateTime @default(now())
+  
+  dog                 Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user                User     @relation(fields: [user_id], references: [id])
+}
