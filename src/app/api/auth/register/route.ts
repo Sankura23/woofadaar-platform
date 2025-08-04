@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,11 +25,13 @@ export async function POST(request: NextRequest) {
     // Create user
     const user = await prisma.user.create({
       data: {
+        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name,
         email,
         password_hash: hashedPassword,
         location: location || null,
         experience_level: experience_level || 'beginner',
+        updated_at: new Date()
       }
     })
 

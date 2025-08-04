@@ -18,7 +18,8 @@
     "next": "अगला",
     "previous": "पिछला",
     "continue": "जारी रखें",
-    "notSet": "सेट नहीं है"
+    "notSet": "सेट नहीं है",
+    "password": "पासवर्ड"
   },
   "navigation": {
     "home": "होम",
@@ -28,6 +29,13 @@
     "login": "लॉगिन",
     "register": "रजिस्टर",
     "logout": "लॉगआउट"
+  },
+  "welcome": {
+    "welcomeBack": "स्वागत है",
+    "welcomeBackToCommunity": "अपने समुदाय में वापस स्वागत है",
+    "manageProfiles": "अपने कुत्तों के प्रोफाइल और समुदाय गतिविधि का प्रबंधन करें",
+    "viewAndManage": "अपने कुत्तों के प्रोफाइल देखें और प्रबंधन करें",
+    "createNewProfile": "नया कुत्ता प्रोफाइल बनाएं"
   },
   "profile": {
     "title": "प्रोफाइल",

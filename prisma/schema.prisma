@@ -7,53 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  name            String
-  password_hash   String
-  location        String?
-  experience_level String  @default("beginner")
-  barks_points    Int      @default(0)
-  is_premium      Boolean  @default(false)
-  preferred_language String @default("en")
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
-  
-  dogs            Dog[]
-  questions       Question[]
-  answers         Answer[]
-  health_logs     HealthLog[]
+model Answer {
+  id                 String   @id
+  question_id        String
+  user_id            String
+  content            String
+  upvotes            Int      @default(0)
+  is_expert_verified Boolean  @default(false)
+  created_at         DateTime @default(now())
+  Question           Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  User               User     @relation(fields: [user_id], references: [id])
 }
 
 model Dog {
-  id                      String   @id @default(cuid())
-  user_id                 String
-  name                    String
-  breed                   String
-  age_months              Int
-  weight_kg               Float
-  gender                  String
-  photo_url               String?
-  medical_history         String?
-  health_id               String?  @unique
+  id                       String      @id
+  user_id                  String
+  name                     String
+  breed                    String
+  age_months               Int
+  weight_kg                Float
+  gender                   String
+  photo_url                String?
+  medical_history          String?
+  health_id                String?     @unique
   kennel_club_registration String?
-  emergency_contact       String?
-  emergency_phone         String?
-  medical_notes           String?
-  personality_traits      String?
-  vaccination_status      String   @default("up_to_date")
-  spayed_neutered         Boolean  @default(false)
-  microchip_id            String?
-  location                String?
-  created_at              DateTime @default(now())
-  
-  user            User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  health_logs     HealthLog[]
+  emergency_contact        String?
+  emergency_phone          String?
+  medical_notes            String?
+  personality_traits       String?
+  vaccination_status       String      @default("up_to_date")
+  spayed_neutered          Boolean     @default(false)
+  microchip_id             String?
+  location                 String?
+  created_at               DateTime    @default(now())
+  User                     User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  HealthLog                HealthLog[]
+  HealthIdVerifications    HealthIdVerification[]
+}
+
+model HealthLog {
+  id                 String   @id
+  dog_id             String
+  user_id            String
+  log_date           DateTime
+  food_amount        String?
+  water_intake       String?
+  exercise_minutes   Int?
+  bathroom_frequency Int?
+  mood               String?
+  notes              String?
+  created_at         DateTime @default(now())
+  Dog                Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  User               User     @relation(fields: [user_id], references: [id])
 }
 
 model Question {
-  id           String   @id @default(cuid())
+  id           String   @id
   user_id      String
   dog_id       String?
   title        String
@@ -63,37 +72,96 @@ model Question {
   upvotes      Int      @default(0)
   answer_count Int      @default(0)
   created_at   DateTime @default(now())
-  
-  user         User     @relation(fields: [user_id], references: [id])
-  answers      Answer[]
+  Answer       Answer[]
+  User         User     @relation(fields: [user_id], references: [id])
 }
 
-model Answer {
-  id                  String   @id @default(cuid())
-  question_id         String
-  user_id             String
-  content             String
-  upvotes             Int      @default(0)
-  is_expert_verified  Boolean  @default(false)
-  created_at          DateTime @default(now())
-  
-  question            Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
-  user                User     @relation(fields: [user_id], references: [id])
+model User {
+  id                 String      @id
+  email              String      @unique
+  name               String
+  password_hash      String
+  location           String?
+  experience_level   String      @default("beginner")
+  barks_points       Int         @default(0)
+  is_premium         Boolean     @default(false)
+  profile_image_url  String?
+  created_at         DateTime    @default(now())
+  updated_at         DateTime
+  preferred_language String      @default("en")
+  Answer             Answer[]
+  Dog                Dog[]
+  HealthLog          HealthLog[]
+  Question           Question[]
 }
 
-model HealthLog {
-  id                  String   @id @default(cuid())
-  dog_id              String
-  user_id             String
-  log_date            DateTime
-  food_amount         String?
-  water_intake        String?
-  exercise_minutes    Int?
-  bathroom_frequency  Int?
-  mood                String?
-  notes               String?
-  created_at          DateTime @default(now())
+model Waitlist {
+  id                 String   @id
+  email              String   @unique
+  name               String
+  location           String?
+  phone              String?
+  dog_owner          Boolean  @default(false)
+  preferred_language String   @default("en")
+  referral_source    String?
+  interests          String?
+  status             String   @default("active")
+  position           Int?
+  created_at         DateTime @default(now())
+  updated_at         DateTime
+}
+
+model Partner {
+  id                    String   @id @default(cuid())
+  email                 String   @unique
+  name                  String
+  partner_type          String   // "veterinarian", "trainer", "corporate"
+  business_name         String?
+  license_number        String?
+  specialization        String?
+  experience_years      Int?
+  location              String
+  address               String?
+  phone                 String
+  website               String?
+  bio                   String?
+  services_offered      String?
+  consultation_fee      String?
+  availability_hours    String?
+  languages_spoken      String?
+  certifications        String?
+  verified              Boolean  @default(false)
+  verification_date     DateTime?
+  status                String   @default("pending") // "pending", "approved", "rejected", "suspended"
+  admin_notes           String?
+  health_id_access      Boolean  @default(false)
+  profile_image_url     String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
   
-  dog                 Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
-  user                User     @relation(fields: [user_id], references: [id])
+  // Relations for future expansion
+  HealthIdVerifications HealthIdVerification[]
+
+  @@index([partner_type])
+  @@index([location])
+  @@index([verified])
+  @@index([status])
+}
+
+model HealthIdVerification {
+  id                String   @id @default(cuid())
+  partner_id        String
+  health_id         String
+  dog_id            String?
+  verification_date DateTime @default(now())
+  purpose           String?  // "consultation", "treatment", "training", etc.
+  notes             String?
+  verified_by       String   // partner email or ID
+  
+  partner           Partner  @relation(fields: [partner_id], references: [id], onDelete: Cascade)
+  dog               Dog?     @relation(fields: [dog_id], references: [id])
+  
+  @@index([health_id])
+  @@index([partner_id])
+  @@index([verification_date])
 }

@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
         barks_points: true,
         is_premium: true,
         preferred_language: true,
+        profile_image_url: true,
         created_at: true
       }
     });
@@ -70,12 +71,28 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, location, experience_level, preferred_language } = body;
+    const { name, location, experience_level, preferred_language, profile_image_url } = body;
 
     // Validation
-    if (!name) {
+    if (!name || name.trim().length < 2) {
       return NextResponse.json(
-        { message: 'Name is required' },
+        { message: 'Name must be at least 2 characters long' },
+        { status: 400 }
+      );
+    }
+
+    if (location && location.trim().length === 0) {
+      return NextResponse.json(
+        { message: 'Location cannot be empty' },
+        { status: 400 }
+      );
+    }
+
+    // Validate experience level
+    const validExperienceLevels = ['beginner', 'intermediate', 'experienced', 'expert'];
+    if (experience_level && !validExperienceLevels.includes(experience_level)) {
+      return NextResponse.json(
+        { message: 'Invalid experience level' },
         { status: 400 }
       );
     }
@@ -83,9 +100,10 @@ export async function PUT(request: NextRequest) {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        name,
-        location: location || null,
+        name: name.trim(),
+        location: location ? location.trim() : null,
         experience_level: experience_level || 'beginner',
+        profile_image_url: profile_image_url || null,
         ...(preferred_language && { preferred_language })
       },
       select: {
@@ -97,6 +115,7 @@ export async function PUT(request: NextRequest) {
         barks_points: true,
         is_premium: true,
         preferred_language: true,
+        profile_image_url: true,
         created_at: true
       }
     });

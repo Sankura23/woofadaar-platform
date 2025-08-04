@@ -18,7 +18,8 @@
     "next": "Next",
     "previous": "Previous",
     "continue": "Continue",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "password": "Password"
   },
   "navigation": {
     "home": "Home",
@@ -28,6 +29,13 @@
     "login": "Login",
     "register": "Register",
     "logout": "Logout"
+  },
+  "welcome": {
+    "welcomeBack": "Welcome back",
+    "welcomeBackToCommunity": "Welcome back to your community",
+    "manageProfiles": "Manage your dog profiles and community activity",
+    "viewAndManage": "View and manage your dog profiles",
+    "createNewProfile": "Create a new dog profile"
   },
   "profile": {
     "title": "Profile",

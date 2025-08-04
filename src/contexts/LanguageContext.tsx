@@ -53,13 +53,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       }
     } catch (error) {
       console.error('Error loading translations:', error);
-      // Load default English if API fails
-      try {
-        const englishTranslations = await import('../translations/en.json');
-        setTranslations(englishTranslations.default);
-      } catch (fallbackError) {
-        console.error('Error loading fallback translations:', fallbackError);
-      }
     } finally {
       setLoading(false);
     }
@@ -101,7 +94,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
       } else {
-        // Return key if translation not found
         return key;
       }
     }
