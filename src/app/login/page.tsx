@@ -1,7 +1,12 @@
+'use client';
+
+import { useState } from 'react';
 import LoginForm from '../../components/profiles/auth/LoginForm';
 import { CompactLanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 
 export default function LoginPage() {
+  const [userType, setUserType] = useState<'pet-parent' | 'partner'>('pet-parent');
+
   return (
     <div className="min-h-screen bg-milk-white py-12">
       <div className="container mx-auto px-4">
@@ -21,9 +26,14 @@ export default function LoginPage() {
         
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-primary mb-2">woofadaar</h1>
-          <p className="text-dark-grey">Welcome back to your community</p>
+          <p className="text-dark-grey">
+            {userType === 'pet-parent' 
+              ? 'Welcome back to your pet community' 
+              : 'Welcome back to your partner dashboard'
+            }
+          </p>
         </div>
-        <LoginForm />
+        <LoginForm onUserTypeChange={setUserType} />
       </div>
     </div>
   )
