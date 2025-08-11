@@ -43,6 +43,8 @@ export async function GET(request: NextRequest) {
         is_premium: true,
         preferred_language: true,
         profile_image_url: true,
+        profile_visibility: true,
+        reputation: true,
         created_at: true
       }
     });
@@ -116,6 +118,8 @@ export async function PUT(request: NextRequest) {
         is_premium: true,
         preferred_language: true,
         profile_image_url: true,
+        profile_visibility: true,
+        reputation: true,
         created_at: true
       }
     });

@@ -37,20 +37,24 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
+        // Store token and user type in localStorage
         localStorage.setItem('woofadaar_token', data.token);
         localStorage.setItem('user_type', data.userType);
         
+        // Dispatch custom event to update navigation
+        window.dispatchEvent(new Event('authStateChanged'));
+        
         // Redirect based on user type
-        if (userType === 'partner') {
-          window.location.href = '/partners/directory';
+        if (data.userType === 'partner') {  
+          window.location.href = '/partner/dashboard';
         } else {
           window.location.href = '/profile';
         }
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || 'Login failed');
+        alert(data.message || 'Login failed');
       }
     } catch (err) {
       alert('Network error. Please try again.');
@@ -60,7 +64,7 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <div className="max-w-md mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-primary mb-6 text-center">Welcome Back!</h2>
       
       {/* User Type Toggle */}
@@ -69,7 +73,7 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
           <button
             type="button"
             onClick={() => handleUserTypeChange('pet-parent')}
-            className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-all ${
+            className={`flex-1 flex items-center justify-center py-2.5 px-4 rounded-md transition-all touch-target ${
               userType === 'pet-parent'
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-gray-600 hover:text-gray-800'
@@ -81,7 +85,7 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
           <button
             type="button"
             onClick={() => handleUserTypeChange('partner')}
-            className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-all ${
+            className={`flex-1 flex items-center justify-center py-2.5 px-4 rounded-md transition-all touch-target ${
               userType === 'partner'
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-gray-600 hover:text-gray-800'
@@ -102,8 +106,10 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({...formData, email: e.target.value})}
-            className="w-full px-4 py-3 border border-light-grey rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-4 py-3 border border-light-grey rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
             placeholder="your.email@example.com"
+            autoComplete="email"
+            inputMode="email"
             required
           />
         </div>
@@ -116,8 +122,9 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
             type="password"
             value={formData.password}
             onChange={(e) => setFormData({...formData, password: e.target.value})}
-            className="w-full px-4 py-3 border border-light-grey rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-4 py-3 border border-light-grey rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
             placeholder="Enter your password"
+            autoComplete="current-password"
             required
           />
         </div>
@@ -125,7 +132,7 @@ export default function LoginForm({ onUserTypeChange }: LoginFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="w-full bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center touch-target"
         >
           {isLoading ? (
             <>

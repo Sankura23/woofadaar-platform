@@ -111,7 +111,7 @@ export default function PartnerRegistrationForm({ onSuccess }: PartnerRegistrati
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
       <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Join Woofadaar&apos;s Partner Network</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Join Woofadaar&apos;s Partner Network</h2>
         <p className="text-gray-600">Connect with India&apos;s dog parent community</p>
       </div>
 

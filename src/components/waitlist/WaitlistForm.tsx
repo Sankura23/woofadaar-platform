@@ -89,7 +89,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Woofadaar!</h3>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Woofadaar!</h3>
           <p className="text-gray-600 mb-4">You&apos;re successfully on our waitlist</p>
           
           {/* Enhanced Position Display */}
@@ -291,7 +291,7 @@ export default function WaitlistForm({ onSuccess }: WaitlistFormProps) {
       </div>
 
       <p className="text-xs text-gray-500 text-center mt-4">
-        By joining, you agree to receive updates about Woofadaar&apos;s launch.
+                    By joining, you agree to receive updates about Woofadaar&apos;s launch.
       </p>
     </form>
   );

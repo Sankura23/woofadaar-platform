@@ -23,9 +23,11 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12)
 
     // Create user
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
     const user = await prisma.user.create({
       data: {
-        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: userId,
         name,
         email,
         password_hash: hashedPassword,
@@ -35,6 +37,22 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // Create initial UserPoints record for gamification
+    await prisma.userPoints.create({
+      data: {
+        user_id: userId,
+        points_earned: 0,
+        points_spent: 0,
+        current_balance: 0,
+        total_lifetime_points: 0,
+        level: 1,
+        experience_points: 0,
+        streak_count: 0,
+        achievements: [],
+        badges: []
+      }
+    });
+
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email },
@@ -43,7 +61,7 @@ export async function POST(request: NextRequest) {
     )
 
     return NextResponse.json({
-      message: 'User created successfully',
+      message: 'Registration successful! Welcome to Woofadaar!',
       token,
       user: { 
         id: user.id, 

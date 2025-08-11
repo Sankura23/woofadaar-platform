@@ -226,7 +226,7 @@ export default function DogForm({ dogId, onSave }: {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
+    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       {isLoading ? (
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
@@ -234,17 +234,17 @@ export default function DogForm({ dogId, onSave }: {
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+            <div className="text-center sm:text-left mb-4 sm:mb-0">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 {dogId ? t('dogs.editDog') : t('dogs.addDog')}
               </h2>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 mt-2 text-sm sm:text-base">
                 {dogId ? t('common.update') : t('common.add')} a comprehensive profile for your furry friend
               </p>
             </div>
-            <div className="w-16 h-16 bg-[#3bbca8] rounded-full flex items-center justify-center">
-              <Heart className="w-8 h-8 text-white" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#3bbca8] rounded-full flex items-center justify-center mx-auto sm:mx-0">
+              <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
           </div>
 
@@ -256,7 +256,7 @@ export default function DogForm({ dogId, onSave }: {
         />
 
         {/* Basic Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('dogs.dogName')} *
@@ -266,8 +266,9 @@ export default function DogForm({ dogId, onSave }: {
               required
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8] touch-target"
               placeholder="e.g., Buddy, Bella, Max"
+              autoComplete="off"
             />
           </div>
 
@@ -279,7 +280,7 @@ export default function DogForm({ dogId, onSave }: {
               required
               value={formData.breed}
               onChange={(e) => setFormData(prev => ({ ...prev, breed: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8] touch-target"
             >
               <option value="">{t('dogs.selectBreed')}</option>
               {INDIAN_DOG_BREEDS.map(breed => (
@@ -294,7 +295,8 @@ export default function DogForm({ dogId, onSave }: {
                   placeholder={t('dogs.customBreed')}
                   value={customBreed}
                   onChange={(e) => setCustomBreed(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8]"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8] touch-target"
+                  autoComplete="off"
                 />
               </div>
             )}
@@ -311,8 +313,9 @@ export default function DogForm({ dogId, onSave }: {
               max="300"
               value={formData.age_months}
               onChange={(e) => setFormData(prev => ({ ...prev, age_months: parseInt(e.target.value) }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8] touch-target"
               placeholder={t('forms.ageHelper')}
+              inputMode="numeric"
             />
             <p className="text-xs text-gray-500 mt-1">
               {formData.age_months > 0 && t('dogs.ageHelper', { years: Math.floor(formData.age_months / 12), months: formData.age_months % 12 })}
@@ -331,8 +334,9 @@ export default function DogForm({ dogId, onSave }: {
               step="0.1"
               value={formData.weight_kg}
               onChange={(e) => setFormData(prev => ({ ...prev, weight_kg: parseFloat(e.target.value) }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8] touch-target"
               placeholder={t('forms.weightHelper')}
+              inputMode="decimal"
             />
           </div>
 
@@ -340,18 +344,18 @@ export default function DogForm({ dogId, onSave }: {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t('dogs.gender')} *
             </label>
-            <div className="flex space-x-4">
+            <div className="flex space-x-6">
               {['male', 'female'].map((gender) => (
-                <label key={gender} className="flex items-center cursor-pointer">
+                <label key={gender} className="flex items-center cursor-pointer touch-target">
                   <input
                     type="radio"
                     name="gender"
                     value={gender}
                     checked={formData.gender === gender}
                     onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value as 'male' | 'female' }))}
-                    className="mr-2"
+                    className="w-4 h-4 mr-3 text-[#3bbca8] focus:ring-[#3bbca8] border-gray-300"
                   />
-                  <span className="capitalize">{t(`dogs.${gender}`)}</span>
+                  <span className="capitalize font-medium">{t(`dogs.${gender}`)}</span>
                 </label>
               ))}
             </div>
@@ -365,7 +369,7 @@ export default function DogForm({ dogId, onSave }: {
               required
               value={formData.location}
               onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8]"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#3bbca8] touch-target"
             >
               <option value="">{t('dogs.selectCity')}</option>
               {INDIAN_CITIES.map(city => (
@@ -543,17 +547,17 @@ export default function DogForm({ dogId, onSave }: {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end space-x-4 pt-6 border-t">
+        <div className="flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t">
           <button
             type="button"
             onClick={() => window.history.back()}
-            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
+            className="w-full sm:w-auto px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium touch-target transition-colors"
           >
             {t('common.cancel')}
           </button>
           <button
             type="submit"
-            className="px-8 py-3 bg-[#3bbca8] text-white rounded-lg hover:bg-[#3bbca8]/90 font-medium flex items-center space-x-2"
+            className="w-full sm:w-auto px-4 sm:px-8 py-3 bg-[#3bbca8] text-white rounded-lg hover:bg-[#3bbca8]/90 font-medium flex items-center justify-center space-x-2 touch-target transition-colors"
           >
             <Heart className="w-4 h-4" />
             <span>{dogId ? t('common.update') : t('common.add')} {t('dogs.dogProfile')}</span>

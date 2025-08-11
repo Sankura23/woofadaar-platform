@@ -1,34 +1,16 @@
 // src/app/api/dogs/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { verifyToken, getTokenFromRequest, isPetParent } from '@/lib/auth';
 import prisma from '@/lib/db';
-
-interface DecodedToken {
-  userId: string;
-  email: string;
-}
-
-async function verifyToken(request: NextRequest): Promise<string | null> {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-
-  const token = authHeader.substring(7);
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as DecodedToken;
-    return decoded.userId;
-  } catch (error) {
-    return null;
-  }
-}
 
 // GET /api/dogs/[id] - Get a specific dog
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userId = await verifyToken(request);
+  const token = getTokenFromRequest(request);
+  const payload = token ? verifyToken(token) : null;
+  const userId = payload && isPetParent(payload) ? payload.userId : null;
   
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -47,10 +29,10 @@ export async function GET(
       return NextResponse.json({ message: 'Dog not found' }, { status: 404 });
     }
 
-    // Parse personality_traits from JSON string to array
+    // personality_traits is already an array in the schema
     const dogWithParsedTraits = {
       ...dog,
-      personality_traits: dog.personality_traits ? JSON.parse(dog.personality_traits) : []
+      personality_traits: dog.personality_traits || []
     };
 
     return NextResponse.json({ dog: dogWithParsedTraits });
@@ -68,7 +50,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userId = await verifyToken(request);
+  const token = getTokenFromRequest(request);
+  const payload = token ? verifyToken(token) : null;
+  const userId = payload && isPetParent(payload) ? payload.userId : null;
   
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -84,7 +68,6 @@ export async function PUT(
       weight_kg,
       gender,
       health_id,
-      kennel_club_registration,
       vaccination_status,
       spayed_neutered,
       microchip_id,
@@ -128,14 +111,13 @@ export async function PUT(
         weight_kg,
         gender,
         health_id,
-        kennel_club_registration: kennel_club_registration || null,
         vaccination_status,
         spayed_neutered,
         microchip_id: microchip_id || null,
         emergency_contact: emergency_contact || null,
         emergency_phone: emergency_phone || null,
         medical_notes: medical_notes || null,
-        personality_traits: JSON.stringify(personality_traits || []),
+        personality_traits: personality_traits || [],
         location,
         photo_url: photo_url || null
       }
@@ -144,7 +126,7 @@ export async function PUT(
     // Parse personality_traits from JSON string to array
     const updatedDog = {
       ...result,
-      personality_traits: result.personality_traits ? JSON.parse(result.personality_traits) : []
+      personality_traits: result.personality_traits || []
     };
 
     return NextResponse.json({
@@ -166,7 +148,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userId = await verifyToken(request);
+  const token = getTokenFromRequest(request);
+  const payload = token ? verifyToken(token) : null;
+  const userId = payload && isPetParent(payload) ? payload.userId : null;
   
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

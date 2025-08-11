@@ -63,7 +63,6 @@ export async function GET(
           age_months: true,
           weight_kg: true,
           gender: true,
-          medical_history: true,
           vaccination_status: true,
           spayed_neutered: true,
           microchip_id: true,

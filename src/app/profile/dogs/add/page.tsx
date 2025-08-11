@@ -14,7 +14,7 @@ export default function AddDogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-milk-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">

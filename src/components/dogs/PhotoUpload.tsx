@@ -149,17 +149,35 @@ export default function PhotoUpload({ onPhotoUploaded, currentPhoto }: PhotoUplo
             />
             <label
               htmlFor="photo-upload"
-              className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-700"
+              className="inline-flex items-center px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer text-sm font-medium text-gray-700 touch-target"
             >
               <Upload className="w-4 h-4 mr-2" />
-              Choose Photo
+              <span className="hidden sm:inline">Choose Photo</span>
+              <span className="sm:hidden">Photo</span>
+            </label>
+
+            {/* Camera button for mobile */}
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileSelect}
+              className="hidden"
+              id="camera-capture"
+            />
+            <label
+              htmlFor="camera-capture"
+              className="sm:hidden inline-flex items-center px-4 py-3 bg-[#3bbca8] text-white border border-[#3bbca8] rounded-lg hover:bg-[#339990] cursor-pointer text-sm font-medium touch-target"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              Camera
             </label>
 
             {selectedFile && (
               <button
                 onClick={clearSelection}
                 disabled={isUploading}
-                className="inline-flex items-center px-3 py-2 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-3 py-3 text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
               >
                 <X className="w-4 h-4" />
               </button>

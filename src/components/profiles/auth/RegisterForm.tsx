@@ -60,15 +60,30 @@ export default function RegisterForm() {
         }),
       });
 
+      console.log('Registration response status:', response.status);
+      
+      const responseData = await response.json();
+      console.log('Registration response data:', responseData);
+      
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('woofadaar_token', data.token);
+        console.log('Registration successful!', responseData);
+        localStorage.setItem('woofadaar_token', responseData.token);
+        localStorage.setItem('user_type', 'pet-parent');
+        
+        // Dispatch auth state change event
+        window.dispatchEvent(new Event('authStateChanged'));
+        
+        setError(''); // Clear any previous errors
+        
+        // Show success message before redirect
+        alert(responseData.message || 'Registration successful!');
         router.push('/profile');
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Registration failed');
+        console.log('Registration failed:', responseData);
+        setError(responseData.message || 'Registration failed');
       }
     } catch (err) {
+      console.error('Registration error:', err);
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);
@@ -76,8 +91,8 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+    <div className="max-w-md mx-auto px-4">
+      <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
         <h2 className="text-2xl font-bold text-primary mb-6 text-center">Create Account</h2>
         
         {error && (
@@ -98,7 +113,7 @@ export default function RegisterForm() {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
               placeholder="Enter your full name"
             />
           </div>
@@ -114,7 +129,7 @@ export default function RegisterForm() {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
               placeholder="your.email@example.com"
             />
           </div>
@@ -130,7 +145,7 @@ export default function RegisterForm() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
               placeholder="Create a password"
             />
           </div>
@@ -146,7 +161,7 @@ export default function RegisterForm() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
               placeholder="Confirm your password"
             />
           </div>
@@ -160,7 +175,7 @@ export default function RegisterForm() {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
             >
               <option value="">Select your city</option>
               <option value="Mumbai, Maharashtra">Mumbai, Maharashtra</option>
@@ -199,7 +214,7 @@ export default function RegisterForm() {
                 value={formData.customLocation}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
                 placeholder="Enter your city name (e.g., Chandigarh, Punjab)"
               />
             </div>
@@ -214,7 +229,7 @@ export default function RegisterForm() {
               name="experience_level"
               value={formData.experience_level}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent touch-target"
             >
               <option value="beginner">First-time dog parent</option>
               <option value="intermediate">Experienced dog parent</option>
@@ -225,7 +240,7 @@ export default function RegisterForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-target"
           >
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>

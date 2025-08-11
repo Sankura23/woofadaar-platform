@@ -156,11 +156,13 @@ export default function DogProfileForm({ dogId, onSave }: {
   };
 
   // Generate unique Woofadaar Dog ID
-  const generateDogId = async () => {
+  const generateDogId = async (showError = true) => {
     const breedName = formData.breed === 'Other' ? customBreed.trim() : formData.breed.trim();
     
     if (!formData.name.trim() || !breedName) {
-      setError('Please enter dog name and breed first to generate Dog ID');
+      if (showError) {
+        setError('Please enter dog name and breed first to generate Dog ID');
+      }
       return;
     }
 
@@ -168,7 +170,7 @@ export default function DogProfileForm({ dogId, onSave }: {
     setError('');
     
     try {
-      const response = await fetch('/api/dogs/generate-health-id', {
+      const response = await fetch('/api/dogs/generate-dog-id', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -182,8 +184,8 @@ export default function DogProfileForm({ dogId, onSave }: {
       });
       
       if (response.ok) {
-        const { healthId } = await response.json();
-        setFormData(prev => ({ ...prev, health_id: healthId }));
+        const { dogId } = await response.json();
+        setFormData(prev => ({ ...prev, health_id: dogId }));
         setSuccess('Dog ID generated successfully!');
       } else {
         const errorData = await response.json();
@@ -209,15 +211,15 @@ export default function DogProfileForm({ dogId, onSave }: {
     
     setError(''); // Clear error when user starts typing
 
-    // Auto-generate Dog ID when name and breed are filled
+    // Auto-generate Dog ID only when name and breed are filled (not for other fields)
     if (name === 'name' || name === 'breed') {
       const newFormData = { ...formData, [name]: value };
       const breedName = newFormData.breed === 'Other' ? customBreed.trim() : newFormData.breed.trim();
       
       if (newFormData.name.trim() && breedName && !newFormData.health_id && !dogId) {
-        // Auto-generate after a short delay
+        // Auto-generate after a short delay (without showing error)
         setTimeout(() => {
-          generateDogId();
+          generateDogId(false);
         }, 1000);
       }
     }
@@ -332,22 +334,28 @@ export default function DogProfileForm({ dogId, onSave }: {
     try {
       // First, upload image if selected
       let imageUrl = formData.photo_url;
-      if (dogImage) {
+      if (dogImage && dogImage.size > 0) {
         const formDataImage = new FormData();
         formDataImage.append('file', dogImage);
         
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
-          },
-          body: formDataImage
-        });
+        try {
+          const uploadResponse = await fetch('/api/upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
+            },
+            body: formDataImage
+          });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          imageUrl = uploadData.url;
-        } else {
+          if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            imageUrl = uploadData.url;
+          } else {
+            console.error('Upload failed:', await uploadResponse.text());
+            throw new Error('Failed to upload image');
+          }
+        } catch (uploadError) {
+          console.error('Upload error:', uploadError);
           throw new Error('Failed to upload image');
         }
       }
@@ -383,10 +391,27 @@ export default function DogProfileForm({ dogId, onSave }: {
           onSave(true);
         }, 1500);
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Failed to save dog profile');
+        const errorData = await response.json().catch(() => ({} as any));
+        console.error('API Error:', errorData);
+        
+        if (response.status === 401) {
+          setError('Your session has expired. Please log in again.');
+          return;
+        }
+        // Handle detailed validation errors
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          const errorMessages = errorData.errors.map((err: any) => `${err.field}: ${err.message}`).join(', ');
+          setError(`Validation errors - ${errorMessages}`);
+        } else if (errorData.details) {
+          setError(`Validation error - ${errorData.details}`);
+        } else if (errorData.error) {
+          setError(errorData.error);
+        } else {
+          setError(errorData.message || 'Failed to save dog profile');
+        }
       }
     } catch (err) {
+      console.error('Network error:', err);
       setError('Network error. Please try again.');
     } finally {
       setLoading(false);
@@ -511,8 +536,10 @@ export default function DogProfileForm({ dogId, onSave }: {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                   placeholder="Enter your dog's name"
+                  autoComplete="given-name"
+                  inputMode="text"
                   required
                 />
               </div>
@@ -526,7 +553,7 @@ export default function DogProfileForm({ dogId, onSave }: {
                   name="breed"
                   value={formData.breed}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                   required
                 >
                   <option value="">Select breed</option>
@@ -542,7 +569,9 @@ export default function DogProfileForm({ dogId, onSave }: {
                       placeholder="Enter custom breed"
                       value={customBreed}
                       onChange={(e) => setCustomBreed(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
+                      autoComplete="off"
+                      inputMode="text"
                       required
                     />
                   </div>
@@ -561,8 +590,9 @@ export default function DogProfileForm({ dogId, onSave }: {
                   onChange={handleChange}
                   min="1"
                   max="300"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                   placeholder="Enter age in months"
+                  inputMode="numeric"
                   required
                 />
               </div>
@@ -580,8 +610,9 @@ export default function DogProfileForm({ dogId, onSave }: {
                   min="0.1"
                   max="100"
                   step="0.1"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                   placeholder="Enter weight in kg"
+                  inputMode="decimal"
                   required
                 />
               </div>
@@ -595,7 +626,7 @@ export default function DogProfileForm({ dogId, onSave }: {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                   required
                 >
                   <option value="male">Male</option>
@@ -612,7 +643,7 @@ export default function DogProfileForm({ dogId, onSave }: {
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                   required
                 >
                   <option value="">Select location</option>
@@ -632,7 +663,7 @@ export default function DogProfileForm({ dogId, onSave }: {
                   name="birthday"
                   value={formData.birthday}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors min-h-[44px]"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   If you know your dog's birthday, enter it here
@@ -640,7 +671,7 @@ export default function DogProfileForm({ dogId, onSave }: {
               </div>
             </div>
 
-            {/* Health ID Section */}
+            {/* Dog ID Section */}
             <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -654,7 +685,7 @@ export default function DogProfileForm({ dogId, onSave }: {
                 </div>
                 <button
                   type="button"
-                  onClick={generateDogId}
+                  onClick={() => generateDogId()}
                   disabled={isGeneratingHealthId || !formData.name.trim() || !formData.breed.trim()}
                   className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >

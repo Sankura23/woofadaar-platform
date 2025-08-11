@@ -20,46 +20,64 @@ model Answer {
 }
 
 model Dog {
-  id                       String      @id
-  user_id                  String
-  name                     String
-  breed                    String
-  age_months               Int
-  weight_kg                Float
-  gender                   String
-  photo_url                String?
-  medical_history          String?
-  health_id                String?     @unique
-  kennel_club_registration String?
-  emergency_contact        String?
-  emergency_phone          String?
-  medical_notes            String?
-  personality_traits       String?
-  vaccination_status       String      @default("up_to_date")
-  spayed_neutered          Boolean     @default(false)
-  microchip_id             String?
-  location                 String?
-  created_at               DateTime    @default(now())
-  User                     User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  HealthLog                HealthLog[]
-  HealthIdVerifications    HealthIdVerification[]
+  id                 String      @id @default(cuid())
+  name               String
+  breed              String
+  age_months         Int
+  weight_kg          Float
+  gender             String
+  vaccination_status String
+  spayed_neutered    Boolean
+  microchip_id       String?
+  emergency_contact  String?
+  emergency_phone    String?
+  medical_notes      String?
+  personality_traits String[]
+  location           String?
+  photo_url          String?
+  health_id          String?     @unique
+  user_id            String
+  created_at         DateTime    @default(now())
+  updated_at         DateTime    @default(now()) @updatedAt
+  // Relations
+  User               User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  HealthLogs         HealthLog[]
+  DogShares          DogShare[]
+  HealthIdVerifications HealthIdVerification[]
+  // Week 3-4 Partnership Relations
+  KCIVerifications   KCIVerification[]
+  Appointments       Appointment[]
+  PartnerReviews     PartnerReview[]
+  // Week 5 Health Tracking Relations
+  MedicalRecords     MedicalRecord[]
+  HealthReminders    HealthReminder[]
+  HealthMetrics      HealthMetric[]
+  HealthInsights     HealthInsight[]
+  HealthPhotos       HealthPhoto[]
+  HealthExports      HealthExport[]
+  // Week 6 Community Relations
+  CommunityQuestions CommunityQuestion[]
+  // Week 6 Partnership Relations
+  PartnerBookings    PartnerBooking[]
+  
+  // Week 8 Health Tracking Relations
+  Medications        Medication[]
+  VetAppointments    VetAppointment[]
+  DiaryEntries       DiaryEntry[]
 }
 
-model HealthLog {
-  id                 String   @id
-  dog_id             String
-  user_id            String
-  log_date           DateTime
-  food_amount        String?
-  water_intake       String?
-  exercise_minutes   Int?
-  bathroom_frequency Int?
-  mood               String?
-  notes              String?
-  created_at         DateTime @default(now())
-  Dog                Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
-  User               User     @relation(fields: [user_id], references: [id])
+model DogShare {
+  id          String    @id @default(cuid())
+  dog_id      String
+  share_token String    @unique
+  share_type  String    @default("public") // "public" | "private" | "partner"
+  expires_at  DateTime?
+  created_by  String
+  created_at  DateTime  @default(now())
+  // Relations
+  Dog         Dog       @relation(fields: [dog_id], references: [id], onDelete: Cascade)
 }
+
 
 model Question {
   id           String   @id
@@ -89,10 +107,69 @@ model User {
   created_at         DateTime    @default(now())
   updated_at         DateTime
   preferred_language String      @default("en")
+  // New fields
+  profile_visibility String      @default("public") // "public" | "private"
+  reputation         Int         @default(0)
+  notification_prefs Json?      @default("{}")
+  is_deactivated     Boolean     @default(false)
+  // Relations
   Answer             Answer[]
   Dog                Dog[]
-  HealthLog          HealthLog[]
+  HealthLogs         HealthLog[]
   Question           Question[]
+  ProfileBackups     ProfileBackup[]
+  AuditLogs          AuditLog[]
+  // Week 3-4 Partnership Relations
+  Appointments       Appointment[]
+  PartnerReviews     PartnerReview[]
+  CommissionEarnings CommissionEarning[]
+  CorporateEmployees CorporateEmployee[]
+  // Week 5 Health Tracking Relations
+  MedicalRecords     MedicalRecord[]
+  HealthReminders    HealthReminder[]
+  HealthMetrics      HealthMetric[]
+  HealthPhotos       HealthPhoto[]
+  HealthExports      HealthExport[]
+  // Week 6 Community Relations
+  CommunityQuestions CommunityQuestion[]
+  CommunityAnswers   CommunityAnswer[]
+  CommunityComments  CommunityComment[]
+  ForumPosts         ForumPost[]
+  CommunityFlags     CommunityFlag[]
+  ModeratedFlags     CommunityFlag[] @relation("ModeratedFlags")
+  ExpertVerifications CommunityExpert[] @relation("ExpertVerifications")
+  UserEngagements    UserEngagement[]
+  UserBadges         UserBadge[]
+  CommunityExperts   CommunityExpert[]
+  CommunityVotes     CommunityVote[]
+  QuestionViews      QuestionView[]
+  
+  // Week 7 Gamification Relations
+  UserPoints         UserPoints?
+  PointTransactions  PointTransaction[]
+  // Week 6 Partnership Relations
+  PartnerBookings    PartnerBooking[]
+  
+  // Week 8 Health & Community Relations
+  DiaryEntries       DiaryEntry[]
+  DiaryComments      DiaryComment[]
+}
+
+model ProfileBackup {
+  id        String   @id @default(cuid())
+  user_id   String
+  data      Json
+  created_at DateTime @default(now())
+  User      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  user_id    String
+  action     String
+  details    Json?
+  created_at DateTime @default(now())
+  User       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Waitlist {
@@ -115,53 +192,1006 @@ model Partner {
   id                    String   @id @default(cuid())
   email                 String   @unique
   name                  String
-  partner_type          String   // "veterinarian", "trainer", "corporate"
+  password              String?  // Password hash for authentication
+  partner_type          String   // "vet", "trainer", "corporate", "kci"
   business_name         String?
   license_number        String?
-  specialization        String?
+  specialization        Json?    // array of specialization strings
   experience_years      Int?
   location              String
   address               String?
   phone                 String
   website               String?
   bio                   String?
-  services_offered      String?
-  consultation_fee      String?
-  availability_hours    String?
-  languages_spoken      String?
-  certifications        String?
+  services_offered      Json?    // structured services data
+  pricing_info          Json?    // structured pricing information
+  availability_schedule Json?    // structured availability data
+  languages_spoken      String[]
+  certifications        String[]
   verified              Boolean  @default(false)
   verification_date     DateTime?
   status                String   @default("pending") // "pending", "approved", "rejected", "suspended"
   admin_notes           String?
   health_id_access      Boolean  @default(false)
   profile_image_url     String?
+  
+  // Enhanced Partnership Foundation
+  partnership_tier      String   @default("basic") // "basic", "premium", "enterprise"
+  kci_verified          Boolean  @default(false)
+  kci_registration_id   String?
+  rating_average        Float    @default(0.0)
+  rating_count          Int      @default(0)
+  commission_rate       Float    @default(0.0) // Percentage for referrals
+  subscription_status   String   @default("active") // "active", "suspended", "cancelled"
+  subscription_expires  DateTime?
+  monthly_revenue       Float    @default(0.0)
+  total_appointments    Int      @default(0)
+  dog_id_integrated     Boolean  @default(false)
+  total_reviews         Int      @default(0)
+  
+  // New Week 6 enhancements
+  consultation_fee_range Json?   // min/max pricing
+  emergency_available   Boolean  @default(false)
+  home_visit_available  Boolean  @default(false)
+  online_consultation   Boolean  @default(false)
+  response_time_hours   Int?     // average response time
+  service_radius_km     Int?     // service coverage radius
+  languages_primary     String   @default("english")
+  verification_documents Json?   // array of document URLs
+  social_media_links    Json?    // structured social media data
+  business_hours        Json?    // detailed business hours
+  holiday_schedule      Json?    // holiday availability
+  cancellation_policy  String?
+  refund_policy         String?
+  terms_conditions      String?
+  last_active_at        DateTime @default(now())
+  
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
   
-  // Relations for future expansion
+  // Relations
   HealthIdVerifications HealthIdVerification[]
+  Appointments         Appointment[]
+  Reviews              PartnerReview[]
+  CommissionEarnings   CommissionEarning[]
+  KCIVerifications     KCIVerification[]
+  CommunityExperts     CommunityExpert[]
+  PartnerBookings      PartnerBooking[]
 
   @@index([partner_type])
   @@index([location])
   @@index([verified])
   @@index([status])
+  @@index([partnership_tier])
+  @@index([kci_verified])
+  @@index([rating_average])
+  @@index([emergency_available])
+  @@index([home_visit_available])
+  @@index([online_consultation])
+  @@index([last_active_at])
+  
+  // Week 8 Health Tracking Relations
+  PrescribedMedications Medication[]
+  VetAppointments       VetAppointment[]
 }
 
 model HealthIdVerification {
   id                String   @id @default(cuid())
   partner_id        String
-  health_id         String
-  dog_id            String?
+  dog_id            String
   verification_date DateTime @default(now())
   purpose           String?  // "consultation", "treatment", "training", etc.
   notes             String?
   verified_by       String   // partner email or ID
   
   partner           Partner  @relation(fields: [partner_id], references: [id], onDelete: Cascade)
-  dog               Dog?     @relation(fields: [dog_id], references: [id])
+  dog               Dog      @relation(fields: [dog_id], references: [id])
   
-  @@index([health_id])
+  @@index([dog_id])
   @@index([partner_id])
   @@index([verification_date])
+}
+
+// Week 3-4 Partnership Foundation Models
+
+model KCIVerification {
+  id                  String   @id @default(cuid())
+  partner_id          String?
+  dog_id              String?
+  kci_registration_id String   @unique
+  breed               String
+  dog_name            String?
+  owner_name          String?
+  registration_date   DateTime?
+  verification_status String   @default("pending") // "pending", "verified", "invalid"
+  verification_data   Json?    // Store KCI API response
+  verified_at         DateTime?
+  created_at          DateTime @default(now())
+  
+  partner             Partner? @relation(fields: [partner_id], references: [id])
+  dog                 Dog?     @relation(fields: [dog_id], references: [id])
+  
+  @@index([kci_registration_id])
+  @@index([verification_status])
+  @@index([breed])
+}
+
+model Appointment {
+  id              String   @id @default(cuid())
+  partner_id      String
+  user_id         String
+  dog_id          String?
+  appointment_date DateTime
+  duration_minutes Int     @default(60)
+  service_type    String   // "consultation", "treatment", "training", "emergency"
+  status          String   @default("scheduled") // "scheduled", "confirmed", "completed", "cancelled", "no_show"
+  notes           String?
+  consultation_fee Float?
+  payment_status  String   @default("pending") // "pending", "paid", "refunded"
+  meeting_type    String   @default("in_person") // "in_person", "video_call", "phone_call"
+  meeting_link    String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  
+  partner         Partner  @relation(fields: [partner_id], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [user_id], references: [id])
+  dog             Dog?     @relation(fields: [dog_id], references: [id])
+  reviews         PartnerReview[]
+  commissions     CommissionEarning[]
+  
+  @@index([partner_id])
+  @@index([user_id])
+  @@index([appointment_date])
+  @@index([status])
+}
+
+model PartnerReview {
+  id                  String   @id @default(cuid())
+  partner_id          String
+  user_id             String
+  dog_id              String?
+  appointment_id      String?
+  partner_booking_id  String?  // new booking system reference
+  rating              Int      // 1-5 stars
+  review_text         String?
+  service_type        String?
+  service_quality     Int?     // separate rating for service quality
+  communication       Int?     // separate rating for communication
+  punctuality         Int?     // separate rating for punctuality
+  overall_experience  Int?     // overall experience rating
+  would_recommend     Boolean? 
+  is_verified         Boolean  @default(false)
+  is_featured         Boolean  @default(false)
+  admin_approved      Boolean  @default(false)
+  photos              String[] // review photos
+  created_at          DateTime @default(now())
+  updated_at          DateTime @default(now()) @updatedAt
+  
+  partner             Partner     @relation(fields: [partner_id], references: [id], onDelete: Cascade)
+  user                User        @relation(fields: [user_id], references: [id])
+  dog                 Dog?        @relation(fields: [dog_id], references: [id])
+  appointment         Appointment? @relation(fields: [appointment_id], references: [id])
+  partner_booking     PartnerBooking? @relation(fields: [partner_booking_id], references: [id])
+  
+  @@index([partner_id])
+  @@index([rating])
+  @@index([created_at])
+  @@index([is_featured])
+  @@index([admin_approved])
+  @@unique([user_id, partner_id, appointment_id])
+}
+
+model CommissionEarning {
+  id              String   @id @default(cuid())
+  partner_id      String
+  user_id         String
+  appointment_id  String?
+  commission_type String   // "referral", "appointment", "subscription"
+  base_amount     Float
+  commission_rate Float
+  commission_amount Float
+  status          String   @default("pending") // "pending", "paid", "cancelled"
+  paid_at         DateTime?
+  created_at      DateTime @default(now())
+  
+  partner         Partner      @relation(fields: [partner_id], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [user_id], references: [id])
+  appointment     Appointment? @relation(fields: [appointment_id], references: [id])
+  
+  @@index([partner_id])
+  @@index([status])
+  @@index([commission_type])
+  @@index([created_at])
+}
+
+// Week 6 Enhanced Partnership Models
+
+model PartnerBooking {
+  id                    String   @id @default(cuid())
+  partner_id            String
+  user_id               String
+  dog_id                String?
+  service_type          String   // "consultation", "grooming", "training", "emergency", "checkup"
+  booking_type          String   // "online", "in_person", "home_visit", "phone"
+  appointment_datetime  DateTime
+  duration_minutes      Int      @default(60)
+  status                String   @default("pending") // "pending", "confirmed", "completed", "cancelled", "no_show", "rescheduled"
+  notes                 String?
+  user_notes            String?  // notes from user
+  partner_notes         String?  // notes from partner
+  price                 Float?
+  commission_amount     Float?
+  payment_status        String   @default("pending") // "pending", "paid", "refunded", "failed"
+  payment_method        String?  // "online", "cash", "card"
+  payment_id            String?  // external payment reference
+  
+  // Booking specific details
+  emergency_level       String?  // "low", "medium", "high", "critical"
+  symptoms              String[]
+  preferred_language    String?
+  special_requirements  String?
+  follow_up_required    Boolean  @default(false)
+  follow_up_date        DateTime?
+  
+  // Cancellation details
+  cancelled_by          String?  // "user", "partner", "admin"
+  cancellation_reason   String?
+  cancelled_at          DateTime?
+  refund_amount         Float?
+  refund_processed_at   DateTime?
+  
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  partner               Partner  @relation(fields: [partner_id], references: [id], onDelete: Cascade)
+  user                  User     @relation(fields: [user_id], references: [id])
+  dog                   Dog?     @relation(fields: [dog_id], references: [id])
+  reviews               PartnerReview[]
+  
+  @@index([partner_id])
+  @@index([user_id])
+  @@index([dog_id])
+  @@index([service_type])
+  @@index([booking_type])
+  @@index([status])
+  @@index([appointment_datetime])
+  @@index([payment_status])
+  @@index([created_at])
+}
+
+model CorporateEnrollment {
+  id                String   @id @default(cuid())
+  company_name      String
+  company_email     String
+  contact_person    String
+  contact_phone     String
+  employee_count    Int
+  enrolled_pets     Int      @default(0)
+  package_type      String   // "basic", "premium", "enterprise"
+  monthly_fee       Float
+  status            String   @default("active") // "active", "suspended", "cancelled"
+  billing_cycle     String   @default("monthly") // "monthly", "quarterly", "annual"
+  next_billing_date DateTime
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+  
+  employees         CorporateEmployee[]
+  
+  @@index([company_email])
+  @@index([status])
+  @@index([package_type])
+}
+
+model CorporateEmployee {
+  id                    String   @id @default(cuid())
+  corporate_enrollment_id String
+  employee_email        String
+  employee_name         String
+  user_id               String?
+  pets_enrolled         Int      @default(0)
+  enrollment_date       DateTime @default(now())
+  status                String   @default("active") // "active", "inactive"
+  
+  corporate_enrollment  CorporateEnrollment @relation(fields: [corporate_enrollment_id], references: [id], onDelete: Cascade)
+  user                  User?               @relation(fields: [user_id], references: [id])
+  
+  @@index([corporate_enrollment_id])
+  @@index([employee_email])
+  @@index([status])
+  @@unique([corporate_enrollment_id, employee_email])
+}
+
+// Week 5 - Health Tracking Foundation Models
+
+model MedicalRecord {
+  id             String   @id @default(cuid())
+  dog_id         String
+  user_id        String
+  record_type    String   // "vaccination", "vet_visit", "medication", "surgery", "checkup"
+  record_date    DateTime
+  title          String
+  description    String?
+  vet_name       String?
+  vet_clinic     String?
+  vet_contact    String?
+  medications    Json?    // array of medication objects
+  next_due_date  DateTime?
+  documents      Json?    // array of document URLs
+  photos         Json?    // array of photo URLs
+  cost           Float?
+  diagnosis      String?
+  treatment_plan String?
+  follow_up_required Boolean @default(false)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @default(now()) @updatedAt
+  
+  dog            Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [user_id], references: [id])
+  
+  @@index([dog_id])
+  @@index([record_type])
+  @@index([record_date])
+  @@index([next_due_date])
+}
+
+model HealthReminder {
+  id                String    @id @default(cuid())
+  dog_id            String
+  user_id           String
+  reminder_type     String    // "medication", "vaccination", "vet_visit", "grooming", "exercise"
+  title             String
+  description       String?
+  medication_name   String?
+  dosage            String?
+  frequency         String    // "daily", "weekly", "monthly", "one_time", "custom"
+  reminder_time     String?   // HH:MM format
+  days_of_week      String[]  // for weekly reminders
+  start_date        DateTime
+  end_date          DateTime?
+  next_reminder     DateTime
+  last_reminded     DateTime?
+  is_active         Boolean   @default(true)
+  auto_complete     Boolean   @default(false)
+  reminder_count    Int       @default(0)
+  max_reminders     Int?
+  snooze_until      DateTime?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @default(now()) @updatedAt
+  
+  dog               Dog       @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user              User      @relation(fields: [user_id], references: [id])
+  
+  @@index([dog_id])
+  @@index([user_id])
+  @@index([reminder_type])
+  @@index([next_reminder])
+  @@index([is_active])
+}
+
+model HealthMetric {
+  id              String   @id @default(cuid())
+  dog_id          String
+  user_id         String
+  metric_type     String   // "weight", "height", "heart_rate", "temperature", "blood_pressure"
+  value           Float
+  unit            String   // "kg", "cm", "bpm", "celsius", "mmHg"
+  measurement_date DateTime
+  notes           String?
+  measured_by     String?  // "owner", "vet", "automatic"
+  device_used     String?  // smart scale, thermometer, etc.
+  created_at      DateTime @default(now())
+  
+  dog             Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [user_id], references: [id])
+  
+  @@index([dog_id])
+  @@index([metric_type])
+  @@index([measurement_date])
+}
+
+model HealthInsight {
+  id                String   @id @default(cuid())
+  dog_id            String
+  insight_type      String   // "trend", "anomaly", "recommendation", "achievement"
+  category          String   // "weight", "exercise", "mood", "eating", "overall"
+  title             String
+  description       String
+  severity          String   @default("info") // "info", "warning", "critical", "positive"
+  data_points       Json?    // relevant data that triggered this insight
+  recommendations   String[]
+  is_read           Boolean  @default(false)
+  is_dismissed      Boolean  @default(false)
+  confidence_score  Float?   // 0-1 confidence in this insight
+  created_at        DateTime @default(now())
+  expires_at        DateTime?
+  
+  dog               Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  
+  @@index([dog_id])
+  @@index([insight_type])
+  @@index([category])
+  @@index([is_read])
+  @@index([created_at])
+}
+
+model HealthPhoto {
+  id          String   @id @default(cuid())
+  dog_id      String
+  user_id     String
+  photo_url   String
+  thumbnail_url String?
+  photo_type  String   // "symptom", "wound", "medication", "general", "before_after"
+  title       String?
+  description String?
+  tags        String[]
+  health_log_id String? // link to specific health log entry
+  medical_record_id String? // link to specific medical record
+  taken_at    DateTime
+  location    String?  // body part or general location
+  visibility  String   @default("private") // "private", "vet_shared", "community"
+  created_at  DateTime @default(now())
+  
+  dog         Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [user_id], references: [id])
+  
+  @@index([dog_id])
+  @@index([photo_type])
+  @@index([taken_at])
+  @@index([health_log_id])
+  @@index([medical_record_id])
+}
+
+model HealthExport {
+  id              String   @id @default(cuid())
+  dog_id          String
+  user_id         String
+  export_type     String   // "pdf_report", "csv_data", "vet_summary", "insurance_claim"
+  date_range_start DateTime
+  date_range_end  DateTime
+  data_types      String[] // "health_logs", "medical_records", "medications", "vaccinations"
+  file_url        String?
+  file_size       Int?     // in bytes
+  status          String   @default("processing") // "processing", "completed", "failed", "expired"
+  download_count  Int      @default(0)
+  expires_at      DateTime
+  error_message   String?
+  created_at      DateTime @default(now())
+  
+  dog             Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [user_id], references: [id])
+  
+  @@index([dog_id])
+  @@index([user_id])
+  @@index([export_type])
+  @@index([status])
+  @@index([expires_at])
+}
+
+// Week 6 - Community Foundation Models
+
+model CommunityQuestion {
+  id              String   @id @default(cuid())
+  user_id         String
+  dog_id          String?
+  title           String
+  content         String
+  tags            String[] // ["health", "behavior", "feeding", "local", etc.]
+  category        String   // "health", "behavior", "feeding", "training", "local", "general"
+  is_resolved     Boolean  @default(false)
+  best_answer_id  String?
+  view_count      Int      @default(0)
+  upvotes         Int      @default(0)
+  downvotes       Int      @default(0)
+  answer_count    Int      @default(0)
+  is_pinned       Boolean  @default(false)
+  is_featured     Boolean  @default(false)
+  status          String   @default("active") // "active", "closed", "deleted", "moderated"
+  photo_url       String?
+  location        String?  // for local questions
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  dog             Dog?     @relation(fields: [dog_id], references: [id], onDelete: SetNull)
+  answers         CommunityAnswer[]
+  comments        CommunityComment[]
+  flags           CommunityFlag[]
+  votes           CommunityVote[]
+  views           QuestionView[]
+  
+  @@index([user_id])
+  @@index([dog_id])
+  @@index([category])
+  @@index([tags])
+  @@index([is_resolved])
+  @@index([status])
+  @@index([created_at])
+}
+
+model CommunityAnswer {
+  id              String   @id @default(cuid())
+  question_id     String
+  user_id         String
+  content         String
+  is_best_answer  Boolean  @default(false)
+  upvotes         Int      @default(0)
+  downvotes       Int      @default(0)
+  is_verified_expert Boolean @default(false)
+  photo_url       String?
+  status          String   @default("active") // "active", "deleted", "moderated"
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+  
+  question        CommunityQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [user_id], references: [id])
+  comments        CommunityComment[]
+  flags           CommunityFlag[]
+  votes           CommunityVote[]
+  
+  @@index([question_id])
+  @@index([user_id])
+  @@index([is_best_answer])
+  @@index([status])
+  @@index([created_at])
+}
+
+model CommunityComment {
+  id              String   @id @default(cuid())
+  user_id         String
+  question_id     String?
+  answer_id       String?
+  forum_post_id   String?
+  content         String
+  upvotes         Int      @default(0)
+  downvotes       Int      @default(0)
+  status          String   @default("active") // "active", "deleted", "moderated"
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  question        CommunityQuestion? @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  answer          CommunityAnswer? @relation(fields: [answer_id], references: [id], onDelete: Cascade)
+  forum_post      ForumPost? @relation(fields: [forum_post_id], references: [id], onDelete: Cascade)
+  flags           CommunityFlag[]
+  
+  @@index([user_id])
+  @@index([question_id])
+  @@index([answer_id])
+  @@index([forum_post_id])
+  @@index([status])
+  @@index([created_at])
+}
+
+model ForumCategory {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  slug            String   @unique
+  icon            String   // emoji or icon name
+  color           String   // hex color
+  is_active       Boolean  @default(true)
+  sort_order      Int      @default(0)
+  post_count      Int      @default(0)
+  created_at      DateTime @default(now())
+  
+  posts           ForumPost[]
+  
+  @@index([slug])
+  @@index([is_active])
+  @@index([sort_order])
+}
+
+model ForumPost {
+  id              String   @id @default(cuid())
+  user_id         String
+  category_id     String
+  title           String
+  content         String
+  tags            String[]
+  is_pinned       Boolean  @default(false)
+  is_featured     Boolean  @default(false)
+  is_locked       Boolean  @default(false)
+  view_count      Int      @default(0)
+  like_count      Int      @default(0)
+  comment_count   Int      @default(0)
+  status          String   @default("active") // "active", "locked", "deleted", "moderated"
+  photo_url       String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  category        ForumCategory @relation(fields: [category_id], references: [id])
+  comments        CommunityComment[]
+  flags           CommunityFlag[]
+  
+  @@index([user_id])
+  @@index([category_id])
+  @@index([tags])
+  @@index([status])
+  @@index([created_at])
+}
+
+model CommunityFlag {
+  id              String   @id @default(cuid())
+  user_id         String
+  question_id     String?
+  answer_id       String?
+  comment_id      String?
+  forum_post_id   String?
+  reason          String   // "spam", "inappropriate", "harassment", "misinformation", "other"
+  description     String?
+  status          String   @default("pending") // "pending", "reviewed", "resolved", "dismissed"
+  moderator_id    String?
+  moderator_notes String?
+  created_at      DateTime @default(now())
+  resolved_at     DateTime?
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  moderator       User?    @relation("ModeratedFlags", fields: [moderator_id], references: [id])
+  question        CommunityQuestion? @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  answer          CommunityAnswer? @relation(fields: [answer_id], references: [id], onDelete: Cascade)
+  comment         CommunityComment? @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  forum_post      ForumPost? @relation(fields: [forum_post_id], references: [id], onDelete: Cascade)
+  
+  @@index([user_id])
+  @@index([question_id])
+  @@index([answer_id])
+  @@index([comment_id])
+  @@index([forum_post_id])
+  @@index([status])
+  @@index([created_at])
+}
+
+model UserEngagement {
+  id              String   @id @default(cuid())
+  user_id         String
+  action_type     String   // "question_posted", "answer_posted", "comment_posted", "upvoted", "downvoted", "best_answer", "forum_post", "expert_verified"
+  points_earned   Int
+  description     String
+  related_id      String?  // ID of related content (question, answer, etc.)
+  related_type    String?  // "question", "answer", "comment", "forum_post"
+  created_at      DateTime @default(now())
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  
+  @@index([user_id])
+  @@index([action_type])
+  @@index([created_at])
+}
+
+model UserBadge {
+  id              String   @id @default(cuid())
+  user_id         String
+  badge_type      String   // "first_question", "first_answer", "best_answer", "helpful_user", "expert", "community_hero", "100_upvotes", etc.
+  badge_name      String
+  badge_description String
+  badge_icon      String   // emoji or icon
+  badge_color     String   // hex color
+  earned_at       DateTime @default(now())
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  
+  @@index([user_id])
+  @@index([badge_type])
+  @@index([earned_at])
+}
+
+model CommunityExpert {
+  id              String   @id @default(cuid())
+  user_id         String
+  partner_id      String?
+  expertise_areas String[] // ["veterinary", "training", "nutrition", "behavior", "grooming", "breeding"]
+  verification_status String @default("pending") // "pending", "verified", "rejected"
+  verification_date DateTime?
+  verified_by     String?
+  bio             String?
+  years_experience Int?
+  certifications  String[]
+  specializations String[]
+  is_featured     Boolean  @default(false)
+  answer_count    Int      @default(0)
+  best_answer_count Int    @default(0)
+  total_points    Int      @default(0)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  partner         Partner? @relation(fields: [partner_id], references: [id], onDelete: SetNull)
+  verifier        User?    @relation("ExpertVerifications", fields: [verified_by], references: [id])
+  
+  @@index([user_id])
+  @@index([partner_id])
+  @@index([expertise_areas])
+  @@index([verification_status])
+  @@index([is_featured])
+}
+
+model CommunityVote {
+  id              String   @id @default(cuid())
+  user_id         String
+  question_id     String?
+  answer_id       String?
+  vote_type       String   // "up", "down"
+  created_at      DateTime @default(now())
+  
+  user            User     @relation(fields: [user_id], references: [id])
+  question        CommunityQuestion? @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  answer          CommunityAnswer? @relation(fields: [answer_id], references: [id], onDelete: Cascade)
+  
+  @@index([user_id])
+  @@index([question_id])
+  @@index([answer_id])
+  @@index([vote_type])
+  @@unique([user_id, question_id])
+  @@unique([user_id, answer_id])
+}
+
+model QuestionView {
+  id                  String   @id @default(cuid())
+  question_id         String
+  user_id             String?
+  session_fingerprint String
+  created_at          DateTime @default(now())
+  
+  question            CommunityQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  user                User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  
+  @@index([question_id])
+  @@index([user_id])
+  @@index([session_fingerprint])
+  @@index([created_at])
+}
+
+// Week 7: Gamification System
+model UserPoints {
+  id                    String   @id @default(cuid())
+  user_id               String   @unique
+  points_earned         Int      @default(0)
+  points_spent          Int      @default(0)
+  current_balance       Int      @default(0)
+  total_lifetime_points Int      @default(0)
+  last_daily_bonus      DateTime?
+  streak_count          Int      @default(0)
+  achievements          Json     @default("[]") // array of achievement IDs
+  badges                Json     @default("[]") // array of badge objects
+  level                 Int      @default(1)
+  experience_points     Int      @default(0)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  user                  User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  point_transactions    PointTransaction[]
+  
+  @@index([user_id])
+  @@index([current_balance])
+  @@index([level])
+  @@index([streak_count])
+}
+
+model PointTransaction {
+  id                String   @id @default(cuid())
+  user_id           String
+  points_amount     Int
+  transaction_type  String   // "earned", "spent", "bonus", "penalty"
+  source            String   // "question_post", "answer_post", "best_answer", "daily_bonus", "expert_verified", etc.
+  source_id         String?  // ID of the question/answer that earned points
+  description       String
+  created_at        DateTime @default(now())
+  
+  user              User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_points       UserPoints @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "PointTransaction_user_points_fkey")
+  
+  @@index([user_id])
+  @@index([transaction_type])
+  @@index([source])
+  @@index([created_at])
+}
+
+// Week 7: Multilingual Support
+model Translation {
+  id                String   @id @default(cuid())
+  content_id        String   // ID of the content being translated
+  content_type      String   // "question", "answer", "comment"
+  original_language String   @default("en")
+  target_language   String
+  original_text     String
+  translated_text   String
+  translation_quality Float?  // confidence score 0-1
+  is_human_verified Boolean  @default(false)
+  verified_by       String?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @default(now()) @updatedAt
+  
+  @@unique([content_id, content_type, target_language])
+  @@index([content_id, content_type])
+  @@index([target_language])
+  @@index([original_language])
+}
+
+// Week 7: Enhanced Community Features
+model CommunityTrending {
+  id                String   @id @default(cuid())
+  content_id        String
+  content_type      String   // "question", "tag", "category"
+  trend_score       Float
+  view_velocity     Float    // views per hour
+  engagement_score  Float    // upvotes, answers, comments combined
+  time_period       String   // "hourly", "daily", "weekly"
+  language          String   @default("en")
+  category          String?
+  location          String?
+  created_at        DateTime @default(now())
+  expires_at        DateTime
+  
+  @@index([trend_score])
+  @@index([content_type])
+  @@index([time_period])
+  @@index([language])
+  @@index([category])
+  @@index([created_at])
+  @@index([expires_at])
+}
+
+// Week 8: Health Tracking System
+model HealthLog {
+  id                    String   @id @default(cuid())
+  dog_id                String
+  user_id               String   // who created the log entry
+  log_date              DateTime @db.Date
+  food_amount           Float?
+  food_type             String?
+  water_intake          Float?
+  exercise_duration     Int?     // minutes
+  exercise_type         String?
+  mood_score            Int?     // 1-5 scale
+  bathroom_frequency    Int?
+  weight_kg             Float?
+  temperature_celsius   Float?
+  notes                 String?
+  photos                Json     @default("[]")
+  symptoms              Json     @default("[]") // array of symptoms
+  energy_level          Int?     // 1-5 scale
+  appetite_level        Int?     // 1-5 scale
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  dog                   Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user                  User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@index([dog_id])
+  @@index([user_id])
+  @@index([log_date])
+  @@index([created_at])
+  @@unique([dog_id, log_date])
+}
+
+model Medication {
+  id                    String   @id @default(cuid())
+  dog_id                String
+  name                  String
+  dosage                String?
+  frequency             String
+  start_date            DateTime @db.Date
+  end_date              DateTime? @db.Date
+  prescribed_by         String?  // partner ID
+  instructions          String?
+  reminder_times        Json     @default("[]")
+  is_active             Boolean  @default(true)
+  medication_type       String   @default("oral") // oral, topical, injection
+  side_effects          String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  dog                   Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  prescribed_partner    Partner? @relation(fields: [prescribed_by], references: [id], onDelete: SetNull)
+  
+  @@index([dog_id])
+  @@index([prescribed_by])
+  @@index([is_active])
+  @@index([start_date])
+  @@index([end_date])
+}
+
+model VetAppointment {
+  id                    String   @id @default(cuid())
+  dog_id                String
+  vet_id                String?
+  appointment_datetime  DateTime
+  reason                String
+  diagnosis             String?
+  treatment             String?
+  medications_prescribed Json    @default("[]")
+  follow_up_date        DateTime? @db.Date
+  cost                  Float?
+  status                String   @default("scheduled") // scheduled, completed, cancelled, no_show
+  notes                 String?
+  documents             Json     @default("[]")
+  appointment_type      String   @default("checkup") // checkup, emergency, vaccination, surgery
+  duration_minutes      Int      @default(30)
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  dog                   Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  vet                   Partner? @relation(fields: [vet_id], references: [id], onDelete: SetNull)
+  
+  @@index([dog_id])
+  @@index([vet_id])
+  @@index([appointment_datetime])
+  @@index([status])
+  @@index([appointment_type])
+}
+
+model DiaryEntry {
+  id                    String   @id @default(cuid())
+  dog_id                String
+  user_id               String
+  title                 String
+  content               String
+  entry_type            String   @default("general") // general, milestone, training, health, photo
+  milestone_type        String?  // first_walk, first_vet, birthday, vaccination
+  photos                Json     @default("[]")
+  tags                  Json     @default("[]")
+  privacy_level         String   @default("public") // public, friends, private
+  reactions             Json     @default("{}")
+  comments_count        Int      @default(0)
+  likes_count           Int      @default(0)
+  shares_count          Int      @default(0)
+  is_featured           Boolean  @default(false)
+  mood_emoji            String?
+  location              String?
+  weather               String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  dog                   Dog      @relation(fields: [dog_id], references: [id], onDelete: Cascade)
+  user                  User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  comments              DiaryComment[]
+  
+  @@index([dog_id])
+  @@index([user_id])
+  @@index([entry_type])
+  @@index([privacy_level])
+  @@index([created_at])
+  @@index([is_featured])
+}
+
+model DiaryComment {
+  id                    String      @id @default(cuid())
+  diary_entry_id        String
+  user_id               String
+  content               String
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @default(now()) @updatedAt
+  
+  diary_entry           DiaryEntry  @relation(fields: [diary_entry_id], references: [id], onDelete: Cascade)
+  user                  User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@index([diary_entry_id])
+  @@index([user_id])
+  @@index([created_at])
+}
+
+model Forum {
+  id                    String   @id @default(cuid())
+  name                  String
+  description           String
+  category              String   // breed, city, life_stage, health, training, general
+  type                  String   // breed_specific, location_based, age_based, health_focused
+  filter_criteria       Json     @default("{}")
+  moderator_ids         Json     @default("[]")
+  post_count            Int      @default(0)
+  member_count          Int      @default(0)
+  is_active             Boolean  @default(true)
+  is_featured           Boolean  @default(false)
+  cover_image           String?
+  rules                 String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @default(now()) @updatedAt
+  
+  
+  @@index([category])
+  @@index([type])
+  @@index([is_active])
+  @@index([is_featured])
+  @@index([created_at])
 }

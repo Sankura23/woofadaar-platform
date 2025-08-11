@@ -2,8 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Heart, Edit3, Trash2, Calendar, Scale, MapPin, Shield, Camera, Users, Award } from 'lucide-react';
+import { Plus, Heart, Edit3, Trash2, Calendar, Scale, MapPin, Shield, Camera, Users, Award, QrCode } from 'lucide-react';
 import Link from 'next/link';
+
 
 interface Dog {
   id: string;
@@ -27,6 +28,8 @@ export default function DogsPage() {
   const [error, setError] = useState('');
   const [selectedDog, setSelectedDog] = useState<string | null>(null);
   const [deletingDog, setDeletingDog] = useState<string | null>(null);
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [qrCodeDog, setQrCodeDog] = useState<{ id: string; name: string } | null>(null);
 
   useEffect(() => {
     fetchDogs();
@@ -42,10 +45,10 @@ export default function DogsPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setDogs(data.dogs || []);
+        setDogs(data.data?.dogs || []);
         // Set first dog as selected if none selected
-        if (data.dogs && data.dogs.length > 0 && !selectedDog) {
-          setSelectedDog(data.dogs[0].id);
+        if (data.data?.dogs && data.data.dogs.length > 0 && !selectedDog) {
+          setSelectedDog(data.data.dogs[0].id);
         }
       } else {
         setError('Failed to fetch dogs');
@@ -106,6 +109,16 @@ export default function DogsPage() {
     }
   };
 
+  const showQRCodeForDog = (dog: Dog) => {
+    setQrCodeDog({ id: dog.id, name: dog.name });
+    setShowQRCode(true);
+  };
+
+  const closeQRCode = () => {
+    setShowQRCode(false);
+    setQrCodeDog(null);
+  };
+
   const formatAge = (months: number) => {
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
@@ -121,8 +134,8 @@ export default function DogsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-milk-white p-6">
-        <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -142,8 +155,8 @@ export default function DogsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-milk-white p-6">
-        <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           <div className="text-center py-12">
             <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg max-w-md mx-auto">
               <p className="text-lg font-medium mb-2">Error Loading Dogs</p>
@@ -162,76 +175,63 @@ export default function DogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-milk-white p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-4 sm:py-6 lg:py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Dogs</h1>
-            <p className="text-gray-600">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+          <div className="text-center sm:text-left mb-4 sm:mb-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">My Dogs</h1>
+            <p className="text-sm sm:text-base text-gray-600">
               Manage your furry family members and their health records
             </p>
           </div>
           <Link
             href="/profile/dogs/add"
-            className="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+            className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#3bbca8] text-white rounded-xl hover:bg-[#339990] transition-colors font-medium touch-target shadow-md hover:shadow-lg"
           >
-            <Plus className="w-5 h-5 mr-2" />
-            Add New Dog
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+            <span className="hidden sm:inline">Add New Dog</span>
+            <span className="sm:hidden">Add Dog</span>
           </Link>
         </div>
 
         {/* Stats Overview */}
-        {dogs.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white rounded-lg shadow-sm p-4">
+        {dogs && dogs.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 border border-gray-100">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-100 rounded-lg">
-                  <Heart className="w-6 h-6 text-blue-600" />
+                  <Heart className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Total Dogs</p>
-                  <p className="text-2xl font-bold text-gray-900">{dogs.length}</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total Dogs</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{dogs?.length || 0}</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <div className="flex items-center">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Shield className="w-6 h-6 text-primary" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Dog IDs</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {dogs.filter(dog => dog.health_id).length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 border border-gray-100">
               <div className="flex items-center">
                 <div className="p-2 bg-yellow-100 rounded-lg">
-                  <Award className="w-6 h-6 text-yellow-600" />
+                  <Award className="w-4 h-4 sm:w-6 sm:h-6 text-yellow-600" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Vaccinated</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {dogs.filter(dog => dog.vaccination_status === 'up_to_date').length}
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Vaccinated</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                    {dogs?.filter(dog => dog.vaccination_status === 'up_to_date').length || 0}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="bg-white rounded-xl shadow-sm p-3 sm:p-4 border border-gray-100">
               <div className="flex items-center">
                 <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users className="w-6 h-6 text-purple-600" />
+                  <Users className="w-4 h-4 sm:w-6 sm:h-6 text-purple-600" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-600">Active</p>
-                  <p className="text-2xl font-bold text-gray-900">{dogs.length}</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Active</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{dogs?.length || 0}</p>
                 </div>
               </div>
             </div>
@@ -239,37 +239,37 @@ export default function DogsPage() {
         )}
 
         {/* Dogs Grid */}
-        {dogs.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="bg-white rounded-lg shadow-sm p-8 max-w-md mx-auto">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-gray-400" />
+        {(!dogs || dogs.length === 0) ? (
+          <div className="text-center py-8 sm:py-12">
+            <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 max-w-md mx-auto border border-gray-100">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Dogs Added Yet</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">No Dogs Added Yet</h3>
+              <p className="text-sm sm:text-base text-gray-600 mb-6">
                 Start by adding your first furry family member to track their health and activities.
               </p>
               <Link
                 href="/profile/dogs/add"
-                className="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+                className="inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#3bbca8] text-white rounded-xl hover:bg-[#339990] transition-colors font-medium touch-target shadow-md hover:shadow-lg"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Your First Dog
               </Link>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {dogs.map((dog) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+            {dogs?.map((dog) => (
               <div
                 key={dog.id}
-                className={`bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${
-                  selectedDog === dog.id ? 'ring-2 ring-primary' : ''
+                className={`bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer border border-gray-100 ${
+                  selectedDog === dog.id ? 'ring-2 ring-[#3bbca8]' : ''
                 }`}
                 onClick={() => setSelectedDog(dog.id)}
               >
                 {/* Dog Photo */}
-                <div className="relative h-48 bg-gray-100">
+                <div className="relative h-40 sm:h-48 bg-gray-100">
                   {dog.photo_url ? (
                     <img
                       src={dog.photo_url}
@@ -283,17 +283,30 @@ export default function DogsPage() {
                     />
                   ) : null}
                   <div className={`absolute inset-0 flex items-center justify-center ${dog.photo_url ? 'hidden' : ''}`}>
-                    <Camera className="w-12 h-12 text-gray-400" />
+                    <Camera className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400" />
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="absolute top-3 right-3 flex space-x-2">
+                  <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex space-x-1 sm:space-x-2">
+                    {dog.health_id && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          showQRCodeForDog(dog);
+                        }}
+                        className="p-1.5 sm:p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors touch-target"
+                        title="View QR Code"
+                      >
+                        <QrCode className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
+                      </button>
+                    )}
                     <Link
                       href={`/profile/dogs/${dog.id}/edit`}
-                      className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
                       onClick={(e) => e.stopPropagation()}
+                      className="p-1.5 sm:p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors touch-target"
+                      title="Edit Dog"
                     >
-                      <Edit3 className="w-4 h-4 text-gray-600" />
+                      <Edit3 className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
                     </Link>
                     <button
                       onClick={(e) => {
@@ -301,128 +314,84 @@ export default function DogsPage() {
                         deleteDog(dog.id);
                       }}
                       disabled={deletingDog === dog.id}
-                      className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors disabled:opacity-50"
+                      className="p-1.5 sm:p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors touch-target disabled:opacity-50"
+                      title="Delete Dog"
                     >
                       {deletingDog === dog.id ? (
-                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
                       ) : (
-                        <Trash2 className="w-4 h-4 text-red-600" />
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-500" />
                       )}
                     </button>
                   </div>
-
-                  {/* Health ID Badge */}
-                  {dog.health_id && (
-                    <div className="absolute bottom-3 left-3">
-                      <div className="bg-primary text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">
-                        <Shield className="w-3 h-3 mr-1" />
-                        Dog ID
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* Dog Info */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-1">{dog.name}</h3>
-                      <p className="text-gray-600 text-sm">{dog.breed}</p>
-                    </div>
+                <div className="p-3 sm:p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900">{dog.name}</h3>
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getVaccinationStatusColor(dog.vaccination_status)}`}>
                       {getVaccinationStatusText(dog.vaccination_status)}
                     </span>
                   </div>
-
-                  {/* Basic Stats */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Calendar className="w-4 h-4 mr-2" />
+                  
+                  <div className="space-y-1 sm:space-y-2 text-sm sm:text-base">
+                    <div className="flex items-center text-gray-600">
+                      <span className="mr-2">🐕</span>
+                      <span className="font-medium">{dog.breed}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400" />
                       <span>{formatAge(dog.age_months)}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Scale className="w-4 h-4 mr-2" />
+                    <div className="flex items-center text-gray-600">
+                      <Scale className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400" />
                       <span>{dog.weight_kg} kg</span>
                     </div>
-                  </div>
-
-                  {/* Location */}
-                  <div className="flex items-center text-sm text-gray-600 mb-4">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="truncate">{dog.location}</span>
-                  </div>
-
-                  {/* Personality Traits */}
-                  {dog.personality_traits.length > 0 && (
-                    <div className="mb-4">
-                      <p className="text-xs font-medium text-gray-500 mb-2">Personality</p>
-                      <div className="flex flex-wrap gap-1">
-                        {dog.personality_traits.slice(0, 3).map((trait) => (
-                          <span
-                            key={trait}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
-                          >
-                            {trait}
-                          </span>
-                        ))}
-                        {dog.personality_traits.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                            +{dog.personality_traits.length - 3} more
-                          </span>
-                        )}
+                    {dog.location && (
+                      <div className="flex items-center text-gray-600">
+                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-gray-400" />
+                        <span className="truncate">{dog.location}</span>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Health ID Display */}
-                  {dog.health_id && (
-                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-                      <p className="text-xs font-medium text-gray-900 mb-1">Dog ID</p>
-                      <p className="text-sm font-mono text-primary truncate">{dog.health_id}</p>
-                    </div>
-                  )}
+                    )}
+                    {dog.health_id && (
+                      <div className="flex items-center text-[#3bbca8]">
+                        <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                        <span className="font-medium text-xs sm:text-sm">ID: {dog.health_id}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Quick Actions */}
-        {dogs.length > 0 && (
-          <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Link
-                href="/profile/dogs/add"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Plus className="w-5 h-5 text-primary mr-3" />
-                <span className="font-medium text-gray-900">Add Another Dog</span>
-              </Link>
-              
-              <Link
-                href="/profile"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Users className="w-5 h-5 text-primary mr-3" />
-                <span className="font-medium text-gray-900">View Profile</span>
-              </Link>
-              
-              <Link
-                href="/partners/directory"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Shield className="w-5 h-5 text-primary mr-3" />
-                <span className="font-medium text-gray-900">Find Vets</span>
-              </Link>
-              
-              <Link
-                href="/waitlist"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Heart className="w-5 h-5 text-primary mr-3" />
-                <span className="font-medium text-gray-900">Join Community</span>
-              </Link>
+        {/* QR Code Modal */}
+        {showQRCode && qrCodeDog && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
+              <div className="text-center">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+                  QR Code for {qrCodeDog.name}
+                </h3>
+                <div className="bg-gray-100 rounded-lg p-4 mb-4">
+                  <div className="w-48 h-48 mx-auto bg-white rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-32 h-32 bg-gray-300 rounded-lg flex items-center justify-center mb-2">
+                        <QrCode className="w-8 h-8 text-gray-500" />
+                      </div>
+                      <p className="text-xs text-gray-500">QR Code Placeholder</p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={closeQRCode}
+                  className="w-full px-4 py-2 bg-[#3bbca8] text-white rounded-lg hover:bg-[#339990] transition-colors font-medium touch-target"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         )}

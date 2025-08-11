@@ -24,7 +24,7 @@ async function verifyToken(request: NextRequest): Promise<string | null> {
 }
 
 function generateHealthId(name: string, breed: string, location: string): string {
-  // Create unique health ID format: WOF-[NAME_INITIAL][BREED_CODE][LOCATION_CODE][TIMESTAMP]
+  // Create unique dog ID format: WOF-[NAME_INITIAL][BREED_CODE][LOCATION_CODE][TIMESTAMP]
   const nameInitial = name.substring(0, 2).toUpperCase().replace(/[^A-Z]/g, 'X');
   const breedCode = breed.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
   const locationCode = location.split(',')[0].substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
@@ -34,7 +34,7 @@ function generateHealthId(name: string, breed: string, location: string): string
   return `WOF${nameInitial}${breedCode}${locationCode}${timestamp}${randomSuffix}`;
 }
 
-// POST /api/dogs/generate-health-id - Generate unique Woofadaar Health ID
+// POST /api/dogs/generate-health-id - Generate unique Woofadaar Dog ID
 export async function POST(request: NextRequest) {
   const userId = await verifyToken(request);
   
@@ -70,14 +70,14 @@ export async function POST(request: NextRequest) {
 
     if (!isUnique) {
       return NextResponse.json(
-        { message: 'Failed to generate unique health ID. Please try again.' },
+        { message: 'Failed to generate unique dog ID. Please try again.' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       healthId: healthId!,
-      message: 'Health ID generated successfully',
+      message: 'Dog ID generated successfully',
       features: [
         'Unique identifier for vet visits',
         'Access to pet-friendly discounts',
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Health ID generation error:', error);
+    console.error('Dog ID generation error:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

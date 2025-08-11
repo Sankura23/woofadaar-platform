@@ -1,0 +1,2048 @@
+
+> woofadaar@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.4.5
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.6:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1093ms
+ ○ Compiling / ...
+ ✓ Compiled / in 767ms (655 modules)
+ HEAD / 200 in 972ms
+ ✓ Compiled /diary in 429ms (705 modules)
+ GET /diary 200 in 638ms
+ ✓ Compiled /favicon.ico in 369ms (1054 modules)
+ GET /favicon.ico 200 in 442ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"125ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:29:08.868Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":127,"environment":"development","includeHealth":false,"method":"GET","requestId":"9isargl1scr","service":"woofadaar-api","timestamp":"2025-08-10T01:29:08.742Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 870ms
+ ✓ Compiled /_not-found in 188ms (1061 modules)
+ GET /api/auth/me 404 in 335ms
+ GET /api/auth/me 404 in 37ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 501ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 61ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 62ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 60ms
+Error creating diary entry: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.create()` invocation:
+
+{
+  data: {
+    dog_id: "cme4lylma0001ygboumt4dxad",
+    title: "Poppy's day out!",
+    content: "Today we visited a cool sunny place where he enjoyed a lot!",
+    entry_type: "adventure",
+    photos: [],
+    milestone_type: "",
+    mood_emoji: "happy",
+    weather: "sunny",
+    location: "",
+    tags: [],
+    privacy_level: "public",
++   dog: {
++     create: DogCreateWithoutDiaryEntriesInput | DogUncheckedCreateWithoutDiaryEntriesInput,
++     connectOrCreate: DogCreateOrConnectWithoutDiaryEntriesInput,
++     connect: DogWhereUniqueInput
++   }
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  }
+}
+
+Argument `dog` is missing.
+    at async POST (src/app/api/diary/entries/route.ts:64:23)
+  62 |
+  63 |     // Create diary entry
+> 64 |     const diaryEntry = await prisma.diaryEntry.create({
+     |                       ^
+  65 |       data: {
+  66 |         dog_id,
+  67 |         title, {
+  clientVersion: '6.13.0'
+}
+ POST /api/diary/entries 500 in 137ms
+ ✓ Compiled /health in 363ms (1106 modules)
+ GET /health 200 in 432ms
+ ✓ Compiled /api/health/[dogId] in 130ms (1108 modules)
+Error: Route "/api/health/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/health/[dogId]/route.ts:28:12)
+  26 |
+  27 |     const userId = payload.userId;
+> 28 |     const { dogId } = params;
+     |            ^
+  29 |     const { searchParams } = new URL(request.url);
+  30 |     const days = parseInt(searchParams.get('days') || '30');
+  31 |
+Error fetching health overview: Error [PrismaClientValidationError]: 
+Invalid `prisma.healthInsight.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad",
+    is_active: true,
+    ~~~~~~~~~
+?   AND?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   OR?: HealthInsightWhereInput[],
+?   NOT?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   id?: StringFilter | String,
+?   insight_type?: StringFilter | String,
+?   category?: StringFilter | String,
+?   title?: StringFilter | String,
+?   description?: StringFilter | String,
+?   severity?: StringFilter | String,
+?   data_points?: JsonNullableFilter,
+?   recommendations?: StringNullableListFilter,
+?   is_read?: BoolFilter | Boolean,
+?   is_dismissed?: BoolFilter | Boolean,
+?   confidence_score?: FloatNullableFilter | Float | Null,
+?   created_at?: DateTimeFilter | DateTime,
+?   expires_at?: DateTimeNullableFilter | DateTime | Null,
+?   dog?: DogScalarRelationFilter | DogWhereInput
+  },
+  orderBy: {
+    generated_at: "desc"
+  },
+  take: 10
+}
+
+Unknown argument `is_active`. Available options are marked with ?.
+    at async GET (src/app/api/health/[dogId]/route.ts:100:27)
+   98 |
+   99 |     // Get recent health insights
+> 100 |     const recentInsights = await prisma.healthInsight.findMany({
+      |                           ^
+  101 |       where: {
+  102 |         dog_id: dogId,
+  103 |         is_active: true {
+  clientVersion: '6.13.0'
+}
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 500 in 912ms
+Error: Route "/api/health/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/health/[dogId]/route.ts:28:12)
+  26 |
+  27 |     const userId = payload.userId;
+> 28 |     const { dogId } = params;
+     |            ^
+  29 |     const { searchParams } = new URL(request.url);
+  30 |     const days = parseInt(searchParams.get('days') || '30');
+  31 |
+Error fetching health overview: Error [PrismaClientValidationError]: 
+Invalid `prisma.healthInsight.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad",
+    is_active: true,
+    ~~~~~~~~~
+?   AND?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   OR?: HealthInsightWhereInput[],
+?   NOT?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   id?: StringFilter | String,
+?   insight_type?: StringFilter | String,
+?   category?: StringFilter | String,
+?   title?: StringFilter | String,
+?   description?: StringFilter | String,
+?   severity?: StringFilter | String,
+?   data_points?: JsonNullableFilter,
+?   recommendations?: StringNullableListFilter,
+?   is_read?: BoolFilter | Boolean,
+?   is_dismissed?: BoolFilter | Boolean,
+?   confidence_score?: FloatNullableFilter | Float | Null,
+?   created_at?: DateTimeFilter | DateTime,
+?   expires_at?: DateTimeNullableFilter | DateTime | Null,
+?   dog?: DogScalarRelationFilter | DogWhereInput
+  },
+  orderBy: {
+    generated_at: "desc"
+  },
+  take: 10
+}
+
+Unknown argument `is_active`. Available options are marked with ?.
+    at async GET (src/app/api/health/[dogId]/route.ts:100:27)
+   98 |
+   99 |     // Get recent health insights
+> 100 |     const recentInsights = await prisma.healthInsight.findMany({
+      |                           ^
+  101 |       where: {
+  102 |         dog_id: dogId,
+  103 |         is_active: true {
+  clientVersion: '6.13.0'
+}
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 500 in 106ms
+ ✓ Compiled /health/[dogId]/log in 253ms (1129 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/log 200 in 504ms
+ ✓ Compiled /api/dogs/[id] in 109ms (1131 modules)
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 463ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 17ms
+ ✓ Compiled /api/health/log in 130ms (864 modules)
+Error saving health log: Error [PrismaClientValidationError]: 
+Invalid `prisma.healthLog.upsert()` invocation:
+
+{
+  where: {
+    dog_id_log_date: {
+      dog_id: "cme4lylma0001ygboumt4dxad",
+      log_date: new Date("2025-08-10T00:00:00.000Z")
+    }
+  },
+  update: {
+    food_amount: undefined,
+    food_type: undefined,
+    water_intake: undefined,
+    exercise_duration: undefined,
+    exercise_type: undefined,
+    mood_rating: 4,
+    bathroom_frequency: undefined,
+    weight_kg: 4.4,
+    temperature_celsius: undefined,
+    notes: undefined,
+    photos: [],
+    symptoms: [],
+    energy_level: 5,
+    appetite_level: 4,
+    updated_at: new Date("2025-08-10T01:30:21.389Z")
+  },
+  create: {
+    dog_id: "cme4lylma0001ygboumt4dxad",
+    user_id: "user_1754717307657_9nc4safdq",
+    log_date: new Date("2025-08-10T00:00:00.000Z"),
+    food_amount: undefined,
+    food_type: undefined,
+    water_intake: undefined,
+    exercise_duration: undefined,
+    exercise_type: undefined,
+    mood_rating: 4,
+    ~~~~~~~~~~~
+    bathroom_frequency: undefined,
+    weight_kg: 4.4,
+    temperature_celsius: undefined,
+    notes: undefined,
+    photos: [],
+    symptoms: [],
+    energy_level: 5,
+    appetite_level: 4,
+?   id?: String,
+?   mood_score?: Int | Null,
+?   created_at?: DateTime,
+?   updated_at?: DateTime
+  }
+}
+
+Unknown argument `mood_rating`. Available options are marked with ?.
+    at async POST (src/app/api/health/log/route.ts:69:22)
+  67 |
+  68 |     // Create or update health log entry (upsert based on dog_id + log_date)
+> 69 |     const healthLog = await prisma.healthLog.upsert({
+     |                      ^
+  70 |       where: {
+  71 |         dog_id_log_date: {
+  72 |           dog_id, {
+  clientVersion: '6.13.0'
+}
+ POST /api/health/log 500 in 332ms
+ GET /health 200 in 58ms
+ ✓ Compiled /api/dogs in 135ms (828 modules)
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"107ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:30:25.536Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":110,"environment":"development","includeHealth":false,"method":"GET","requestId":"v78eadax4rj","service":"woofadaar-api","timestamp":"2025-08-10T01:30:25.427Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 301ms
+Error: Route "/api/health/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/health/[dogId]/route.ts:28:12)
+  26 |
+  27 |     const userId = payload.userId;
+> 28 |     const { dogId } = params;
+     |            ^
+  29 |     const { searchParams } = new URL(request.url);
+  30 |     const days = parseInt(searchParams.get('days') || '30');
+  31 |
+Error fetching health overview: Error [PrismaClientValidationError]: 
+Invalid `prisma.healthInsight.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad",
+    is_active: true,
+    ~~~~~~~~~
+?   AND?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   OR?: HealthInsightWhereInput[],
+?   NOT?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   id?: StringFilter | String,
+?   insight_type?: StringFilter | String,
+?   category?: StringFilter | String,
+?   title?: StringFilter | String,
+?   description?: StringFilter | String,
+?   severity?: StringFilter | String,
+?   data_points?: JsonNullableFilter,
+?   recommendations?: StringNullableListFilter,
+?   is_read?: BoolFilter | Boolean,
+?   is_dismissed?: BoolFilter | Boolean,
+?   confidence_score?: FloatNullableFilter | Float | Null,
+?   created_at?: DateTimeFilter | DateTime,
+?   expires_at?: DateTimeNullableFilter | DateTime | Null,
+?   dog?: DogScalarRelationFilter | DogWhereInput
+  },
+  orderBy: {
+    generated_at: "desc"
+  },
+  take: 10
+}
+
+Unknown argument `is_active`. Available options are marked with ?.
+    at async GET (src/app/api/health/[dogId]/route.ts:100:27)
+   98 |
+   99 |     // Get recent health insights
+> 100 |     const recentInsights = await prisma.healthInsight.findMany({
+      |                           ^
+  101 |       where: {
+  102 |         dog_id: dogId,
+  103 |         is_active: true {
+  clientVersion: '6.13.0'
+}
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 500 in 168ms
+Error: Route "/api/health/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/health/[dogId]/route.ts:28:12)
+  26 |
+  27 |     const userId = payload.userId;
+> 28 |     const { dogId } = params;
+     |            ^
+  29 |     const { searchParams } = new URL(request.url);
+  30 |     const days = parseInt(searchParams.get('days') || '30');
+  31 |
+Error fetching health overview: Error [PrismaClientValidationError]: 
+Invalid `prisma.healthInsight.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad",
+    is_active: true,
+    ~~~~~~~~~
+?   AND?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   OR?: HealthInsightWhereInput[],
+?   NOT?: HealthInsightWhereInput | HealthInsightWhereInput[],
+?   id?: StringFilter | String,
+?   insight_type?: StringFilter | String,
+?   category?: StringFilter | String,
+?   title?: StringFilter | String,
+?   description?: StringFilter | String,
+?   severity?: StringFilter | String,
+?   data_points?: JsonNullableFilter,
+?   recommendations?: StringNullableListFilter,
+?   is_read?: BoolFilter | Boolean,
+?   is_dismissed?: BoolFilter | Boolean,
+?   confidence_score?: FloatNullableFilter | Float | Null,
+?   created_at?: DateTimeFilter | DateTime,
+?   expires_at?: DateTimeNullableFilter | DateTime | Null,
+?   dog?: DogScalarRelationFilter | DogWhereInput
+  },
+  orderBy: {
+    generated_at: "desc"
+  },
+  take: 10
+}
+
+Unknown argument `is_active`. Available options are marked with ?.
+    at async GET (src/app/api/health/[dogId]/route.ts:100:27)
+   98 |
+   99 |     // Get recent health insights
+> 100 |     const recentInsights = await prisma.healthInsight.findMany({
+      |                           ^
+  101 |       where: {
+  102 |         dog_id: dogId,
+  103 |         is_active: true {
+  clientVersion: '6.13.0'
+}
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 500 in 107ms
+ GET /diary 200 in 57ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 205ms
+ ✓ Compiled /_not-found in 202ms (1131 modules)
+ GET /api/auth/me 404 in 323ms
+ GET /api/auth/me 404 in 30ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 344ms
+ ✓ Compiled /partners/directory in 323ms (1138 modules)
+ GET /partners/directory 200 in 365ms
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 461ms
+ ✓ Compiled /api/partners in 271ms (1141 modules)
+Error fetching diary entries: Error [PrismaClientValidationError]: 
+Invalid `prisma.diaryEntry.findMany()` invocation:
+
+{
+  where: {
+    dog_id: "cme4lylma0001ygboumt4dxad"
+  },
+  include: {
+    dog: {
+      select: {
+        id: true,
+        name: true,
+        breed: true,
+        photo_url: true,
+        user: {
+        ~~~~
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            avatar_url: true
+          }
+        },
+?       age_months?: true,
+?       weight_kg?: true,
+?       gender?: true,
+?       vaccination_status?: true,
+?       spayed_neutered?: true,
+?       microchip_id?: true,
+?       emergency_contact?: true,
+?       emergency_phone?: true,
+?       medical_notes?: true,
+?       personality_traits?: true,
+?       location?: true,
+?       health_id?: true,
+?       user_id?: true,
+?       created_at?: true,
+?       updated_at?: true,
+?       User?: true,
+?       HealthLogs?: true,
+?       DogShares?: true,
+?       HealthIdVerifications?: true,
+?       KCIVerifications?: true,
+?       Appointments?: true,
+?       PartnerReviews?: true,
+?       MedicalRecords?: true,
+?       HealthReminders?: true,
+?       HealthMetrics?: true,
+?       HealthInsights?: true,
+?       HealthPhotos?: true,
+?       HealthExports?: true,
+?       CommunityQuestions?: true,
+?       PartnerBookings?: true,
+?       Medications?: true,
+?       VetAppointments?: true,
+?       DiaryEntries?: true,
+?       _count?: true
+      }
+    },
+    comments: {
+      select: {
+        id: true
+      }
+    }
+  },
+  orderBy: {
+    created_at: "desc"
+  },
+  skip: 0,
+  take: 10
+}
+
+Unknown field `user` for select statement on model `Dog`. Available options are marked with ?.
+    at async GET (src/app/api/diary/entries/route.ts:208:34)
+  206 |     }
+  207 |
+> 208 |     const [entries, totalCount] = await Promise.all([
+      |                                  ^
+  209 |       prisma.diaryEntry.findMany({
+  210 |         where: whereClause,
+  211 |         include: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 500 in 334ms
+ GET /api/partners?limit=12&page=1 200 in 523ms
+ GET /api/partners?limit=12&page=1 200 in 15ms
+ ✓ Compiled /appointments in 163ms (1148 modules)
+ GET /appointments 200 in 214ms
+ ✓ Compiled /api/appointments/book in 245ms (1150 modules)
+ GET /api/appointments/book 401 in 271ms
+ GET /api/appointments/book 401 in 4ms
+ GET /api/partners?limit=50 200 in 457ms
+ GET /api/partners?limit=50 200 in 15ms
+ ✓ Compiled /dog-id in 112ms (1157 modules)
+ GET /dog-id 200 in 143ms
+ GET /api/dog-id/access 404 in 93ms
+ GET /api/dog-id/access 404 in 25ms
+ GET /api/partners?limit=50 200 in 262ms
+ GET /api/partners?limit=50 200 in 19ms
+ ✓ Compiled /community in 256ms (1180 modules)
+ GET /community 200 in 307ms
+ ✓ Compiled /api/community/questions in 128ms (1182 modules)
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 332ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 70ms
+ ✓ Compiled /api/community/forums in 127ms (1184 modules)
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 270ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 27ms
+ ✓ Compiled /api/community/forums/categories in 129ms (1186 modules)
+ GET /api/community/forums/categories?isActive=true 200 in 247ms
+ GET /api/community/forums/categories?isActive=true 200 in 15ms
+ ✓ Compiled /api/points in 135ms (1188 modules)
+Error fetching user points: Error [PrismaClientValidationError]: 
+Invalid `prisma.userPoints.findUnique()` invocation:
+
+{
+  where: {
++   user_id: String
+  },
+  include: {
+    point_transactions: {
+      orderBy: {
+        created_at: "desc"
+      },
+      take: 20
+    }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/points/route.ts:9:23)
+   7 |     const userId = await verifyToken(request);
+   8 |
+>  9 |     const userPoints = await prisma.userPoints.findUnique({
+     |                       ^
+  10 |       where: { user_id: userId },
+  11 |       include: {
+  12 |         point_transactions: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/points 500 in 289ms
+Error fetching user points: Error [PrismaClientValidationError]: 
+Invalid `prisma.userPoints.findUnique()` invocation:
+
+{
+  where: {
++   user_id: String
+  },
+  include: {
+    point_transactions: {
+      orderBy: {
+        created_at: "desc"
+      },
+      take: 20
+    }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/points/route.ts:9:23)
+   7 |     const userId = await verifyToken(request);
+   8 |
+>  9 |     const userPoints = await prisma.userPoints.findUnique({
+     |                       ^
+  10 |       where: { user_id: userId },
+  11 |       include: {
+  12 |         point_transactions: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/points 500 in 49ms
+ ✓ Compiled /community/questions/[id] in 334ms (1199 modules)
+ GET /community/questions/cme4zk0xz0005ygborpi3ysaf 200 in 591ms
+ ✓ Compiled /api/community/questions/[id] in 159ms (1201 modules)
+ GET /api/community/questions/cme4zk0xz0005ygborpi3ysaf 200 in 562ms
+ GET /api/community/questions/cme4zk0xz0005ygborpi3ysaf 200 in 79ms
+ ✓ Compiled /api/community/questions/[id]/view in 147ms (1203 modules)
+ POST /api/community/questions/cme4zk0xz0005ygborpi3ysaf/view 200 in 421ms
+ POST /api/community/questions/cme4zk0xz0005ygborpi3ysaf/view 200 in 565ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 144ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 47ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 51ms
+ GET /api/community/forums/categories?isActive=true 200 in 27ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 28ms
+Error fetching user points: Error [PrismaClientValidationError]: 
+Invalid `prisma.userPoints.findUnique()` invocation:
+
+{
+  where: {
++   user_id: String
+  },
+  include: {
+    point_transactions: {
+      orderBy: {
+        created_at: "desc"
+      },
+      take: 20
+    }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/points/route.ts:9:23)
+   7 |     const userId = await verifyToken(request);
+   8 |
+>  9 |     const userPoints = await prisma.userPoints.findUnique({
+     |                       ^
+  10 |       where: { user_id: userId },
+  11 |       include: {
+  12 |         point_transactions: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/points 500 in 60ms
+ GET /api/community/forums/categories?isActive=true 200 in 60ms
+Error fetching user points: Error [PrismaClientValidationError]: 
+Invalid `prisma.userPoints.findUnique()` invocation:
+
+{
+  where: {
++   user_id: String
+  },
+  include: {
+    point_transactions: {
+      orderBy: {
+        created_at: "desc"
+      },
+      take: 20
+    }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/points/route.ts:9:23)
+   7 |     const userId = await verifyToken(request);
+   8 |
+>  9 |     const userPoints = await prisma.userPoints.findUnique({
+     |                       ^
+  10 |       where: { user_id: userId },
+  11 |       include: {
+  12 |         point_transactions: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/points 500 in 53ms
+ ✓ Compiled / in 255ms (886 modules)
+ GET / 200 in 349ms
+ ✓ Compiled in 344ms (1220 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 243ms (1220 modules)
+ GET / 200 in 28ms
+ ✓ Compiled in 254ms (1218 modules)
+ GET / 200 in 22ms
+ ✓ Compiled in 319ms (954 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 81ms (336 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 74ms (336 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 72ms (336 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 98ms (332 modules)
+ GET / 200 in 39ms
+ ✓ Compiled /favicon.ico in 130ms (495 modules)
+ GET /favicon.ico 200 in 159ms
+ ✓ Compiled /profile/dogs in 269ms (834 modules)
+ GET /profile/dogs 200 in 340ms
+ ✓ Compiled /api/dogs in 83ms (852 modules)
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"281ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:33:50.968Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":288,"environment":"development","includeHealth":false,"method":"GET","requestId":"8ispfx0q4qe","service":"woofadaar-api","timestamp":"2025-08-10T01:33:50.685Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 435ms
+ GET /health 200 in 68ms
+ ✓ Compiled /api/health/[dogId] in 142ms (854 modules)
+ GET /health 200 in 42ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 376ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 61ms
+ ✓ Compiled /api/health/insights in 124ms (1183 modules)
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 328ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 62ms
+ ✓ Compiled /_not-found in 183ms (1188 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/medications 404 in 222ms
+ GET /health/cme4lylma0001ygboumt4dxad/medications 404 in 82ms
+ GET /health 200 in 101ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 190ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 52ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 185ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 60ms
+ POST /api/health/insights 200 in 81ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 79ms
+ GET /diary 200 in 59ms
+ GET /api/auth/me 404 in 98ms
+ ✓ Compiled /api/diary/entries in 354ms (1190 modules)
+ GET /api/auth/me 404 in 409ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 679ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 60ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 39ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 34ms
+ GET /health 200 in 34ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 113ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 54ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 90ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 51ms
+ GET /health/cme4lylma0001ygboumt4dxad/logs 404 in 17ms
+ GET /health/cme4lylma0001ygboumt4dxad/logs 404 in 36ms
+ GET /health 200 in 67ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 90ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 55ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 83ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 53ms
+ GET /profile/dogs 200 in 36ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"38ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:34:51.871Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":40,"environment":"development","includeHealth":false,"method":"GET","requestId":"wme17djd53","service":"woofadaar-api","timestamp":"2025-08-10T01:34:51.832Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 92ms
+ GET /health 200 in 26ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 73ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 55ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 59ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 50ms
+ GET /diary 200 in 42ms
+ GET /api/auth/me 404 in 51ms
+ GET /api/auth/me 404 in 25ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 57ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 24ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 24ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 25ms
+ GET /health 200 in 21ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 64ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 54ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 50ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 51ms
+ GET /diary 200 in 34ms
+ GET /api/auth/me 404 in 51ms
+ GET /api/auth/me 404 in 24ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 57ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 25ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 24ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 26ms
+Error awarding points: TypeError: Failed to parse URL from /api/points
+    at POST (src/app/api/diary/entries/route.ts:98:12)
+   96 |     // Award points for diary entry
+   97 |     try {
+>  98 |       await fetch('/api/points', {
+      |            ^
+   99 |         method: 'POST',
+  100 |         headers: { 'Content-Type': 'application/json' },
+  101 |         body: JSON.stringify({ {
+  [cause]: TypeError: Invalid URL
+      at POST (src/app/api/diary/entries/route.ts:98:12)
+     96 |     // Award points for diary entry
+     97 |     try {
+  >  98 |       await fetch('/api/points', {
+        |            ^
+     99 |         method: 'POST',
+    100 |         headers: { 'Content-Type': 'application/json' },
+    101 |         body: JSON.stringify({ {
+    code: 'ERR_INVALID_URL',
+    input: '/api/points'
+  }
+}
+ POST /api/diary/entries 200 in 279ms
+ GET /health 200 in 39ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 70ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 53ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 63ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 54ms
+ GET /diary 200 in 33ms
+ GET /api/auth/me 404 in 59ms
+ GET /api/auth/me 404 in 25ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 113ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 93ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 55ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 60ms
+ GET /health 200 in 30ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 62ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 53ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 50ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 53ms
+ GET /health/cme4lylma0001ygboumt4dxad/log 200 in 56ms
+ ✓ Compiled /api/dogs/[id] in 173ms (585 modules)
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 476ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 18ms
+ ✓ Compiled /api/dogs in 124ms (847 modules)
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"105ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:36:16.072Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":106,"environment":"development","includeHealth":false,"method":"GET","requestId":"9smeq8s4s2","service":"woofadaar-api","timestamp":"2025-08-10T01:36:15.967Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 280ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 113ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 52ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 186ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 56ms
+ GET /health/cme4lylma0001ygboumt4dxad/appointments 404 in 66ms
+ GET /health/cme4lylma0001ygboumt4dxad/appointments 404 in 59ms
+ GET /health 200 in 78ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 95ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 54ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 84ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 54ms
+ GET /health/cme4lylma0001ygboumt4dxad/medications 404 in 19ms
+ GET /health/cme4lylma0001ygboumt4dxad/medications 404 in 39ms
+ GET /health 200 in 59ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 60ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 52ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 51ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 55ms
+ POST /api/health/insights 200 in 62ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 73ms
+ GET /health/cme4lylma0001ygboumt4dxad/log 200 in 32ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 20ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 16ms
+ ✓ Compiled /api/health/log in 124ms (847 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/log 200 in 34ms
+Error awarding points: TypeError: Failed to parse URL from /api/points
+    at POST (src/app/api/health/log/route.ts:117:14)
+  115 |     if (healthLog) {
+  116 |       try {
+> 117 |         await fetch('/api/points', {
+      |              ^
+  118 |           method: 'POST',
+  119 |           headers: { 'Content-Type': 'application/json' },
+  120 |           body: JSON.stringify({ {
+  [cause]: TypeError: Invalid URL
+      at POST (src/app/api/health/log/route.ts:117:14)
+    115 |     if (healthLog) {
+    116 |       try {
+  > 117 |         await fetch('/api/points', {
+        |              ^
+    118 |           method: 'POST',
+    119 |           headers: { 'Content-Type': 'application/json' },
+    120 |           body: JSON.stringify({ {
+    code: 'ERR_INVALID_URL',
+    input: '/api/points'
+  }
+}
+ POST /api/health/log 200 in 370ms
+ ✓ Compiled /health/[dogId] in 271ms (1187 modules)
+ GET /health/cme4lylma0001ygboumt4dxad 200 in 510ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 112ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 19ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 199ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 57ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 95ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 53ms
+ GET /health/cme4lylma0001ygboumt4dxad/logs 404 in 35ms
+ GET /health/cme4lylma0001ygboumt4dxad/logs 404 in 50ms
+ GET /health/cme4lylma0001ygboumt4dxad 200 in 71ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 22ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 88ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 55ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 88ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 55ms
+ GET /diary 200 in 55ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"32ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:37:43.144Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":33,"environment":"development","includeHealth":false,"method":"GET","requestId":"q4l5brvxs0d","service":"woofadaar-api","timestamp":"2025-08-10T01:37:43.111Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 67ms
+ GET /api/auth/me 404 in 31ms
+ ✓ Compiled /api/diary/entries in 299ms (1189 modules)
+ GET /api/auth/me 404 in 364ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 678ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 121ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 68ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 71ms
+ ✓ Compiled /profile in 401ms (1232 modules)
+ GET /profile 200 in 452ms
+ ✓ Compiled /api/user in 205ms (1234 modules)
+ GET /api/user 200 in 360ms
+ GET /api/user 200 in 17ms
+ GET /community 200 in 52ms
+ ✓ Compiled /api/community/questions in 238ms (880 modules)
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 455ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 64ms
+ ✓ Compiled /api/community/forums in 100ms (882 modules)
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 244ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 24ms
+ ✓ Compiled /api/community/forums/categories in 91ms (884 modules)
+ GET /api/community/forums/categories?isActive=true 200 in 215ms
+ GET /api/community/forums/categories?isActive=true 200 in 13ms
+ ✓ Compiled /api/points in 97ms (886 modules)
+Error fetching user points: Error [PrismaClientValidationError]: 
+Invalid `prisma.userPoints.findUnique()` invocation:
+
+{
+  where: {
++   user_id: String
+  },
+  include: {
+    point_transactions: {
+      orderBy: {
+        created_at: "desc"
+      },
+      take: 20
+    }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/points/route.ts:9:23)
+   7 |     const userId = await verifyToken(request);
+   8 |
+>  9 |     const userPoints = await prisma.userPoints.findUnique({
+     |                       ^
+  10 |       where: { user_id: userId },
+  11 |       include: {
+  12 |         point_transactions: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/points 500 in 257ms
+Error fetching user points: Error [PrismaClientValidationError]: 
+Invalid `prisma.userPoints.findUnique()` invocation:
+
+{
+  where: {
++   user_id: String
+  },
+  include: {
+    point_transactions: {
+      orderBy: {
+        created_at: "desc"
+      },
+      take: 20
+    }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/points/route.ts:9:23)
+   7 |     const userId = await verifyToken(request);
+   8 |
+>  9 |     const userPoints = await prisma.userPoints.findUnique({
+     |                       ^
+  10 |       where: { user_id: userId },
+  11 |       include: {
+  12 |         point_transactions: { {
+  clientVersion: '6.13.0'
+}
+ GET /api/points 500 in 52ms
+ ✓ Compiled /login in 256ms (1255 modules)
+ GET /login 200 in 282ms
+ ✓ Compiled in 134ms (375 modules)
+ GET /login 200 in 43ms
+ GET /login 200 in 10ms
+ ✓ Compiled /admin/waitlist in 327ms (1263 modules)
+ GET /admin/waitlist 200 in 380ms
+ ✓ Compiled /api/partners/contact in 301ms (1268 modules)
+ GET /api/waitlist?type=admin 200 in 486ms
+ GET /api/partners/contact 200 in 510ms
+ GET /api/waitlist?type=admin 200 in 33ms
+ GET /api/partners/contact 200 in 27ms
+ GET /api/waitlist?type=admin 200 in 62ms
+ GET /api/waitlist?type=admin 200 in 34ms
+ GET /api/partners/contact 200 in 17ms
+ GET / 200 in 25ms
+ GET /login 200 in 15ms
+ ✓ Compiled /api/auth/login in 311ms (967 modules)
+ POST /api/auth/login 200 in 481ms
+ ✓ Compiled /partner/dashboard in 232ms (974 modules)
+ GET /partner/dashboard 200 in 316ms
+ ✓ Compiled /api/partners/dashboard in 211ms (976 modules)
+ GET /api/partners/dashboard 200 in 234ms
+ ✓ Compiled /partner/appointments in 262ms (983 modules)
+ GET /partner/appointments 200 in 295ms
+ GET /api/partners/dashboard 200 in 13ms
+ GET /api/partners/dashboard 200 in 5ms
+ ✓ Compiled /partner/reviews in 228ms (990 modules)
+ GET /partner/reviews 200 in 260ms
+ ✓ Compiled in 111ms (379 modules)
+ GET /partner/reviews 200 in 16ms
+ GET /partner/reviews 200 in 11ms
+ GET /api/partners/dashboard 200 in 26ms
+ GET /api/partners/dashboard 200 in 6ms
+ ✓ Compiled /partner/revenue in 243ms (997 modules)
+ GET /partner/revenue 200 in 285ms
+ GET /api/partners/dashboard 200 in 37ms
+ GET /api/partners/dashboard 200 in 35ms
+ ✓ Compiled /partner/dog-id in 300ms (1004 modules)
+ GET /partner/dog-id 200 in 336ms
+ GET /api/partners/dashboard 200 in 29ms
+ GET /api/partners/dashboard 200 in 6ms
+ ✓ Compiled in 114ms (383 modules)
+ GET /partner/dashboard 200 in 21ms
+ GET /partner/dashboard 200 in 12ms
+ ✓ Compiled in 110ms (383 modules)
+ GET /partner/dashboard 200 in 15ms
+ ✓ Compiled in 88ms (383 modules)
+ GET /partner/dashboard 200 in 10ms
+ GET /partner/appointments 200 in 31ms
+ GET /partner/reviews 200 in 18ms
+ GET /partner/revenue 200 in 50ms
+ GET /partner/dog-id 200 in 32ms
+ ✓ Compiled /partner/corporate in 261ms (840 modules)
+ GET /partner/corporate 200 in 351ms
+ ✓ Compiled / in 96ms (474 modules)
+ GET / 200 in 206ms
+ ✓ Compiled in 138ms (385 modules)
+ GET / 200 in 36ms
+ ✓ Compiled /waitlist in 227ms (824 modules)
+ GET /waitlist 200 in 271ms
+ GET /login 200 in 49ms
+ GET /partner/dashboard 200 in 25ms
+ GET /partner/dashboard 200 in 12ms
+ ✓ Compiled /api/partners/dashboard in 73ms (465 modules)
+ GET /api/partners/dashboard 200 in 140ms
+ GET /api/partners/dashboard 200 in 5ms
+ GET /partner/dashboard 200 in 61ms
+ GET /partner/dashboard 200 in 11ms
+ GET /api/partners/dashboard 200 in 5ms
+ GET /api/partners/dashboard 200 in 5ms
+ GET / 200 in 19ms
+ GET /login 200 in 14ms
+ ✓ Compiled /api/auth/login in 381ms (524 modules)
+ POST /api/auth/login 200 in 973ms
+ ✓ Compiled /profile in 188ms (561 modules)
+ GET /profile 200 in 316ms
+ ✓ Compiled /api/dogs in 72ms (563 modules)
+ ✓ Compiled (826 modules)
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"54ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:48:04.222Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":57,"environment":"development","includeHealth":false,"method":"GET","requestId":"jr0evvixe6l","service":"woofadaar-api","timestamp":"2025-08-10T01:48:04.166Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 449ms
+ GET /api/user 200 in 530ms
+ ✓ Compiled /profile/dogs in 153ms (837 modules)
+ GET /profile/dogs 200 in 225ms
+ ✓ Compiled /health in 206ms (859 modules)
+ GET /health 200 in 273ms
+ ✓ Compiled /api/health/[dogId] in 94ms (861 modules)
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 302ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 104ms
+ ✓ Compiled /api/health/insights in 100ms (863 modules)
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 314ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 63ms
+ ✓ Compiled /health/[dogId]/logs in 410ms (1246 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/logs 200 in 668ms
+ ✓ Compiled /api/dogs/[id] in 181ms (872 modules)
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 332ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 18ms
+ ✓ Compiled /api/health/logs/[dogId] in 155ms (1250 modules)
+ GET /api/health/logs/cme4lylma0001ygboumt4dxad?limit=50&offset=0 200 in 587ms
+ GET /api/health/logs/cme4lylma0001ygboumt4dxad?limit=50&offset=0 200 in 35ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 112ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 55ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 95ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 50ms
+ POST /api/health/insights 200 in 55ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 63ms
+ ✓ Compiled /health/[dogId]/appointments in 340ms (1256 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/appointments 200 in 593ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 118ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 15ms
+ ✓ Compiled /appointments in 220ms (881 modules)
+ GET /appointments 200 in 288ms
+ ✓ Compiled /api/partners in 178ms (883 modules)
+ ✓ Compiled (885 modules)
+ GET /api/appointments/book 401 in 390ms
+ GET /api/appointments/book 401 in 4ms
+ GET /api/partners?limit=50 200 in 559ms
+ GET /api/partners?limit=50 200 in 29ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 44ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 15ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 116ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 78ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 97ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 51ms
+ ✓ Compiled /health/[dogId]/medications in 434ms (1274 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/medications 200 in 688ms
+ ✓ Compiled /api/medications/[dogId] in 300ms (1271 modules)
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 446ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 13ms
+Error: Route "/api/medications/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/medications/[dogId]/route.ts:12:12)
+  10 |   try {
+  11 |     const userId = await verifyToken(request);
+> 12 |     const { dogId } = params;
+     |            ^
+  13 |     const { searchParams } = new URL(request.url);
+  14 |     const includeInactive = searchParams.get('includeInactive') === 'true';
+  15 |
+Error fetching medications: Error [PrismaClientValidationError]: 
+Invalid `prisma.dog.findFirst()` invocation:
+
+{
+  where: {
+    id: "cme4lylma0001ygboumt4dxad",
++   user_id: {
++     equals: String | StringFieldRefInput,
++     in: String[] | ListStringFieldRefInput,
++     notIn: String[] | ListStringFieldRefInput,
++     lt: String | StringFieldRefInput,
++     lte: String | StringFieldRefInput,
++     gt: String | StringFieldRefInput,
++     gte: String | StringFieldRefInput,
++     contains: String | StringFieldRefInput,
++     startsWith: String | StringFieldRefInput,
++     endsWith: String | StringFieldRefInput,
++     mode: QueryMode,
++     not: String | NestedStringFilter
++   }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/medications/[dogId]/route.ts:17:16)
+  15 |
+  16 |     // Verify dog ownership
+> 17 |     const dog = await prisma.dog.findFirst({
+     |                ^
+  18 |       where: {
+  19 |         id: dogId,
+  20 |         user_id: userId {
+  clientVersion: '6.13.0'
+}
+ GET /api/medications/cme4lylma0001ygboumt4dxad 500 in 614ms
+Error: Route "/api/medications/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/medications/[dogId]/route.ts:12:12)
+  10 |   try {
+  11 |     const userId = await verifyToken(request);
+> 12 |     const { dogId } = params;
+     |            ^
+  13 |     const { searchParams } = new URL(request.url);
+  14 |     const includeInactive = searchParams.get('includeInactive') === 'true';
+  15 |
+Error fetching medications: Error [PrismaClientValidationError]: 
+Invalid `prisma.dog.findFirst()` invocation:
+
+{
+  where: {
+    id: "cme4lylma0001ygboumt4dxad",
++   user_id: {
++     equals: String | StringFieldRefInput,
++     in: String[] | ListStringFieldRefInput,
++     notIn: String[] | ListStringFieldRefInput,
++     lt: String | StringFieldRefInput,
++     lte: String | StringFieldRefInput,
++     gt: String | StringFieldRefInput,
++     gte: String | StringFieldRefInput,
++     contains: String | StringFieldRefInput,
++     startsWith: String | StringFieldRefInput,
++     endsWith: String | StringFieldRefInput,
++     mode: QueryMode,
++     not: String | NestedStringFilter
++   }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/medications/[dogId]/route.ts:17:16)
+  15 |
+  16 |     // Verify dog ownership
+> 17 |     const dog = await prisma.dog.findFirst({
+     |                ^
+  18 |       where: {
+  19 |         id: dogId,
+  20 |         user_id: userId {
+  clientVersion: '6.13.0'
+}
+ GET /api/medications/cme4lylma0001ygboumt4dxad 500 in 84ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 115ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 85ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 63ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 157ms
+ ✓ Compiled /diary in 395ms (903 modules)
+ GET /diary 200 in 436ms
+ ✓ Compiled /_not-found in 446ms (1293 modules)
+ GET /api/auth/me 404 in 573ms
+ GET /api/auth/me 404 in 31ms
+ GET /diary 200 in 120ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 810ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 120ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 71ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 63ms
+ GET /login 200 in 65ms
+ GET /profile 200 in 18ms
+ GET /api/user 200 in 44ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"20ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T01:49:05.619Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":21,"environment":"development","includeHealth":false,"method":"GET","requestId":"aj7gats20m4","service":"woofadaar-api","timestamp":"2025-08-10T01:49:05.599Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 65ms
+ GET /api/user 200 in 23ms
+ ✓ Compiled /partners/directory in 301ms (896 modules)
+ GET /partners/directory 200 in 422ms
+ GET /api/partners?limit=12&page=1 200 in 203ms
+ GET /api/partners?limit=12&page=1 200 in 30ms
+ GET /diary 200 in 36ms
+ GET /api/auth/me 404 in 117ms
+ GET /api/auth/me 404 in 27ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 197ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 103ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 59ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 56ms
+ GET /diary 200 in 49ms
+ GET /api/auth/me 404 in 62ms
+ GET /api/auth/me 404 in 25ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 109ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 61ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 55ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 56ms
+ GET /appointments 200 in 53ms
+ GET /api/appointments/book 401 in 24ms
+ GET /api/partners?limit=50 200 in 26ms
+ GET /api/appointments/book 401 in 10ms
+ GET /api/partners?limit=50 200 in 21ms
+ GET /health 200 in 38ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 109ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 77ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 88ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 62ms
+ GET /health/cme4lylma0001ygboumt4dxad/appointments 200 in 42ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 19ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 17ms
+ GET /appointments 200 in 33ms
+ GET /api/appointments/book 401 in 18ms
+ GET /api/partners?limit=50 200 in 24ms
+ GET /api/appointments/book 401 in 7ms
+ GET /api/partners?limit=50 200 in 18ms
+ GET /profile 200 in 39ms
+ GET /api/user 200 in 44ms
+ GET /api/user 200 in 17ms
+ GET /partners/directory 200 in 38ms
+ GET /api/partners?limit=12&page=1 200 in 30ms
+ GET /api/partners?limit=12&page=1 200 in 19ms
+ GET /login 200 in 36ms
+ ✓ Compiled /register in 365ms (1012 modules)
+ GET /register 200 in 465ms
+ ✓ Compiled /api/auth/register in 269ms (1014 modules)
+ POST /api/auth/register 200 in 925ms
+ ✓ Compiled /partners/register in 286ms (1021 modules)
+ GET /partners/register 200 in 344ms
+ POST /api/partners 400 in 36ms
+ POST /api/partners 400 in 16ms
+ POST /api/partners 400 in 17ms
+ POST /api/partners 400 in 24ms
+ ✓ Compiled in 388ms (833 modules)
+ GET /partners/register 200 in 92ms
+ ✓ Compiled in 99ms (401 modules)
+ GET /partners/register 200 in 14ms
+ ✓ Compiled in 140ms (401 modules)
+ GET /partners/register 200 in 40ms
+ ✓ Compiled /api/partners in 148ms (455 modules)
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 265ms
+ GET /partners/register 200 in 140ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 21ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 13ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 18ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 19ms
+ GET /partners/register 200 in 109ms
+ ✓ Compiled /favicon.ico in 107ms (457 modules)
+ GET /favicon.ico 200 in 136ms
+ ✓ Compiled / in 159ms (462 modules)
+ GET / 200 in 294ms
+ GET /login 200 in 44ms
+ GET /partners/register 200 in 125ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 44ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 22ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 33ms
+Partner registration data received: {
+  partner_type: 'veterinarian',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+Invalid partner type received: "veterinarian". Valid types: vet, trainer, corporate, kci
+ POST /api/partners 400 in 26ms
+Partner registration data received: {
+  partner_type: 'trainer',
+  email: 'vet@test.com',
+  name: 'vet',
+  type_of_partner_type: 'string'
+}
+ POST /api/partners 200 in 485ms
+ GET /login 200 in 38ms
+ ✓ Compiled /api/auth/login in 268ms (532 modules)
+ POST /api/auth/login 200 in 714ms
+ ✓ Compiled /profile in 206ms (565 modules)
+ GET /profile 200 in 361ms
+ ✓ Compiled /api/dogs in 73ms (567 modules)
+ ✓ Compiled (830 modules)
+ GET /api/user 200 in 546ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"191ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-10T02:02:52.224Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":193,"environment":"development","includeHealth":false,"method":"GET","requestId":"47s76yw05ao","service":"woofadaar-api","timestamp":"2025-08-10T02:02:52.032Z","url":"/api/dogs","userId":"user_1754717307657_9nc4safdq"}
+ GET /api/dogs 200 in 636ms
+ ✓ Compiled /health in 199ms (853 modules)
+ GET /health 200 in 259ms
+ ✓ Compiled /api/health/[dogId] in 99ms (855 modules)
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 312ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 101ms
+ ✓ Compiled /api/health/insights in 96ms (857 modules)
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 321ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 72ms
+ ✓ Compiled /health/[dogId]/log in 329ms (867 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/log 200 in 403ms
+ ✓ Compiled /api/dogs/[id] in 110ms (869 modules)
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 247ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 16ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 116ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 56ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 181ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 49ms
+ ✓ Compiled /health/[dogId]/medications in 225ms (876 modules)
+ GET /health/cme4lylma0001ygboumt4dxad/medications 200 in 294ms
+ ✓ Compiled /api/medications/[dogId] in 119ms (878 modules)
+Error: Route "/api/medications/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/medications/[dogId]/route.ts:12:12)
+  10 |   try {
+  11 |     const userId = await verifyToken(request);
+> 12 |     const { dogId } = params;
+     |            ^
+  13 |     const { searchParams } = new URL(request.url);
+  14 |     const includeInactive = searchParams.get('includeInactive') === 'true';
+  15 |
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 364ms
+ GET /api/dogs/cme4lylma0001ygboumt4dxad 200 in 15ms
+Error fetching medications: Error [PrismaClientValidationError]: 
+Invalid `prisma.dog.findFirst()` invocation:
+
+{
+  where: {
+    id: "cme4lylma0001ygboumt4dxad",
++   user_id: {
++     equals: String | StringFieldRefInput,
++     in: String[] | ListStringFieldRefInput,
++     notIn: String[] | ListStringFieldRefInput,
++     lt: String | StringFieldRefInput,
++     lte: String | StringFieldRefInput,
++     gt: String | StringFieldRefInput,
++     gte: String | StringFieldRefInput,
++     contains: String | StringFieldRefInput,
++     startsWith: String | StringFieldRefInput,
++     endsWith: String | StringFieldRefInput,
++     mode: QueryMode,
++     not: String | NestedStringFilter
++   }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/medications/[dogId]/route.ts:17:16)
+  15 |
+  16 |     // Verify dog ownership
+> 17 |     const dog = await prisma.dog.findFirst({
+     |                ^
+  18 |       where: {
+  19 |         id: dogId,
+  20 |         user_id: userId {
+  clientVersion: '6.13.0'
+}
+ GET /api/medications/cme4lylma0001ygboumt4dxad 500 in 476ms
+Error: Route "/api/medications/[dogId]" used `params.dogId`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at GET (src/app/api/medications/[dogId]/route.ts:12:12)
+  10 |   try {
+  11 |     const userId = await verifyToken(request);
+> 12 |     const { dogId } = params;
+     |            ^
+  13 |     const { searchParams } = new URL(request.url);
+  14 |     const includeInactive = searchParams.get('includeInactive') === 'true';
+  15 |
+Error fetching medications: Error [PrismaClientValidationError]: 
+Invalid `prisma.dog.findFirst()` invocation:
+
+{
+  where: {
+    id: "cme4lylma0001ygboumt4dxad",
++   user_id: {
++     equals: String | StringFieldRefInput,
++     in: String[] | ListStringFieldRefInput,
++     notIn: String[] | ListStringFieldRefInput,
++     lt: String | StringFieldRefInput,
++     lte: String | StringFieldRefInput,
++     gt: String | StringFieldRefInput,
++     gte: String | StringFieldRefInput,
++     contains: String | StringFieldRefInput,
++     startsWith: String | StringFieldRefInput,
++     endsWith: String | StringFieldRefInput,
++     mode: QueryMode,
++     not: String | NestedStringFilter
++   }
+  }
+}
+
+Argument `user_id` must not be null.
+    at async GET (src/app/api/medications/[dogId]/route.ts:17:16)
+  15 |
+  16 |     // Verify dog ownership
+> 17 |     const dog = await prisma.dog.findFirst({
+     |                ^
+  18 |       where: {
+  19 |         id: dogId,
+  20 |         user_id: userId {
+  clientVersion: '6.13.0'
+}
+ GET /api/medications/cme4lylma0001ygboumt4dxad 500 in 77ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 120ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 57ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 96ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 54ms
+ ✓ Compiled /diary in 328ms (886 modules)
+ GET /diary 200 in 387ms
+ ✓ Compiled /api/diary/entries in 269ms (1280 modules)
+ GET /api/auth/me 404 in 534ms
+ GET /api/auth/me 404 in 30ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 786ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 173ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 66ms
+ GET /api/diary/entries?limit=10&offset=0&dog_id=cme4lylma0001ygboumt4dxad 200 in 68ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 119ms
+ GET /api/health/cme4lylma0001ygboumt4dxad?days=30 200 in 67ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 84ms
+ GET /api/health/insights?dog_id=cme4lylma0001ygboumt4dxad&limit=10 200 in 61ms
+ ✓ Compiled /partners/directory in 314ms (894 modules)
+ GET /partners/directory 200 in 372ms
+ ✓ Compiled /api/partners in 226ms (896 modules)
+ GET /api/partners?limit=12&page=1 200 in 455ms
+ GET /api/partners?limit=12&page=1 200 in 17ms
+ GET /profile 200 in 68ms
+ GET /api/user 200 in 41ms
+ GET /api/user 200 in 16ms
+ ✓ Compiled in 233ms (401 modules)
+ GET /profile 200 in 39ms
+ ✓ Compiled in 104ms (401 modules)
+ GET /profile 200 in 12ms
+ ✓ Compiled in 365ms (891 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/server/app/profile/page.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/server/app/profile/page.js',
+  page: '/profile'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 545ms (1205 modules)
+ GET /profile 500 in 960ms
+ GET /profile 200 in 52ms
+ GET /profile 200 in 8ms
+ GET /profile 200 in 84ms
+ ✓ Compiled /_not-found in 178ms (1210 modules)
+ GET /_next/static/css/app/layout.css?v=1754791757453 404 in 318ms
+ GET /_next/static/chunks/main-app.js?v=1754791757453 404 in 303ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 19ms
+ GET /_next/static/chunks/app/profile/page.js 404 in 20ms
+ ✓ Compiled in 109ms (553 modules)
+[?25h

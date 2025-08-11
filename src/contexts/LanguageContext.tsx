@@ -12,6 +12,8 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+export { LanguageContext };
+
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {

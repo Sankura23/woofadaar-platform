@@ -1,0 +1,921 @@
+
+> woofadaar@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.4.5
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.6:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1108ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1520ms (664 modules)
+ HEAD / 200 in 1705ms
+ GET / 200 in 71ms
+ ✓ Compiled /favicon.ico in 105ms (417 modules)
+ GET /favicon.ico 200 in 172ms
+ ✓ Compiled /community in 223ms (689 modules)
+ GET /community 200 in 276ms
+ GET /community 200 in 11ms
+ ✓ Compiled /api/community/questions in 165ms (761 modules)
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 755ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 92ms
+ ✓ Compiled /api/community/forums in 83ms (763 modules)
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 239ms
+ ✓ Compiled /api/community/forums/categories in 108ms (765 modules)
+ GET /api/community/forums/categories?isActive=true 200 in 229ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 330ms
+ GET /api/community/forums/categories?isActive=true 200 in 27ms
+ ✓ Compiled /profile/dogs in 249ms (798 modules)
+ GET /profile/dogs 200 in 293ms
+ ○ Compiling /profile ...
+ ✓ Compiled /profile in 598ms (1119 modules)
+ GET /profile 200 in 727ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"140ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-08T18:05:02.823Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":0,"duration":143,"environment":"development","includeHealth":false,"method":"GET","requestId":"4jdx6rbvooj","service":"woofadaar-api","timestamp":"2025-08-08T18:05:02.681Z","url":"/api/dogs","userId":"user_1754418135751_1ml9cuftd"}
+ GET /api/dogs 200 in 992ms
+ ✓ Compiled /api/user in 112ms (1121 modules)
+ GET /api/user 200 in 234ms
+ GET /api/user 200 in 16ms
+ GET /community 200 in 54ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 143ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 216ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 223ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 45ms
+ GET /api/community/forums/categories?isActive=true 200 in 41ms
+ GET /api/community/forums/categories?isActive=true 200 in 13ms
+ ✓ Compiled /api/community/questions/[id]/vote in 190ms (1123 modules)
+Error voting on question: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.communityVote.findFirst()` invocation:
+
+
+The table `public.CommunityVote` does not exist in the current database.
+    at async POST (src/app/api/community/questions/[id]/vote/route.ts:53:25)
+  51 |
+  52 |     // Check if user already voted
+> 53 |     const existingVote = await prisma.communityVote.findFirst({
+     |                         ^
+  54 |       where: {
+  55 |         user_id: userId,
+  56 |         question_id: questionId {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/vote 500 in 624ms
+Error voting on question: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.communityVote.findFirst()` invocation:
+
+
+The table `public.CommunityVote` does not exist in the current database.
+    at async POST (src/app/api/community/questions/[id]/vote/route.ts:53:25)
+  51 |
+  52 |     // Check if user already voted
+> 53 |     const existingVote = await prisma.communityVote.findFirst({
+     |                         ^
+  54 |       where: {
+  55 |         user_id: userId,
+  56 |         question_id: questionId {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/vote 500 in 100ms
+ ✓ Compiled /community/questions/[id] in 291ms (1138 modules)
+ GET /community/questions/cme2rdy6g00038oz6udqakb2b 200 in 518ms
+ ✓ Compiled /api/community/questions/[id] in 107ms (1140 modules)
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 557ms
+ ✓ Compiled /api/community/questions/[id]/view in 188ms (1142 modules)
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 409ms
+Error updating view count: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.questionView.findFirst()` invocation:
+
+
+The table `public.QuestionView` does not exist in the current database.
+    at async POST (src/app/api/community/questions/[id]/view/route.ts:54:25)
+  52 |     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  53 |     
+> 54 |     const existingView = await prisma.questionView.findFirst({
+     |                         ^
+  55 |       where: {
+  56 |         question_id: questionId,
+  57 |         OR: [ {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 500 in 495ms
+Error updating view count: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.questionView.findFirst()` invocation:
+
+
+The table `public.QuestionView` does not exist in the current database.
+    at async POST (src/app/api/community/questions/[id]/view/route.ts:54:25)
+  52 |     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  53 |     
+> 54 |     const existingView = await prisma.questionView.findFirst({
+     |                         ^
+  55 |       where: {
+  56 |         question_id: questionId,
+  57 |         OR: [ {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 500 in 166ms
+Error voting on question: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.communityVote.findFirst()` invocation:
+
+
+The table `public.CommunityVote` does not exist in the current database.
+    at async POST (src/app/api/community/questions/[id]/vote/route.ts:53:25)
+  51 |
+  52 |     // Check if user already voted
+> 53 |     const existingVote = await prisma.communityVote.findFirst({
+     |                         ^
+  54 |       where: {
+  55 |         user_id: userId,
+  56 |         question_id: questionId {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/vote 500 in 104ms
+Error voting on question: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.communityVote.findFirst()` invocation:
+
+
+The table `public.CommunityVote` does not exist in the current database.
+    at async POST (src/app/api/community/questions/[id]/vote/route.ts:53:25)
+  51 |
+  52 |     // Check if user already voted
+> 53 |     const existingVote = await prisma.communityVote.findFirst({
+     |                         ^
+  54 |       where: {
+  55 |         user_id: userId,
+  56 |         question_id: questionId {
+  code: 'P2021',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/vote 500 in 96ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 157ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 64ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 92ms
+ GET /api/community/forums/categories?isActive=true 200 in 36ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 49ms
+ GET /api/community/forums/categories?isActive=true 200 in 31ms
+ GET / 200 in 61ms
+ GET /profile/dogs 200 in 49ms
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"29ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-08T18:06:45.789Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":0,"duration":31,"environment":"development","includeHealth":false,"method":"GET","requestId":"h1sdgjwlygw","service":"woofadaar-api","timestamp":"2025-08-08T18:06:45.759Z","url":"/api/dogs","userId":"user_1754418135751_1ml9cuftd"}
+ GET /api/dogs 200 in 74ms
+ GET /profile 200 in 42ms
+ GET /api/user 200 in 32ms
+ GET /api/user 200 in 14ms
+ GET /profile/dogs 200 in 18ms
+ GET /profile/dogs 200 in 119ms
+ GET /favicon.ico 200 in 7ms
+ GET /profile/dogs 200 in 30ms
+ GET /favicon.ico 200 in 4ms
+ ✓ Compiled /health in 444ms (1147 modules)
+ GET /health 200 in 483ms
+ ✓ Compiled /api/health/reminders/active in 121ms (1149 modules)
+ GET /api/health/reminders/active 401 in 153ms
+ GET /api/health/reminders/active 401 in 6ms
+ GET /profile 200 in 51ms
+ GET /api/user 200 in 129ms
+ GET /api/user 200 in 16ms
+ GET /profile 200 in 103ms
+ GET /favicon.ico 200 in 8ms
+ GET /api/user 200 in 21ms
+ ✓ Compiled /login in 194ms (1162 modules)
+ GET /login 200 in 222ms
+ ✓ Compiled /api/auth/login in 128ms (1165 modules)
+ POST /api/auth/login 200 in 460ms
+ GET /profile 200 in 61ms
+ GET /api/user 200 in 25ms
+ GET /profile/dogs 200 in 22ms
+ GET /profile 200 in 25ms
+ GET /api/user 200 in 16ms
+ GET /api/user 200 in 16ms
+ GET /profile 200 in 57ms
+ GET /favicon.ico 200 in 10ms
+ GET /api/user 200 in 25ms
+ GET /profile 200 in 23ms
+ GET /favicon.ico 200 in 7ms
+ GET /api/user 200 in 21ms
+ GET /profile/dogs 200 in 6ms
+ GET /profile 200 in 6ms
+ GET /api/user 200 in 39ms
+ GET /api/user 200 in 15ms
+ GET / 200 in 11ms
+ ✓ Compiled /dog-id in 194ms (1172 modules)
+ GET /dog-id 200 in 229ms
+ ✓ Compiled /api/partners in 299ms (1179 modules)
+ GET /api/dog-id/access 404 in 379ms
+ GET /api/dog-id/access 404 in 24ms
+ GET /api/partners?limit=50 200 in 487ms
+ GET /api/partners?limit=50 200 in 25ms
+ GET / 200 in 16ms
+ GET / 200 in 49ms
+ ✓ Compiled in 236ms (326 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 82ms (326 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 78ms (326 modules)
+ GET / 200 in 9ms
+ ✓ Compiled in 83ms (326 modules)
+ GET / 200 in 9ms
+ ✓ Compiled in 81ms (326 modules)
+ GET / 200 in 16ms
+ ✓ Compiled in 268ms (795 modules)
+ ⚠ Unsupported metadata themeColor is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+ GET / 200 in 95ms
+ ✓ Compiled in 129ms (795 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 77ms (326 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 156ms (795 modules)
+ GET / 200 in 26ms
+ GET / 200 in 112ms
+ ✓ Compiled /favicon.ico in 174ms (486 modules)
+ GET /favicon.ico 200 in 283ms
+ GET / 200 in 335ms
+ GET /login 200 in 34ms
+ ✓ Compiled /api/auth/login in 210ms (571 modules)
+ POST /api/auth/login 200 in 599ms
+ GET /profile 200 in 85ms
+ ✓ Compiled /api/dogs in 63ms (573 modules)
+ ✓ Compiled (836 modules)
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"108ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-08T18:17:01.760Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":110,"environment":"development","includeHealth":false,"method":"GET","requestId":"zt2u9gv4y9","service":"woofadaar-api","timestamp":"2025-08-08T18:17:01.651Z","url":"/api/dogs","userId":"user_1754418458490_7qfbpy5dp"}
+ GET /api/dogs 200 in 365ms
+ GET /api/user 200 in 447ms
+ GET /profile/dogs 200 in 53ms
+ ✓ Compiled /community in 155ms (843 modules)
+ GET /community 200 in 194ms
+ GET /community 200 in 8ms
+ ✓ Compiled /api/community/questions in 86ms (845 modules)
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 324ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 111ms
+ ✓ Compiled /api/community/forums in 103ms (847 modules)
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 254ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 28ms
+ ✓ Compiled /api/community/forums/categories in 89ms (849 modules)
+ GET /api/community/forums/categories?isActive=true 200 in 215ms
+ GET /api/community/forums/categories?isActive=true 200 in 16ms
+ ✓ Compiled /api/community/questions/[id]/vote in 155ms (851 modules)
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/vote 200 in 417ms
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/vote 200 in 90ms
+ GET /community/questions/cme2rdy6g00038oz6udqakb2b 200 in 55ms
+ ✓ Compiled /api/community/questions/[id] in 89ms (853 modules)
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 303ms
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 86ms
+ ✓ Compiled /api/community/questions/[id]/view in 85ms (855 modules)
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 200 in 203ms
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 200 in 313ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 160ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 79ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 102ms
+ GET /api/community/forums/categories?isActive=true 200 in 37ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 26ms
+ GET /api/community/forums/categories?isActive=true 200 in 28ms
+ GET /community/questions/cme2rdy6g00038oz6udqakb2b 200 in 44ms
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 122ms
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 200 in 28ms
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 64ms
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 200 in 23ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 138ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 66ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 97ms
+ GET /api/community/forums/categories?isActive=true 200 in 27ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 32ms
+ GET /api/community/forums/categories?isActive=true 200 in 22ms
+ GET /community/questions/cme2rdy6g00038oz6udqakb2b 200 in 28ms
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 69ms
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 200 in 29ms
+ GET /api/community/questions/cme2rdy6g00038oz6udqakb2b 200 in 64ms
+ POST /api/community/questions/cme2rdy6g00038oz6udqakb2b/view 200 in 24ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 92ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 47ms
+ GET /api/community/forums/categories?isActive=true 200 in 19ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 92ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 32ms
+ GET /api/community/forums/categories?isActive=true 200 in 22ms
+ GET / 200 in 48ms
+ ✓ Compiled in 126ms (326 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 93ms (326 modules)
+ GET / 200 in 13ms
+ ✓ Compiled in 73ms (326 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 73ms (326 modules)
+ GET / 200 in 9ms
+ ✓ Compiled in 79ms (326 modules)
+ GET / 200 in 15ms
+ ✓ Compiled in 109ms (326 modules)
+ GET / 200 in 32ms
+ ✓ Compiled in 83ms (326 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 74ms (326 modules)
+ GET / 200 in 13ms
+ GET / 200 in 57ms
+ ✓ Compiled in 128ms (777 modules)
+ GET / 200 in 99ms
+ ✓ Compiled in 103ms (326 modules)
+ GET / 200 in 64ms
+ GET / 200 in 9ms
+ ✓ Compiled in 87ms (326 modules)
+ GET / 200 in 15ms
+ GET / 200 in 46ms
+ ✓ Compiled in 122ms (777 modules)
+ GET / 200 in 65ms
+ ✓ Compiled in 79ms (326 modules)
+ GET / 200 in 14ms
+ GET / 200 in 57ms
+ ✓ Compiled in 82ms (777 modules)
+ GET / 200 in 31ms
+ ✓ Compiled in 107ms (326 modules)
+ GET / 200 in 31ms
+ ✓ Compiled /favicon.ico in 62ms (482 modules)
+ GET /favicon.ico 200 in 121ms
+ ✓ Compiled in 130ms (326 modules)
+ GET /favicon.ico 200 in 14ms
+ ✓ Compiled /api/i18n/[lang] in 242ms (799 modules)
+ GET /api/i18n/en 200 in 558ms
+ ✓ Compiled in 112ms (326 modules)
+ GET / 200 in 70ms
+ GET / 200 in 48ms
+ ✓ Compiled in 127ms (777 modules)
+ GET / 200 in 104ms
+ ✓ Compiled /favicon.ico in 56ms (482 modules)
+ GET /favicon.ico 200 in 113ms
+ GET /favicon.ico 200 in 4ms
+ ✓ Compiled in 88ms (326 modules)
+ GET / 200 in 38ms
+ GET /favicon.ico 200 in 10ms
+ GET /login 200 in 41ms
+ ✓ Compiled /api/auth/login in 208ms (567 modules)
+ POST /api/auth/login 200 in 867ms
+ GET /profile 200 in 90ms
+ ✓ Compiled /api/dogs in 62ms (569 modules)
+ ✓ Compiled (832 modules)
+[32m[32minfo[32m[39m: [32mDatabase dogs_fetch completed[39m {"duration":"129ms","environment":"development","operation":"dogs_fetch","service":"woofadaar-api","success":true,"table":"dogs","timestamp":"2025-08-09T04:47:18.094Z"}
+[32m[32minfo[32m[39m: [32mDogs retrieved successfully[39m {"count":1,"duration":130,"environment":"development","includeHealth":false,"method":"GET","requestId":"zoodzttjzuc","service":"woofadaar-api","timestamp":"2025-08-09T04:47:17.965Z","url":"/api/dogs","userId":"user_1754418458490_7qfbpy5dp"}
+ GET /api/dogs 200 in 444ms
+ GET /api/user 200 in 498ms
+ GET /community 200 in 65ms
+ ✓ Compiled /api/community/questions in 83ms (834 modules)
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 395ms
+ GET /api/community/questions?limit=5&sortBy=created_at&sortOrder=desc 200 in 116ms
+ ✓ Compiled /api/community/forums in 97ms (836 modules)
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 267ms
+ GET /api/community/forums?limit=5&sortBy=created_at&sortOrder=desc 200 in 27ms
+ ✓ Compiled /api/community/forums/categories in 81ms (838 modules)
+ GET /api/community/forums/categories?isActive=true 200 in 212ms
+ GET /api/community/forums/categories?isActive=true 200 in 18ms
+ GET / 200 in 55ms
+ GET /login 200 in 34ms
+Login error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/auth/login/route.ts:13:22)
+  11 |     if (userType === 'partner') {
+  12 |       // Partner login
+> 13 |       const partner = await prisma.partner.findUnique({
+     |                      ^
+  14 |         where: { email }
+  15 |       })
+  16 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/auth/login 500 in 150ms
+Login error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/auth/login/route.ts:13:22)
+  11 |     if (userType === 'partner') {
+  12 |       // Partner login
+> 13 |       const partner = await prisma.partner.findUnique({
+     |                      ^
+  14 |         where: { email }
+  15 |       })
+  16 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/auth/login 500 in 101ms
+ ✓ Compiled /admin/waitlist in 273ms (1158 modules)
+ GET /admin/waitlist 200 in 327ms
+ ✓ Compiled /api/partners/contact in 243ms (1163 modules)
+ GET /api/waitlist?type=admin 200 in 412ms
+ GET /api/waitlist?type=admin 200 in 42ms
+ GET /api/partners/contact 200 in 467ms
+ GET /api/partners/contact 200 in 16ms
+ GET /api/waitlist?type=admin 200 in 34ms
+ GET /api/waitlist?type=admin 200 in 35ms
+ GET /api/partners/contact 200 in 106ms
+ GET / 200 in 55ms
+ GET /login 200 in 34ms
+Login error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/auth/login/route.ts:13:22)
+  11 |     if (userType === 'partner') {
+  12 |       // Partner login
+> 13 |       const partner = await prisma.partner.findUnique({
+     |                      ^
+  14 |         where: { email }
+  15 |       })
+  16 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/auth/login 500 in 113ms
+Login error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/auth/login/route.ts:13:22)
+  11 |     if (userType === 'partner') {
+  12 |       // Partner login
+> 13 |       const partner = await prisma.partner.findUnique({
+     |                      ^
+  14 |         where: { email }
+  15 |       })
+  16 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/auth/login 500 in 214ms
+Login error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/auth/login/route.ts:13:22)
+  11 |     if (userType === 'partner') {
+  12 |       // Partner login
+> 13 |       const partner = await prisma.partner.findUnique({
+     |                      ^
+  14 |         where: { email }
+  15 |       })
+  16 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/auth/login 500 in 113ms
+ GET /admin/waitlist 200 in 42ms
+ GET /api/partners/contact 200 in 36ms
+ GET /api/waitlist?type=admin 200 in 44ms
+ GET /api/partners/contact 200 in 18ms
+ GET /api/waitlist?type=admin 200 in 38ms
+ GET /api/waitlist?type=admin 200 in 35ms
+ GET /api/waitlist?type=admin 200 in 35ms
+ GET /api/partners/contact 200 in 28ms
+ ✓ Compiled /api/partners/[id] in 244ms (1163 modules)
+Database error in partner delete: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async DELETE (src/app/api/partners/[id]/route.ts:30:30)
+  28 |     try {
+  29 |       // Check if partner exists
+> 30 |       const existingPartner = await prisma.partner.findUnique({
+     |                              ^
+  31 |         where: { id }
+  32 |       });
+  33 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ DELETE /api/partners/cmdypruf20001oh0frx2c12dj 503 in 1287ms
+ GET /admin/waitlist 200 in 114ms
+ ✓ Compiled /favicon.ico in 99ms (851 modules)
+ GET /favicon.ico 200 in 218ms
+ GET /api/waitlist?type=admin 200 in 374ms
+ GET /api/waitlist?type=admin 200 in 39ms
+ GET /api/partners/contact 200 in 425ms
+ GET /api/partners/contact 200 in 34ms
+Database error in partner delete: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async DELETE (src/app/api/partners/[id]/route.ts:30:30)
+  28 |     try {
+  29 |       // Check if partner exists
+> 30 |       const existingPartner = await prisma.partner.findUnique({
+     |                              ^
+  31 |         where: { id }
+  32 |       });
+  33 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ DELETE /api/partners/cmdypruf20001oh0frx2c12dj 503 in 161ms
+ GET / 200 in 56ms
+ GET /login 200 in 31ms
+Login error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/auth/login/route.ts:13:22)
+  11 |     if (userType === 'partner') {
+  12 |       // Partner login
+> 13 |       const partner = await prisma.partner.findUnique({
+     |                      ^
+  14 |         where: { email }
+  15 |       })
+  16 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/auth/login 500 in 126ms
+ GET / 200 in 29ms
+ GET /profile 200 in 20ms
+ GET /api/user 401 in 12ms
+ GET /api/dogs 401 in 42ms
+ GET /api/user 401 in 38ms
+ GET /api/dogs 401 in 10ms
+ GET /login 200 in 15ms
+ GET /login 200 in 7ms
+ ✓ Compiled /register in 365ms (1166 modules)
+ GET /register 200 in 454ms
+ GET /login 200 in 60ms
+ ✓ Compiled /partners/register in 278ms (1166 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /partners/register 200 in 355ms
+ ✓ Compiled /api/partners in 190ms (838 modules)
+ POST /api/partners 400 in 219ms
+ GET /partners/register 200 in 35ms
+Partner registration error: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.partner.findUnique()` invocation:
+
+
+The column `Partner.consultation_fee` does not exist in the current database.
+    at async POST (src/app/api/partners/route.ts:308:28)
+  306 |
+  307 |     // Check if email already exists
+> 308 |     const existingPartner = await prisma.partner.findUnique({
+      |                            ^
+  309 |       where: { email: body.email }
+  310 |     });
+  311 | {
+  code: 'P2022',
+  meta: [Object],
+  clientVersion: '6.13.0'
+}
+ POST /api/partners 400 in 273ms
+ GET / 200 in 42ms
+ GET /favicon.ico 200 in 10ms
+ ✓ Compiled in 140ms (332 modules)
+ GET / 200 in 38ms
+ ✓ Compiled in 109ms (332 modules)
+ GET / 200 in 33ms
+ ✓ Compiled in 81ms (332 modules)
+ GET / 200 in 10ms
+ ✓ Compiled in 79ms (332 modules)
+ GET / 200 in 13ms
+ GET / 200 in 51ms
+ ✓ Compiled in 134ms (743 modules)
+ GET / 200 in 104ms
+ ✓ Compiled /favicon.ico in 49ms (442 modules)
+ GET /favicon.ico 200 in 104ms
+ GET /favicon.ico 200 in 5ms
+ ✓ Compiled in 98ms (332 modules)
+ GET / 200 in 38ms
+ GET / 200 in 53ms
+ ✓ Compiled in 94ms (760 modules)
+ GET / 200 in 32ms
+ GET /favicon.ico 200 in 9ms
+ GET /favicon.ico 200 in 5ms
+ GET /favicon.ico 200 in 8ms
+ GET /login 200 in 21ms
+ GET /partners/register 200 in 133ms
+ GET /login 200 in 25ms
+ GET / 200 in 15ms
+ GET /admin/waitlist 200 in 48ms
+ ✓ Compiled /api/partners/contact in 93ms (449 modules)
+ ✓ Compiled (451 modules)
+ GET /api/waitlist?type=admin 200 in 435ms
+ GET /api/waitlist?type=admin 200 in 33ms
+ GET /api/partners/contact 200 in 470ms
+ GET /api/partners/contact 200 in 30ms
+ GET /api/waitlist?type=admin 200 in 63ms
+ GET /api/waitlist?type=admin 200 in 33ms
+ ✓ Compiled in 92ms (332 modules)
+ GET /admin/waitlist 200 in 26ms
+ GET /api/partners/contact 200 in 15ms
+ GET /api/waitlist?type=admin 200 in 60ms
+ GET /api/partners/contact 200 in 17ms
+ GET /api/waitlist?type=admin 200 in 34ms
+ GET / 200 in 18ms
+ ✓ Compiled in 109ms (332 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 239ms (332 modules)
+ GET / 200 in 11ms
+ ✓ Compiled in 223ms (338 modules)
+ GET / 200 in 12ms
+ ✓ Compiled in 78ms (338 modules)
+ GET / 200 in 12ms
+ GET / 200 in 53ms
+ ✓ Compiled in 133ms (773 modules)
+ GET / 200 in 71ms
+ ✓ Compiled in 89ms (338 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json',
+  page: '/'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 691ms (1077 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET / 500 in 2096ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET / 500 in 356ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET / 500 in 323ms
+ ✓ Compiled /_not-found in 285ms (1082 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET /_next/static/css/app/layout.css?v=1754676994804 500 in 531ms
+ GET /_next/static/chunks/main-app.js?v=1754676994804 500 in 501ms
+ ✓ Compiled in 288ms (1082 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET /_next/static/chunks/app-pages-internals.js 500 in 415ms
+ GET /_next/static/chunks/app/page.js 500 in 414ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET /_next/static/css/app/layout.css?v=1754676994804 500 in 231ms
+ GET /_next/static/chunks/webpack.js?v=1754676994804 500 in 221ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'
+}
+ GET /_next/static/chunks/main-app.js?v=1754676994804 500 in 398ms
+ GET /_next/static/chunks/app/layout.js 500 in 402ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 402ms
+ GET /_next/static/chunks/app/page.js 500 in 402ms
+ ✓ Compiled /favicon.ico in 211ms (623 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 303ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 67ms
+ ⨯ Error: Cannot find module './4985.js'
+Require stack:
+- /Users/sanket/Desktop/woofadaar1/.next/server/webpack-runtime.js
+- /Users/sanket/Desktop/woofadaar1/.next/server/app/favicon.ico/route.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/require.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/load-components.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/utils.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/options.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/index.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/next.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/app/_not-found/page.js:2:7463)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:2:7520) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/css/app/layout.css?v=1754676994804 500 in 40ms
+ ⨯ Error: Cannot find module './4985.js'
+Require stack:
+- /Users/sanket/Desktop/woofadaar1/.next/server/webpack-runtime.js
+- /Users/sanket/Desktop/woofadaar1/.next/server/app/favicon.ico/route.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/require.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/load-components.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/utils.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/options.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/index.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/next.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/app/_not-found/page.js:2:7463)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:2:7520) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/chunks/webpack.js?v=1754676994804 500 in 20ms
+ ⨯ Error: Cannot find module './4985.js'
+Require stack:
+- /Users/sanket/Desktop/woofadaar1/.next/server/webpack-runtime.js
+- /Users/sanket/Desktop/woofadaar1/.next/server/app/favicon.ico/route.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/require.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/load-components.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/utils.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/options.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/index.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/next.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/app/_not-found/page.js:2:7463)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:2:7520) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4985.js'
+Require stack:
+- /Users/sanket/Desktop/woofadaar1/.next/server/webpack-runtime.js
+- /Users/sanket/Desktop/woofadaar1/.next/server/app/favicon.ico/route.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/require.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/load-components.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/utils.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/options.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/index.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/next.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/app/_not-found/page.js:2:7463)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:2:7520) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4985.js'
+Require stack:
+- /Users/sanket/Desktop/woofadaar1/.next/server/webpack-runtime.js
+- /Users/sanket/Desktop/woofadaar1/.next/server/app/favicon.ico/route.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/require.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/load-components.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/utils.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/options.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/index.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/next.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/app/_not-found/page.js:2:7463)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:2:7520) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Error: Cannot find module './4985.js'
+Require stack:
+- /Users/sanket/Desktop/woofadaar1/.next/server/webpack-runtime.js
+- /Users/sanket/Desktop/woofadaar1/.next/server/app/favicon.ico/route.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/require.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/load-components.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/utils.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/options.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/swc/index.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/config.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/next.js
+- /Users/sanket/Desktop/woofadaar1/node_modules/next/dist/server/lib/start-server.js
+    at <unknown> (.next/server/app/_not-found/page.js:2:7463)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:2:7520) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /_next/static/chunks/main-app.js?v=1754676994804 500 in 57ms
+ GET /_next/static/chunks/app/layout.js 500 in 57ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 57ms
+ GET /_next/static/chunks/app/page.js 500 in 57ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/routes-manifest.json',
+  page: '/favicon.ico'
+}
+ GET /favicon.ico 500 in 31ms
+[Error: ENOENT: no such file or directory, stat '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat '/Users/sanket/Desktop/woofadaar1/.next/cache/webpack/server-development/16.pack.gz'
+[?25h

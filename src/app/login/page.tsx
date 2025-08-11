@@ -1,11 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import LoginForm from '../../components/profiles/auth/LoginForm';
 import { CompactLanguageSwitcher } from '../../components/ui/LanguageSwitcher';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [userType, setUserType] = useState<'pet-parent' | 'partner'>('pet-parent');
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkAuthStatus = () => {
+      const token = localStorage.getItem('woofadaar_token');
+      const userType = localStorage.getItem('user_type');
+      
+      if (token) {
+        // User is logged in, redirect based on user type
+        if (userType === 'partner') {
+          router.push('/partner/dashboard');
+        } else {
+          router.push('/profile');
+        }
+        return;
+      }
+      
+      // User is not logged in, show login page
+      setIsCheckingAuth(false);
+    };
+
+    checkAuthStatus();
+  }, [router]);
+
+  // Show loading spinner while checking auth status
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-milk-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-milk-white py-12">

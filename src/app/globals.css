@@ -15,3 +15,13 @@
   --color-primary: var(--color-mint-teal);
   --color-secondary: var(--color-purple);
 }
+
+/* Mobile-first helpers */
+.touch-target { min-height: 44px; min-width: 44px; }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.text-balance { text-wrap: balance; }
+
+/* Container paddings */
+.container { padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 640px) { .container { padding-left: 1.5rem; padding-right: 1.5rem; } }
+@media (min-width: 1024px) { .container { padding-left: 2rem; padding-right: 2rem; } }

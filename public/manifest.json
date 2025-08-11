@@ -1,0 +1,22 @@
+{
+  "name": "Woofadaar - Dog Parent Community",
+  "short_name": "Woofadaar",
+  "description": "The ultimate platform connecting dog parents with expert care, community support, and comprehensive health management",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3bbca8",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/woofadaar-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "pets", "lifestyle", "social"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": false
+}
