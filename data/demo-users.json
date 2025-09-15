@@ -1,0 +1,31 @@
+{
+  "user-1755591601326-jjhicbky8": {
+    "id": "user-1755591601326-jjhicbky8",
+    "name": "Emilia",
+    "email": "e@c.com",
+    "password": "Password",
+    "barkPoints": 100,
+    "reputation": 10,
+    "createdAt": "2025-08-19T08:20:01.326Z",
+    "profile_image_url": "https://res.cloudinary.com/dzsrrmjfa/image/upload/v1755675787/woofadaar/othhirza9dictfnpczix.jpg",
+    "updated_at": "2025-08-20T07:43:08.879Z"
+  },
+  "user-1755596390615-3lnqgw9qb": {
+    "id": "user-1755596390615-3lnqgw9qb",
+    "name": "Sydney",
+    "email": "s@y.com",
+    "password": "Password",
+    "barkPoints": 100,
+    "reputation": 10,
+    "createdAt": "2025-08-19T09:39:50.615Z"
+  },
+  "test-user-for-anya": {
+    "id": "test-user-for-anya",
+    "name": "Pet Parent Test",
+    "email": "pet.parent@test.com",
+    "password": "test123",
+    "barkPoints": 200,
+    "reputation": 50,
+    "createdAt": "2025-08-28T15:56:04.030Z"
+  }
+}

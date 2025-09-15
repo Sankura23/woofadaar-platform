@@ -40,15 +40,26 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // DISABLE SERVICE WORKER - Force fresh content
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                      console.log('SW registered: ', registration);
-                    })
-                    .catch(function(registrationError) {
-                      console.log('SW registration failed: ', registrationError);
+                  // Immediately unregister any existing service workers
+                  navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(registration => {
+                      console.log('Unregistering service worker:', registration);
+                      registration.unregister();
                     });
+                  });
+                  
+                  // Clear all caches
+                  if ('caches' in window) {
+                    caches.keys().then(cacheNames => {
+                      cacheNames.forEach(cacheName => {
+                        console.log('Deleting cache:', cacheName);
+                        caches.delete(cacheName);
+                      });
+                    });
+                  }
                 });
               }
             `,

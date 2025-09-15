@@ -52,10 +52,16 @@ export default function DogIDPage() {
   const fetchDogIDs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/dog-id/access');
+      const token = localStorage.getItem('woofadaar_token');
+      const response = await fetch('/api/dog-id/access', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
-        setDogIDs(data.dog_ids || []);
+        setDogIDs(data.data.dog_ids || []);
       }
     } catch (error) {
       console.error('Error fetching dog IDs:', error);
@@ -82,10 +88,12 @@ export default function DogIDPage() {
     setAccessResult(null);
 
     try {
+      const token = localStorage.getItem('woofadaar_token');
       const response = await fetch('/api/dog-id/partner-access', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           dog_id: selectedDogID,
@@ -198,7 +206,7 @@ export default function DogIDPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">

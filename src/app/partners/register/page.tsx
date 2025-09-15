@@ -117,26 +117,26 @@ export default function PartnerRegistrationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#fef8e8] py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">🏢 Partner Registration</h1>
-          <p className="text-lg text-gray-600">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl sm:text-6xl font-black text-[#171717] mb-6">🏢 Partner Registration</h1>
+          <p className="text-xl text-[#525252] font-medium max-w-3xl mx-auto leading-relaxed">
             Join Woofadaar as a verified partner and connect with dog parents across India
           </p>
         </div>
 
         {/* Registration Form */}
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="p-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Partner Application</h2>
+        <div className="bg-white rounded-2xl shadow-xl border border-[#f5f5f5]">
+          <div className="p-8 sm:p-10">
+            <h2 className="text-3xl font-bold text-[#171717] mb-8">Partner Application</h2>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-base font-semibold text-[#171717] mb-3">
                     Full Name *
                   </label>
                   <input
@@ -144,13 +144,13 @@ export default function PartnerRegistrationPage() {
                     id="name"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-base font-semibold text-[#171717] mb-3">
                     Email Address *
                   </label>
                   <input
@@ -158,13 +158,13 @@ export default function PartnerRegistrationPage() {
                     id="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="phone" className="block text-base font-semibold text-[#171717] mb-3">
                     Phone Number *
                   </label>
                   <input
@@ -172,13 +172,13 @@ export default function PartnerRegistrationPage() {
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="password" className="block text-base font-semibold text-[#171717] mb-3">
                     Password *
                   </label>
                   <input
@@ -186,14 +186,14 @@ export default function PartnerRegistrationPage() {
                     id="password"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="Minimum 6 characters"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-base font-semibold text-[#171717] mb-3">
                     Confirm Password *
                   </label>
                   <input
@@ -201,21 +201,21 @@ export default function PartnerRegistrationPage() {
                     id="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="Re-enter your password"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="partner_type" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="partner_type" className="block text-base font-semibold text-[#171717] mb-3">
                     Partner Type *
                   </label>
                   <select
                     id="partner_type"
                     value={formData.partner_type}
                     onChange={(e) => handleInputChange('partner_type', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200 bg-white"
                     required
                   >
                     <option value="vet">Veterinarian</option>
@@ -227,9 +227,9 @@ export default function PartnerRegistrationPage() {
               </div>
 
               {/* Business Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="business_name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="business_name" className="block text-base font-semibold text-[#171717] mb-3">
                     Business Name
                   </label>
                   <input
@@ -237,13 +237,13 @@ export default function PartnerRegistrationPage() {
                     id="business_name"
                     value={formData.business_name}
                     onChange={(e) => handleInputChange('business_name', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="Your clinic, business, or organization name"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="location" className="block text-base font-semibold text-[#171717] mb-3">
                     Location *
                   </label>
                   <input
@@ -251,14 +251,14 @@ export default function PartnerRegistrationPage() {
                     id="location"
                     value={formData.location}
                     onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="City, State"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="website" className="block text-base font-semibold text-[#171717] mb-3">
                     Website
                   </label>
                   <input
@@ -266,13 +266,13 @@ export default function PartnerRegistrationPage() {
                     id="website"
                     value={formData.website}
                     onChange={(e) => handleInputChange('website', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="https://your-website.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="consultation_fee" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="consultation_fee" className="block text-base font-semibold text-[#171717] mb-3">
                     Consultation Fee
                   </label>
                   <input
@@ -280,7 +280,7 @@ export default function PartnerRegistrationPage() {
                     id="consultation_fee"
                     value={formData.consultation_fee}
                     onChange={(e) => handleInputChange('consultation_fee', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="e.g., ₹500 per session"
                   />
                 </div>
@@ -288,7 +288,7 @@ export default function PartnerRegistrationPage() {
 
               {/* Services and Availability */}
               <div>
-                <label htmlFor="services_offered" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="services_offered" className="block text-base font-semibold text-[#171717] mb-3">
                   Services Offered
                 </label>
                 <textarea
@@ -296,13 +296,13 @@ export default function PartnerRegistrationPage() {
                   value={formData.services_offered}
                   onChange={(e) => handleInputChange('services_offered', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                   placeholder="Describe the services you offer..."
                 />
               </div>
 
               <div>
-                <label htmlFor="availability_hours" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="availability_hours" className="block text-base font-semibold text-[#171717] mb-3">
                   Availability Hours
                 </label>
                 <input
@@ -310,15 +310,15 @@ export default function PartnerRegistrationPage() {
                   id="availability_hours"
                   value={formData.availability_hours}
                   onChange={(e) => handleInputChange('availability_hours', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                   placeholder="e.g., Mon-Fri 9 AM - 6 PM, Sat 10 AM - 4 PM"
                 />
               </div>
 
               {/* Additional Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label htmlFor="languages_spoken" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="languages_spoken" className="block text-base font-semibold text-[#171717] mb-3">
                     Languages Spoken
                   </label>
                   <input
@@ -326,13 +326,13 @@ export default function PartnerRegistrationPage() {
                     id="languages_spoken"
                     value={formData.languages_spoken}
                     onChange={(e) => handleInputChange('languages_spoken', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="e.g., English, Hindi, Marathi"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="certifications" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="certifications" className="block text-base font-semibold text-[#171717] mb-3">
                     Certifications & Qualifications
                   </label>
                   <input
@@ -340,14 +340,14 @@ export default function PartnerRegistrationPage() {
                     id="certifications"
                     value={formData.certifications}
                     onChange={(e) => handleInputChange('certifications', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                     placeholder="e.g., BVSc, Certified Dog Trainer"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="bio" className="block text-base font-semibold text-[#171717] mb-3">
                   Bio/About You
                 </label>
                 <textarea
@@ -355,7 +355,7 @@ export default function PartnerRegistrationPage() {
                   value={formData.bio}
                   onChange={(e) => handleInputChange('bio', e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full px-6 py-4 border-2 border-[#d4d4d4] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-[#3bbca8] text-base transition-all duration-200"
                   placeholder="Tell us about your experience, expertise, and what makes you unique..."
                 />
               </div>
@@ -363,7 +363,7 @@ export default function PartnerRegistrationPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-primary text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-50"
+                className="w-full bg-[#3bbca8] text-white px-8 py-4 rounded-xl hover:bg-[#339990] transition-all duration-200 disabled:opacity-50 font-bold text-lg shadow-lg hover:shadow-xl"
               >
                 {isSubmitting ? 'Submitting Application...' : 'Submit Application'}
               </button>
@@ -371,24 +371,24 @@ export default function PartnerRegistrationPage() {
 
             {/* Submission Result */}
             {submitResult && (
-              <div className={`mt-6 p-4 rounded-lg ${
+              <div className={`mt-8 p-6 rounded-2xl border-2 ${
                 submitResult.success 
-                  ? 'bg-green-50 border border-green-200 text-green-800'
-                  : 'bg-red-50 border border-red-200 text-red-800'
+                  ? 'bg-green-50 border-[#099441] text-[#099441]'
+                  : 'bg-red-50 border-[#b71c1c] text-[#b71c1c]'
               }`}>
-                <h3 className="font-semibold mb-2">
+                <h3 className="font-bold mb-3 text-lg">
                   {submitResult.success ? '✅ Application Submitted Successfully' : '❌ Submission Failed'}
                 </h3>
-                <p>{submitResult.message}</p>
+                <p className="text-base font-medium">{submitResult.message}</p>
                 
                 {submitResult.success && (
-                  <div className="mt-4 p-3 bg-white rounded border">
-                    <h4 className="font-medium mb-2">Next Steps:</h4>
-                    <ul className="text-sm space-y-1">
+                  <div className="mt-6 p-6 bg-white rounded-xl border-2 border-[#e5e5e5]">
+                    <h4 className="font-bold mb-4 text-lg text-[#171717]">Next Steps:</h4>
+                    <ul className="text-base space-y-3 text-[#525252]">
                       <li>• Our team will review your application within 2-3 business days</li>
                       <li>• You'll receive an email confirmation with your application ID</li>
                       <li>• We may contact you for additional information or verification</li>
-                      <li>• Once approved, you can <a href="/login" className="text-primary hover:underline">login here</a> using your email and password</li>
+                      <li>• Once approved, you can <a href="/login" className="text-[#3bbca8] hover:text-[#339990] font-semibold">login here</a> using your email and password</li>
                       <li>• After login, you'll have access to your partner dashboard</li>
                     </ul>
                   </div>
@@ -397,10 +397,10 @@ export default function PartnerRegistrationPage() {
             )}
 
             {/* Back to Home */}
-            <div className="mt-8 text-center">
+            <div className="mt-10 text-center">
               <Link
                 href="/"
-                className="text-primary hover:underline font-medium"
+                className="text-[#3bbca8] hover:text-[#339990] font-bold text-lg transition-colors"
               >
                 ← Back to Home
               </Link>

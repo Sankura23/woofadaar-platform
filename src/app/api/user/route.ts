@@ -73,7 +73,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, location, experience_level, preferred_language, profile_image_url } = body;
+    const { name, email, location, experience_level, preferred_language, profile_image_url } = body;
 
     // Validation
     if (!name || name.trim().length < 2) {
@@ -90,6 +90,32 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Validate email if provided
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return NextResponse.json(
+          { message: 'Invalid email format' },
+          { status: 400 }
+        );
+      }
+
+      // Check if email is already taken by another user
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          email: email,
+          id: { not: userId }
+        }
+      });
+
+      if (existingUser) {
+        return NextResponse.json(
+          { message: 'Email is already taken by another user' },
+          { status: 409 }
+        );
+      }
+    }
+
     // Validate experience level
     const validExperienceLevels = ['beginner', 'intermediate', 'experienced', 'expert'];
     if (experience_level && !validExperienceLevels.includes(experience_level)) {
@@ -99,15 +125,23 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // Build update data
+    const updateData: any = {
+      name: name.trim(),
+      location: location ? location.trim() : null,
+      experience_level: experience_level || 'beginner',
+      profile_image_url: profile_image_url || null,
+      ...(preferred_language && { preferred_language })
+    };
+
+    // Add email to update if provided
+    if (email) {
+      updateData.email = email.trim();
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: {
-        name: name.trim(),
-        location: location ? location.trim() : null,
-        experience_level: experience_level || 'beginner',
-        profile_image_url: profile_image_url || null,
-        ...(preferred_language && { preferred_language })
-      },
+      data: updateData,
       select: {
         id: true,
         name: true,
@@ -132,7 +166,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error('Database error:', error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: 'Failed to update profile. Please try again.' },
       { status: 500 }
     );
   }

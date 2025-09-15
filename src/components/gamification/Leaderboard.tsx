@@ -71,16 +71,26 @@ export default function Leaderboard() {
   const [data, setData] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState('all');
+  const [cityFilter, setCityFilter] = useState('');
+  const [breedFilter, setBreedFilter] = useState('');
   const [activeTab, setActiveTab] = useState<'points' | 'contributors' | 'experts'>('points');
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [timeframe]);
+  }, [timeframe, cityFilter, breedFilter]);
 
   const fetchLeaderboard = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/leaderboard?timeframe=${timeframe}&limit=50`);
+      const params = new URLSearchParams({
+        timeframe,
+        limit: '50'
+      });
+      
+      if (cityFilter) params.append('city', cityFilter);
+      if (breedFilter) params.append('breed', breedFilter);
+      
+      const response = await fetch(`/api/leaderboard?${params}`);
       
       if (response.ok) {
         const result = await response.json();
@@ -172,6 +182,38 @@ export default function Leaderboard() {
               <option value="all">All Time</option>
               <option value="month">This Month</option>
               <option value="week">This Week</option>
+            </select>
+            
+            <select
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-transparent"
+            >
+              <option value="">All Cities</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Bangalore">Bangalore</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Pune">Pune</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Kolkata">Kolkata</option>
+              <option value="Ahmedabad">Ahmedabad</option>
+            </select>
+            
+            <select
+              value={breedFilter}
+              onChange={(e) => setBreedFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-transparent"
+            >
+              <option value="">All Breeds</option>
+              <option value="Indian Pariah">Indian Pariah Dog</option>
+              <option value="Rajapalayam">Rajapalayam</option>
+              <option value="Mudhol Hound">Mudhol Hound</option>
+              <option value="Rampur Greyhound">Rampur Greyhound</option>
+              <option value="Chippiparai">Chippiparai</option>
+              <option value="Golden Retriever">Golden Retriever</option>
+              <option value="German Shepherd">German Shepherd</option>
+              <option value="Labrador">Labrador</option>
             </select>
           </div>
         </div>

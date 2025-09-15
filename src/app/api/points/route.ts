@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
+import { PointsManager, POINTS_CONFIG, INDIAN_CONTEXT } from '@/lib/points-system';
 
 export async function GET(request: NextRequest) {
   try {
     const userId = await verifyToken(request);
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
     const userPoints = await prisma.userPoints.findUnique({
       where: { user_id: userId },
@@ -54,43 +62,79 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const userId = await verifyToken(request);
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
-    const { points_amount, transaction_type, source, source_id, description } = body;
+    const { 
+      action, 
+      source, 
+      source_id, 
+      description, 
+      userContext = {},
+      indianContext = {}
+    } = body;
+
+    // Calculate points using Week 21 system
+    let points_amount: number;
+    let multiplierApplied: number;
+    
+    if (action && POINTS_CONFIG.basePoints[action as keyof typeof POINTS_CONFIG.basePoints]) {
+      const pointsCalc = PointsManager.calculatePoints(
+        action as keyof typeof POINTS_CONFIG.basePoints,
+        userContext
+      );
+      
+      const indianBonus = PointsManager.getIndianContextBonus(indianContext);
+      
+      points_amount = Math.round(pointsCalc.points * indianBonus);
+      multiplierApplied = pointsCalc.multiplier * indianBonus;
+    } else {
+      // Fallback to manual points if action not recognized
+      points_amount = body.points_amount || 0;
+      multiplierApplied = 1.0;
+    }
+
+    const transaction_type = 'earned';
 
     const userPoints = await prisma.userPoints.findUnique({
       where: { user_id: userId }
     });
 
+    // Calculate level and experience points
+    const newTotalLifetimePoints = (userPoints?.total_lifetime_points || 0) + points_amount;
+    const levelInfo = PointsManager.calculateLevel(newTotalLifetimePoints);
+
     if (!userPoints) {
       await prisma.userPoints.create({
         data: {
           user_id: userId,
-          points_earned: transaction_type === 'earned' ? points_amount : 0,
-          points_spent: transaction_type === 'spent' ? Math.abs(points_amount) : 0,
-          current_balance: transaction_type === 'earned' ? points_amount : -Math.abs(points_amount),
-          total_lifetime_points: transaction_type === 'earned' ? points_amount : 0
+          points_earned: points_amount,
+          points_spent: 0,
+          current_balance: points_amount,
+          total_lifetime_points: points_amount,
+          level: levelInfo.level,
+          experience_points: newTotalLifetimePoints
         }
       });
     } else {
       const currentBalance = userPoints.current_balance;
-      const newBalance = transaction_type === 'earned' 
-        ? currentBalance + points_amount 
-        : currentBalance - Math.abs(points_amount);
+      const newBalance = currentBalance + points_amount;
 
       await prisma.userPoints.update({
         where: { user_id: userId },
         data: {
-          points_earned: transaction_type === 'earned' 
-            ? userPoints.points_earned + points_amount 
-            : userPoints.points_earned,
-          points_spent: transaction_type === 'spent' 
-            ? userPoints.points_spent + Math.abs(points_amount) 
-            : userPoints.points_spent,
+          points_earned: userPoints.points_earned + points_amount,
           current_balance: newBalance,
-          total_lifetime_points: transaction_type === 'earned' 
-            ? userPoints.total_lifetime_points + points_amount 
-            : userPoints.total_lifetime_points
+          total_lifetime_points: newTotalLifetimePoints,
+          level: levelInfo.level,
+          experience_points: newTotalLifetimePoints
         }
       });
     }
@@ -108,7 +152,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: { transaction }
+      data: { 
+        transaction,
+        pointsAwarded: points_amount,
+        multiplierApplied,
+        newLevel: levelInfo.level,
+        pointsToNextLevel: levelInfo.pointsToNext
+      }
     });
 
   } catch (error) {

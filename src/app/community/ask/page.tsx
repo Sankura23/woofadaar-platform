@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import CategorySuggestionCard from '@/components/community/CategorySuggestionCard';
+import QuestionTemplateSelector from '@/components/community/QuestionTemplateSelector';
+import QuestionQualityIndicator from '@/components/community/QuestionQualityIndicator';
+import EnhancedCategorySelector from '@/components/community/EnhancedCategorySelector';
 
 interface Dog {
   id: string;
@@ -20,8 +24,14 @@ export default function AskQuestionPage() {
     tags: [] as string[],
     dogId: '',
     photoUrl: '',
-    location: ''
+    location: '',
+    // Week 18 enhancements
+    imageUrls: [] as string[],
+    videoUrl: '',
+    isUrgent: false
   });
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [templateData, setTemplateData] = useState<Record<string, string>>({});
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -139,21 +149,31 @@ export default function AskQuestionPage() {
         return;
       }
 
+      // Prepare enhanced submission with template data
+      const submissionData = {
+        title: formData.title.trim(),
+        content: formData.content.trim(),
+        category: formData.category,
+        tags: formData.tags,
+        dogId: formData.dogId || null,
+        photoUrl: formData.photoUrl || null,
+        location: formData.location || null,
+        // Week 19 Phase 1 enhancements
+        templateId: selectedTemplate?.id || null,
+        templateData: Object.keys(templateData).length > 0 ? templateData : null,
+        // Week 18 enhancements - temporarily disabled until schema migration
+        // imageUrls: formData.imageUrls,
+        // videoUrl: formData.videoUrl || null,
+        // isUrgent: formData.isUrgent
+      };
+
       const response = await fetch('/api/community/questions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          title: formData.title.trim(),
-          content: formData.content.trim(),
-          category: formData.category,
-          tags: formData.tags,
-          dogId: formData.dogId || null,
-          photoUrl: formData.photoUrl || null,
-          location: formData.location || null
-        })
+        body: JSON.stringify(submissionData)
       });
 
       const data = await response.json();
@@ -176,7 +196,7 @@ export default function AskQuestionPage() {
 
   if (success) {
     return (
-      <div className="bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 min-h-screen py-8">
+      <div className="bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-lg p-8 text-center shadow-sm">
             <div className="text-6xl mb-4">✅</div>
@@ -196,7 +216,7 @@ export default function AskQuestionPage() {
 
   return (
     <ProtectedRoute>
-      <div className="bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 min-h-screen py-8">
+      <div className="bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -242,24 +262,14 @@ export default function AskQuestionPage() {
                 </p>
               </div>
 
-              {/* Category */}
-              <div className="mb-6">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                  Category *
-                </label>
-                                 <select
-                   id="category"
-                   name="category"
-                   value={formData.category}
-                   onChange={handleInputChange}
-                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-transparent min-h-[44px]"
-                 >
-                  {categories.map((category) => (
-                    <option key={category.value} value={category.value}>
-                      {category.icon} {category.label}
-                    </option>
-                  ))}
-                </select>
+              {/* Enhanced Category Selector */}
+              <div className="mb-6 relative">
+                <EnhancedCategorySelector
+                  selectedCategory={formData.category}
+                  onCategoryChange={(category) => 
+                    setFormData(prev => ({ ...prev, category }))
+                  }
+                />
               </div>
 
               {/* Content */}
@@ -267,17 +277,19 @@ export default function AskQuestionPage() {
                 <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
                   Question Details *
                 </label>
-                                 <textarea
-                   id="content"
-                   name="content"
-                   value={formData.content}
-                   onChange={handleInputChange}
-                   rows={8}
-                   placeholder="Provide more details about your question. Include relevant information like your dog's age, breed, symptoms, etc."
-                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-transparent resize-vertical"
-                   autoComplete="off"
-                   inputMode="text"
-                 />
+                <div className="border border-gray-300 rounded-md">
+                  <textarea
+                    id="content"
+                    name="content"
+                    value={formData.content}
+                    onChange={handleInputChange}
+                    rows={8}
+                    placeholder="Provide more details about your question. Include relevant information like your dog's age, breed, symptoms, etc."
+                    className="w-full px-3 py-2 border-0 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-transparent resize-vertical"
+                    autoComplete="off"
+                    inputMode="text"
+                  />
+                </div>
                 <p className="text-sm text-gray-500 mt-1">
                   {formData.content.length} characters (minimum 20)
                 </p>
@@ -376,7 +388,7 @@ export default function AskQuestionPage() {
                 <label htmlFor="photoUrl" className="block text-sm font-medium text-gray-700 mb-2">
                   Photo URL (optional)
                 </label>
-                                 <input
+                <input
                    type="url"
                    id="photoUrl"
                    name="photoUrl"
@@ -387,6 +399,46 @@ export default function AskQuestionPage() {
                    autoComplete="url"
                    inputMode="url"
                  />
+              </div>
+
+              {/* Video URL */}
+              <div className="mb-6">
+                <label htmlFor="videoUrl" className="block text-sm font-medium text-gray-700 mb-2">
+                  Video URL (optional)
+                </label>
+                <input
+                   type="url"
+                   id="videoUrl"
+                   name="videoUrl"
+                   value={formData.videoUrl}
+                   onChange={handleInputChange}
+                   placeholder="https://youtube.com/watch?v=... or https://example.com/video.mp4"
+                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#3bbca8] focus:border-transparent min-h-[44px]"
+                   autoComplete="url"
+                   inputMode="url"
+                 />
+              </div>
+
+              {/* Urgent Question Toggle */}
+              <div className="mb-6">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="isUrgent"
+                    checked={formData.isUrgent}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      isUrgent: e.target.checked
+                    }))}
+                    className="rounded border-gray-300 text-[#3bbca8] focus:ring-[#3bbca8]"
+                  />
+                  <span className="ml-2 text-sm font-medium text-gray-700">
+                    🚨 Mark as urgent question
+                  </span>
+                </label>
+                <p className="text-sm text-gray-500 mt-1">
+                  Urgent questions get priority visibility and faster responses
+                </p>
               </div>
 
               {/* Submit Button */}
@@ -404,6 +456,34 @@ export default function AskQuestionPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Question Quality Indicator */}
+            <QuestionQualityIndicator
+              title={formData.title}
+              content={formData.content}
+            />
+
+            {/* AI Category Suggestions */}
+            <CategorySuggestionCard
+              title={formData.title}
+              content={formData.content}
+              currentCategory={formData.category}
+              onCategorySelect={(category) => 
+                setFormData(prev => ({ ...prev, category }))
+              }
+              onTagsSelect={(tags) => 
+                setFormData(prev => ({ ...prev, tags }))
+              }
+              currentTags={formData.tags}
+            />
+
+            {/* Question Template Selector */}
+            <QuestionTemplateSelector
+              category={formData.category}
+              onTemplateSelect={setSelectedTemplate}
+              onTemplateDataChange={setTemplateData}
+              selectedTemplate={selectedTemplate}
+            />
+
             {/* Tips */}
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">💡 Tips for Better Questions</h3>

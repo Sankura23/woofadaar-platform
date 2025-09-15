@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear User Sessions - Woofadaar</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            text-align: center;
+        }
+        .success { color: green; margin: 20px 0; }
+        button { 
+            background: #007bff; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 10px;
+        }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🐕 Woofadaar - Clear User Sessions</h1>
+    <p>This will clear all stored user login sessions and authentication tokens.</p>
+    
+    <button onclick="clearAllSessions()">Clear All User Sessions</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        function clearAllSessions() {
+            try {
+                // Clear localStorage
+                const localStorageKeys = Object.keys(localStorage);
+                localStorageKeys.forEach(key => {
+                    if (key.includes('auth') || key.includes('token') || key.includes('user') || key.includes('session')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                // Clear sessionStorage
+                const sessionStorageKeys = Object.keys(sessionStorage);
+                sessionStorageKeys.forEach(key => {
+                    if (key.includes('auth') || key.includes('token') || key.includes('user') || key.includes('session')) {
+                        sessionStorage.removeItem(key);
+                    }
+                });
+                
+                // Clear relevant cookies
+                const cookies = document.cookie.split(";");
+                cookies.forEach(cookie => {
+                    const cookieName = cookie.split("=")[0].trim();
+                    if (cookieName.includes('auth') || cookieName.includes('token') || cookieName.includes('session') || cookieName === 'woofadaar_session' || cookieName === 'partner-token') {
+                        document.cookie = cookieName + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    }
+                });
+                
+                document.getElementById('result').innerHTML = '<div class="success">✅ All user login sessions cleared successfully!<br>You can now use the website with fresh login state.</div>';
+                
+                // Redirect to home page after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<div style="color: red;">❌ Error clearing sessions: ' + error.message + '</div>';
+            }
+        }
+    </script>
+</body>
+</html>

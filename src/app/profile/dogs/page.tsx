@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Plus, Heart, Edit3, Trash2, Calendar, Scale, MapPin, Shield, Camera, Users, Award, QrCode } from 'lucide-react';
 import Link from 'next/link';
 
@@ -23,6 +24,7 @@ interface Dog {
 }
 
 export default function DogsPage() {
+  const searchParams = useSearchParams();
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -35,12 +37,52 @@ export default function DogsPage() {
     fetchDogs();
   }, []);
 
+  // Listen for refresh parameter changes
+  useEffect(() => {
+    const refreshParam = searchParams?.get('refresh');
+    const addedParam = searchParams?.get('added');
+    if (refreshParam || addedParam) {
+      // Clear any existing dogs state first to force a fresh fetch
+      setDogs([]);
+      // Add a small delay if a dog was just added to ensure backend processing is complete
+      const delay = addedParam ? 200 : 0;
+      setTimeout(() => {
+        fetchDogs();
+      }, delay);
+    }
+  }, [searchParams]);
+
+  // Refresh dogs when returning to this page
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchDogs();
+    };
+    
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchDogs();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const fetchDogs = async () => {
     try {
-      const response = await fetch('/api/dogs', {
+      const response = await fetch(`/api/auth/working-dogs?t=${Date.now()}&r=${Math.random()}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
-        }
+          'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`,
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        cache: 'no-store'
       });
 
       if (response.ok) {
@@ -66,7 +108,7 @@ export default function DogsPage() {
 
     setDeletingDog(dogId);
     try {
-      const response = await fetch(`/api/dogs/${dogId}`, {
+      const response = await fetch(`/api/auth/working-dogs/${dogId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
@@ -134,7 +176,7 @@ export default function DogsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
@@ -155,7 +197,7 @@ export default function DogsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
           <div className="text-center py-12">
             <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg max-w-md mx-auto">
@@ -175,7 +217,7 @@ export default function DogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-4 sm:py-6 lg:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 py-4 sm:py-6 lg:py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">

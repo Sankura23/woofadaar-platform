@@ -66,8 +66,11 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
     { name: 'My Dogs', href: '/profile/dogs', icon: '🐕' },
     { name: 'Health Tracking', href: '/health', icon: '❤️' },
     { name: 'Dog Diary', href: '/diary', icon: '📖' },
+    { name: 'Events', href: '/events', icon: '📅' },
+    { name: 'My Events', href: '/events/my', icon: '🗓️' },
+    { name: 'Premium', href: '/premium', icon: '⭐' },
     { name: 'Find Partners', href: '/partners/directory', icon: '🔍' },
-    { name: 'Book Appointments', href: '/appointments', icon: '📅' },
+    { name: 'Book Appointments', href: '/appointments', icon: '⏰' },
     { name: 'Dog ID', href: '/dog-id', icon: '🏥' },
   ];
 
@@ -77,16 +80,16 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
     { name: 'Partner Dashboard', href: '/partner/dashboard', icon: '📊' },
     { name: 'Appointments', href: '/partner/appointments', icon: '📅' },
     { name: 'Reviews', href: '/partner/reviews', icon: '⭐' },
-    { name: 'Revenue', href: '/partner/revenue', icon: '💰' },
-    { name: 'Dog ID Access', href: '/partner/dog-id', icon: '🏥' },
-    { name: 'Corporate Portal', href: '/partner/corporate', icon: '🏢' },
+    { name: 'Earnings', href: '/partner/earnings', icon: '💰' },
+    { name: 'Dog ID Access', href: '/partner/dog-id', icon: '🆔' },
+    { name: 'Corporate', href: '/partner/corporate', icon: '🏢' }
   ];
 
   const adminMenuItems = [
     { name: 'Admin Dashboard', href: '/admin', icon: '⚙️' },
     { name: 'Partner Management', href: '/admin/partners', icon: '👥' },
     { name: 'Waitlist', href: '/admin/waitlist', icon: '📋' },
-    { name: 'Revenue Analytics', href: '/admin/revenue', icon: '📈' },
+    { name: 'Revenue Analytics', href: '/admin/revenue-analytics', icon: '📈' },
     { name: 'KCI Management', href: '/admin/kci', icon: '🏆' },
     { name: 'Corporate Management', href: '/admin/corporate', icon: '🏢' },
   ];
@@ -110,16 +113,19 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
   };
 
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
+    <nav className="bg-[#3bbca8] shadow-lg border-b border-[#2daa96]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-14 md:h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <img src="/woofadaar-logo.svg" alt="Woofadaar" className="h-6 w-6 md:h-8 md:w-8" />
+        <div className="flex h-14 md:h-16">
+          {/* Logo - Fixed to far left */}
+          <div className="flex items-center flex-shrink-0 mr-12 pr-8">
+            <Link href="/" className="flex items-center hover:opacity-80 transition-opacity p-3">
+              <img src="/Final Icon-14.jpg" alt="Woofadaar" className="h-12 w-12 md:h-14 md:w-14" />
             </Link>
           </div>
-
+          
+          {/* Rest of navigation */}
+          <div className="flex-1 flex justify-between">
+          
           {/* Desktop Navigation - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-4">
             {authState.isAuthenticated ? (
@@ -132,8 +138,8 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
                       href={item.href}
                       className={`flex items-center space-x-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-h-[44px] ${
                         isActive(item.href)
-                          ? 'bg-[#3bbca8] text-white shadow-md'
-                          : 'text-gray-700 hover:text-[#3bbca8] hover:bg-gray-50 hover:shadow-sm'
+                          ? 'bg-white text-[#3bbca8] shadow-md'
+                          : 'text-white hover:text-white hover:bg-[#2daa96] hover:shadow-sm border border-white/20 hover:border-white/40'
                       }`}
                     >
                       <span className="text-sm">{item.icon}</span>
@@ -159,7 +165,7 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
                   {/* Logout button */}
                   <button
                     onClick={handleLogout}
-                    className="text-gray-600 hover:text-[#e05a37] px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-50"
+                    className="text-white hover:text-[#e05a37] px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-[#2daa96]"
                   >
                     Logout
                   </button>
@@ -169,19 +175,26 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
               <>
                 <Link
                   href="/partners/directory"
-                  className="text-gray-700 hover:text-[#3bbca8] px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-50"
+                  className="text-white hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-[#2daa96] border border-white/30 hover:border-white/50"
                 >
                   Find Partners
                 </Link>
                 <Link
+                  href="/employee/login"
+                  className="flex items-center space-x-2 text-white hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-[#2daa96] border border-blue-400/50 hover:border-blue-300 bg-blue-500/20 hover:bg-blue-500/30"
+                >
+                  <span>🏢</span>
+                  <span>Employee Portal</span>
+                </Link>
+                <Link
                   href="/login"
-                  className="text-gray-700 hover:text-[#3bbca8] px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-gray-50"
+                  className="text-white hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-[#2daa96] border border-white/30 hover:border-white/50"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-[#3bbca8] text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-[#2daa96] transition-colors shadow-md hover:shadow-lg"
+                  className="bg-white text-[#3bbca8] px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors shadow-md hover:shadow-lg border border-gray-200"
                 >
                   Register
                 </Link>
@@ -201,7 +214,7 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
             </div>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-700 hover:text-primary p-2 border border-gray-300 rounded-md touch-target"
+              className="text-white hover:text-white p-2 border border-white rounded-md touch-target"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMobileMenuOpen ? (
@@ -212,13 +225,14 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
               </svg>
             </button>
           </div>
+          </div>
         </div>
       </div>
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
         <div className="lg:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-[#3bbca8] border-t border-[#2daa96]">
             {authState.isAuthenticated ? (
               <>
                 {/* Regular menu items */}
@@ -228,8 +242,8 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
                     href={item.href}
                     className={`flex items-center space-x-2 px-3 py-3 rounded-lg text-base font-medium transition-colors touch-target ${
                       isActive(item.href)
-                        ? 'bg-[#3bbca8] text-white'
-                        : 'text-gray-700 hover:text-[#3bbca8] hover:bg-gray-50'
+                        ? 'bg-white text-[#3bbca8]'
+                        : 'text-white hover:text-white hover:bg-[#2daa96] border border-white/20 hover:border-white/40'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -258,7 +272,7 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
                     handleLogout();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="flex items-center space-x-2 px-3 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-[#e05a37] hover:bg-gray-50 transition-colors w-full text-left touch-target"
+                  className="flex items-center space-x-2 px-3 py-3 rounded-lg text-base font-medium text-white hover:text-[#e05a37] hover:bg-[#2daa96] transition-colors w-full text-left touch-target"
                 >
                   <span>🚪</span>
                   <span>Logout</span>
@@ -268,15 +282,23 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
               <>
                 <Link
                   href="/partners/directory"
-                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 touch-target"
+                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-white hover:text-white hover:bg-[#2daa96] touch-target border border-white/20 hover:border-white/40"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <span>🔍</span>
                   <span>Find Partners</span>
                 </Link>
                 <Link
+                  href="/employee/login"
+                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-white hover:text-white hover:bg-[#2daa96] touch-target border border-blue-400/50 hover:border-blue-300 bg-blue-500/20 hover:bg-blue-500/30"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span>🏢</span>
+                  <span>Employee Portal</span>
+                </Link>
+                <Link
                   href="/login"
-                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 touch-target"
+                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium text-white hover:text-white hover:bg-[#2daa96] touch-target border border-white/20 hover:border-white/40"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <span>🔑</span>
@@ -284,7 +306,7 @@ export default function Navigation({ userType = 'user', isAuthenticated = false 
                 </Link>
                 <Link
                   href="/register"
-                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium bg-primary text-white touch-target"
+                  className="flex items-center space-x-2 px-3 py-3 rounded-md text-base font-medium bg-white text-[#3bbca8] touch-target border border-gray-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <span>👋</span>

@@ -23,7 +23,7 @@ export default function PartnerManagement() {
 
   const fetchAdminData = async () => {
     try {
-      const response = await fetch('/api/partners/contact', {
+      const response = await fetch('/api/partners', {
         headers: {
           'Authorization': 'Bearer admin-token'
         }
@@ -71,6 +71,17 @@ export default function PartnerManagement() {
     } finally {
       setUpdatingPartner(null);
     }
+  };
+
+  // Quick helpers for common approve/decline flows
+  const approvePartner = async (partnerId: string) => {
+    await updatePartner(partnerId, { status: 'approved', verified: true });
+  };
+
+  const rejectPartner = async (partnerId: string) => {
+    const confirmed = window.confirm('Decline this partner application?');
+    if (!confirmed) return;
+    await updatePartner(partnerId, { status: 'rejected', verified: false });
   };
 
   const exportToCSV = () => {
@@ -292,13 +303,36 @@ export default function PartnerManagement() {
                       {new Date(partner.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <button
-                        onClick={() => setSelectedPartner(partner)}
-                        disabled={updatingPartner === partner.id}
-                        className="text-[#3bbca8] hover:text-[#339990] disabled:opacity-50"
-                      >
-                        {updatingPartner === partner.id ? 'Updating...' : 'Manage'}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {/* Inline Approve / Decline for pending partners */}
+                        {partner.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => approvePartner(partner.id)}
+                              disabled={updatingPartner === partner.id}
+                              className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 disabled:opacity-50"
+                              title="Approve partner"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => rejectPartner(partner.id)}
+                              disabled={updatingPartner === partner.id}
+                              className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 disabled:opacity-50"
+                              title="Decline partner"
+                            >
+                              Decline
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => setSelectedPartner(partner)}
+                          disabled={updatingPartner === partner.id}
+                          className="text-[#3bbca8] hover:text-[#339990] disabled:opacity-50"
+                        >
+                          {updatingPartner === partner.id ? 'Updating...' : 'Manage'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

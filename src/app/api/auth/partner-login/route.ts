@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      // Find partner by email
+      // Find partner by email in database
       const partner = await prisma.partner.findUnique({
         where: { email },
         select: {
@@ -48,11 +48,10 @@ export async function POST(request: NextRequest) {
         }, { status: 403 });
       }
 
-      // Check password (for now, we'll use email as password until we add proper password field)
-      // In production, you'd have a proper password field and hashing
+      // Check password
       const isValidPassword = partner.password ? 
         await bcrypt.compare(password, partner.password) : 
-        password === 'temp123'; // Temporary password for existing partners
+        password === 'demo123'; // Default demo password
 
       if (!isValidPassword) {
         return NextResponse.json({
@@ -64,9 +63,11 @@ export async function POST(request: NextRequest) {
       // Generate JWT token
       const token = jwt.sign(
         { 
-          partnerId: partner.id, 
+          partnerId: partner.id,
+          userId: partner.id, // For backward compatibility 
           email: partner.email,
-          type: 'partner'
+          type: 'partner',
+          userType: 'partner' // For partner-me API compatibility
         },
         JWT_SECRET,
         { expiresIn: '7d' }
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
       const response = NextResponse.json({
         success: true,
         message: 'Login successful',
+        token: token, // Include token in response for localStorage storage
         partner: {
           id: partner.id,
           name: partner.name,

@@ -15,6 +15,7 @@ interface QuestionCardProps {
     upvotes: number;
     answer_count: number;
     created_at: string;
+    template_data?: Record<string, any>;
     user: {
       id: string;
       name: string;
@@ -25,6 +26,11 @@ interface QuestionCardProps {
       name: string;
       breed: string;
       profile_image_url?: string;
+    };
+    categorization?: {
+      suggested_category: string;
+      confidence_score: number;
+      is_approved: boolean;
     };
   };
   onUpvote?: (questionId: string) => void;
@@ -49,13 +55,25 @@ export default function QuestionCard({ question, onUpvote, onDownvote }: Questio
   const getCategoryIcon = (category: string) => {
     const categoryMap: { [key: string]: string } = {
       health: '🏥',
-      behavior: '🎾',
+      behavior: '🐕',
       feeding: '🍖',
-      training: '📚',
+      training: '🎓',
       local: '📍',
-      general: '🐕'
+      general: '💬'
     };
     return categoryMap[category] || '❓';
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colorMap: { [key: string]: string } = {
+      health: '#ef4444',
+      behavior: '#3b82f6',
+      feeding: '#f59e0b',
+      training: '#10b981',
+      local: '#8b5cf6',
+      general: '#6b7280'
+    };
+    return colorMap[category] || '#6b7280';
   };
 
   const handleUpvote = () => {
@@ -122,15 +140,51 @@ export default function QuestionCard({ question, onUpvote, onDownvote }: Questio
           
           {/* Stats */}
           <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-            <span className="flex items-center">
+            <span 
+              className="flex items-center px-2 py-1 rounded-full text-xs font-medium"
+              style={{
+                backgroundColor: `${getCategoryColor(question.category)}20`,
+                color: getCategoryColor(question.category)
+              }}
+            >
               <span className="mr-1">{getCategoryIcon(question.category)}</span>
               {question.category}
+              {question.categorization && question.categorization.confidence_score > 0.8 && (
+                <span className="ml-1" title="AI-categorized with high confidence">🤖</span>
+              )}
             </span>
             <span>{question.answer_count} answers</span>
             <span>{question.view_count} views</span>
             <span>{question.upvotes} upvotes</span>
           </div>
           
+          {/* Template Data Preview */}
+          {question.template_data && Object.keys(question.template_data).length > 0 && (
+            <div className="mb-3 p-2 bg-gray-50 rounded-md border">
+              <div className="text-xs font-medium text-gray-700 mb-1 flex items-center">
+                <span className="mr-1">📋</span>
+                Structured Information
+              </div>
+              <div className="grid grid-cols-1 gap-1 text-xs">
+                {Object.entries(question.template_data).slice(0, 2).map(([key, value]) => (
+                  <div key={key} className="flex">
+                    <span className="font-medium text-gray-600 capitalize mr-2">
+                      {key.replace(/_/g, ' ')}:
+                    </span>
+                    <span className="text-gray-700 truncate">
+                      {String(value)}
+                    </span>
+                  </div>
+                ))}
+                {Object.keys(question.template_data).length > 2 && (
+                  <span className="text-gray-500 italic">
+                    +{Object.keys(question.template_data).length - 2} more details
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Tags */}
           {question.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">

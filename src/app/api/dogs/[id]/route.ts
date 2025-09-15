@@ -1,43 +1,105 @@
 // src/app/api/dogs/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken, getTokenFromRequest, isPetParent } from '@/lib/auth';
+import jwt from 'jsonwebtoken';
 import prisma from '@/lib/db';
 
-// GET /api/dogs/[id] - Get a specific dog
+// Helper functions
+function getTokenFromRequest(request: NextRequest): string | null {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return null;
+  }
+  return authHeader.substring(7);
+}
+
+function verifyToken(token: string): any {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret-key-for-development');
+  } catch {
+    return null;
+  }
+}
+
+function isPetParent(payload: any): boolean {
+  return payload?.userId && payload?.userType === 'pet-parent';
+}
+
+// GET /api/dogs/[id] - Get a specific dog using demo storage
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const token = getTokenFromRequest(request);
-  const payload = token ? verifyToken(token) : null;
-  const userId = payload && isPetParent(payload) ? payload.userId : null;
-  
-  if (!userId) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
-    const { id } = await params;
-    const dog = await prisma.dog.findFirst({
-      where: { 
-        id: id,
-        user_id: userId 
-      }
-    });
-
-    if (!dog) {
-      return NextResponse.json({ message: 'Dog not found' }, { status: 404 });
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    // personality_traits is already an array in the schema
-    const dogWithParsedTraits = {
-      ...dog,
-      personality_traits: dog.personality_traits || []
-    };
+    const token = authHeader.substring(7);
+    const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-for-development';
+    
+    let decoded;
+    try {
+      decoded = jwt.verify(token, jwtSecret) as any;
+    } catch (error) {
+      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+    }
 
-    return NextResponse.json({ dog: dogWithParsedTraits });
+    if (!decoded.userId || decoded.userType !== 'pet-parent') {
+      return NextResponse.json({ message: 'Invalid user token' }, { status: 401 });
+    }
+
+    const userId = decoded.userId;
+    const { id } = await params;
+
+    // Get dog from database
+    try {
+      const dog = await prisma.dog.findFirst({
+        where: {
+          id: id,
+          user_id: userId
+        },
+        select: {
+          id: true,
+          name: true,
+          breed: true,
+          age_months: true,
+          weight_kg: true,
+          gender: true,
+          vaccination_status: true,
+          spayed_neutered: true,
+          microchip_id: true,
+          emergency_contact: true,
+          emergency_phone: true,
+          medical_notes: true,
+          personality_traits: true,
+          location: true,
+          photo_url: true,
+          health_id: true,
+          created_at: true,
+          updated_at: true
+        }
+      });
+
+      if (!dog) {
+        return NextResponse.json({ message: 'Dog not found' }, { status: 404 });
+      }
+
+      // Ensure personality_traits is an array
+      const dogWithParsedTraits = {
+        ...dog,
+        personality_traits: dog.personality_traits || []
+      };
+
+      console.log(`Retrieved dog ${id} for user ${userId}:`, { name: dog.name, breed: dog.breed });
+
+      return NextResponse.json({ dog: dogWithParsedTraits });
+    } catch (dbError) {
+      console.error('Database error fetching dog:', dbError);
+      return NextResponse.json({ message: 'Database error occurred' }, { status: 500 });
+    }
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('Error fetching dog:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

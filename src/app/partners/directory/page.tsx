@@ -59,6 +59,10 @@ function PartnerDirectoryContent() {
     fetchPartners();
   }, [filters]);
 
+  useEffect(() => {
+    console.log('Partners state updated:', partners.length, partners);
+  }, [partners]);
+
   const fetchPartners = async (offset = 0) => {
     setLoading(true);
     setError('');
@@ -77,15 +81,17 @@ function PartnerDirectoryContent() {
       }
 
       const data = await response.json();
+      console.log('Partners API response:', data);
+      console.log('Partners count:', data.partners?.length || 0);
       
       if (offset === 0) {
-        setPartners(data.data?.partners || []);
+        setPartners(data.partners || []);
       } else {
-        setPartners(prev => [...prev, ...(data.data?.partners || [])]);
+        setPartners(prev => [...prev, ...(data.partners || [])]);
       }
       
       // Fix pagination structure mismatch
-      const apiPagination = data.data?.pagination;
+      const apiPagination = data.pagination;
       if (apiPagination) {
         setPagination({
           total: apiPagination.totalCount,
@@ -164,7 +170,7 @@ function PartnerDirectoryContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -394,7 +400,7 @@ function PartnerDirectoryContent() {
 export default function PartnerDirectoryPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>

@@ -1,0 +1,111 @@
+PROMPT FOR CLAUDE: Intent Recognition System Analysis
+
+I have a Q&A system for dog parents in India (Woofadaar) where I implemented an intent recognition system to understand natural language questions without requiring question marks. Here's what I accomplished:
+
+## CURRENT IMPLEMENTATION:
+
+### Intent Recognition Function:
+- **Pattern-based matching** using regex to detect different types of user intent
+- **Weighted scoring system** where different patterns get different confidence scores
+- **Multi-pattern detection** to handle various ways people ask questions
+
+### Current Pattern Categories:
+1. **Explicit Questions** (weight: 1.0): `/\?/g` - detects question marks
+2. **Interrogative Words** (weight: 0.9): `/\b(what|when|where|why|how|who|which)\b/g`
+3. **Help Requests** (weight: 0.8): `/\b(help|advice|suggest|recommend|tips?)\b/g`
+4. **Need Statements** (weight: 0.7): `/\b(need|want|looking for|seeking)\b/g`
+5. **Seeking Guidance** (weight: 0.8): `/\b(should I|can I|will this|is this)\b/g`
+6. **Problem Statements** (weight: 0.6): `/\b(problem|issue|trouble|struggling|difficulty)\b/g`
+7. **Malfunction** (weight: 0.5): `/\b(not working|doesn't work|won't)\b/g`
+8. **Pet Issues** (weight: 0.7): `/\b(my dog|dog is|dog has|dog won't|dog doesn't)\b/g`
+
+### Scoring Logic:
+- Calculates total weighted score from all pattern matches
+- Normalizes confidence to 0-1 scale by dividing by 2
+- Considers anything above 0.25 confidence as a valid question
+- Rewards high confidence (>0.7) with bonus points in quality scoring
+
+### Quality Assessment Integration:
+- **Before**: Penalized questions without question marks (-5 to -15 points)
+- **After**: Uses intent recognition to understand natural language
+- **Bonus system**: +5 points for clear intent detection
+- **Reduced penalties**: Only -8 points for genuinely unclear intent (vs -15 before)
+
+## CURRENT RESULTS:
+✅ "Help! Poppy is not eating as before" → Detected as help_request, high score
+✅ "Need advice on dog training" → Detected as need_statement, good score  
+✅ "My dog won't stop barking" → Detected as pet_issue, good score
+✅ "Looking for vet recommendations" → Detected as need_statement, good score
+
+## CONTEXT & CONSTRAINTS:
+- **Users**: Indian dog parents, mix of English proficiency levels
+- **No AI/ML APIs**: Must avoid OpenAI, Hugging Face, or paid services
+- **Pure JavaScript/TypeScript**: Browser-based pattern matching only
+- **Real-time**: Must work instantly as users type (no API delays)
+- **Cultural context**: Indian English patterns, Hindi-English mix sometimes
+
+## QUESTION:
+How can I enhance this intent recognition system further without using real AI/ML? 
+
+Specifically:
+1. **Missing patterns**: What other ways do people ask questions that I'm not catching?
+2. **Indian context**: Any India-specific language patterns or Hinglish I should consider?
+3. **Confidence scoring**: Is my weighting system optimal?
+4. **Edge cases**: What scenarios might break my current system?
+5. **Performance**: Any optimizations for real-time processing?
+6. **False positives**: How to avoid marking non-questions as questions?
+
+Please suggest concrete improvements to the regex patterns, scoring weights, or overall logic that would make this system more accurate and comprehensive.
+
+## CURRENT CODE IMPLEMENTATION:
+
+```javascript
+const detectQuestionIntent = (title, content) => {
+  const text = `${title} ${content}`.toLowerCase();
+  
+  const helpIndicators = [
+    { pattern: /\?/g, weight: 1.0, type: 'explicit' },
+    { pattern: /\b(what|when|where|why|how|who|which)\b/g, weight: 0.9, type: 'interrogative' },
+    { pattern: /\b(help|advice|suggest|recommend|tips?)\b/g, weight: 0.8, type: 'help_request' },
+    { pattern: /\b(need|want|looking for|seeking)\b/g, weight: 0.7, type: 'need_statement' },
+    { pattern: /\b(should I|can I|will this|is this)\b/g, weight: 0.8, type: 'seeking_guidance' },
+    { pattern: /\b(problem|issue|trouble|struggling|difficulty)\b/g, weight: 0.6, type: 'problem_statement' },
+    { pattern: /\b(not working|doesn't work|won't)\b/g, weight: 0.5, type: 'malfunction' },
+    { pattern: /\b(my dog|dog is|dog has|dog won't|dog doesn't)\b/g, weight: 0.7, type: 'pet_issue' }
+  ];
+  
+  let totalScore = 0;
+  let detectedType = 'unknown';
+  
+  helpIndicators.forEach(({ pattern, weight, type }) => {
+    const matches = text.match(pattern);
+    if (matches) {
+      const score = matches.length * weight;
+      totalScore += score;
+      if (weight > 0.5) detectedType = type;
+    }
+  });
+  
+  const confidence = Math.min(totalScore / 2, 1.0);
+  const isQuestion = confidence > 0.25;
+  
+  return { isQuestion, confidence, type: detectedType };
+};
+```
+
+## EXAMPLE TEST CASES:
+
+**Working Well:**
+- "Help with my puppy's potty training" → help_request (0.8)
+- "Need suggestions for dog food brands" → need_statement (0.7)
+- "My dog is limping since yesterday" → pet_issue (0.7)
+- "Should I take my dog to vet" → seeking_guidance (0.8)
+
+**Potential Improvements Needed:**
+- "Best dog food for golden retriever" → Currently low confidence
+- "Vaccination schedule confusion" → May not be detected properly
+- "Kya karna chahiye agar dog sick hai" → Hindi-English mix not handled
+- "Dog trainer contact Mumbai" → Location-based query detection
+- Declarative statements that imply questions but don't use question words
+
+Please analyze this system and provide specific, actionable improvements!

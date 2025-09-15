@@ -73,10 +73,8 @@ export default function RegisterForm() {
         // Dispatch auth state change event
         window.dispatchEvent(new Event('authStateChanged'));
         
-        setError(''); // Clear any previous errors
-        
-        // Show success message before redirect
-        alert(responseData.message || 'Registration successful!');
+        // Clear any previous errors and redirect immediately
+        setError('');
         router.push('/profile');
       } else {
         console.log('Registration failed:', responseData);

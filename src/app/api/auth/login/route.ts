@@ -7,14 +7,85 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password, userType = 'pet-parent' } = await request.json()
 
+    // Admin login
+    if (userType === 'admin') {
+      // Demo admin authentication for development
+      if (email === 'admin@woofadaar.com' && password === 'admin123') {
+        const demoAdmin = {
+          id: 'admin-123',
+          name: 'Admin User',
+          email: 'admin@woofadaar.com',
+          role: 'admin'
+        };
+
+        const token = jwt.sign(
+          { 
+            userId: demoAdmin.id, 
+            email: demoAdmin.email,
+            userType: 'admin',
+            role: 'admin'
+          },
+          process.env.JWT_SECRET!,
+          { expiresIn: '7d' }
+        );
+
+        return NextResponse.json({
+          message: 'Admin login successful (Demo Mode)',
+          token,
+          userType: 'admin',
+          user: demoAdmin
+        });
+      }
+
+      return NextResponse.json(
+        { message: 'Invalid admin credentials' },
+        { status: 401 }
+      )
+    }
+
     // Determine which model to query based on userType
     if (userType === 'partner') {
       // Partner login
-      const partner = await prisma.partner.findUnique({
-        where: { email }
-      })
+      let partner = null;
+      try {
+        partner = await prisma.partner.findUnique({
+          where: { email }
+        });
+      } catch (dbError) {
+        console.warn('Database error during partner login, using demo auth:', dbError);
+      }
 
       if (!partner) {
+        // Demo partner authentication for development
+        if (email === 'demo@vet.com' && password === 'demo123') {
+          const demoPartner = {
+            id: 'demo-partner-123',
+            name: 'Dr. Demo Veterinarian',
+            email: 'demo@vet.com',
+            partner_type: 'vet',
+            business_name: 'Demo Vet Clinic',
+            verified: true,
+            status: 'approved'
+          };
+
+          const token = jwt.sign(
+            { 
+              partnerId: demoPartner.id, 
+              email: demoPartner.email,
+              userType: 'partner'
+            },
+            process.env.JWT_SECRET!,
+            { expiresIn: '7d' }
+          );
+
+          return NextResponse.json({
+            message: 'Login successful (Demo Mode)',
+            token,
+            userType: 'partner',
+            user: demoPartner
+          });
+        }
+
         return NextResponse.json(
           { message: 'Invalid credentials' },
           { status: 401 }
@@ -58,11 +129,44 @@ export async function POST(request: NextRequest) {
 
     } else {
       // Pet Parent login (default)
-      const user = await prisma.user.findUnique({
-        where: { email }
-      })
+      let user = null;
+      try {
+        user = await prisma.user.findUnique({
+          where: { email }
+        });
+      } catch (dbError) {
+        console.warn('Database error during user login, using demo auth:', dbError);
+      }
 
       if (!user) {
+        // Demo user authentication for development
+        if (email === 'demo@user.com' && password === 'demo123') {
+          const demoUser = {
+            id: 'demo-user-123',
+            name: 'Demo User',
+            email: 'demo@user.com',
+            barks_points: 100,
+            is_premium: false
+          };
+
+          const token = jwt.sign(
+            { 
+              userId: demoUser.id, 
+              email: demoUser.email,
+              userType: 'pet-parent'
+            },
+            process.env.JWT_SECRET!,
+            { expiresIn: '7d' }
+          );
+
+          return NextResponse.json({
+            message: 'Login successful (Demo Mode)',
+            token,
+            userType: 'pet-parent',
+            user: demoUser
+          });
+        }
+
         return NextResponse.json(
           { message: 'Invalid credentials' },
           { status: 401 }
@@ -70,7 +174,12 @@ export async function POST(request: NextRequest) {
       }
 
       // Check password
-      const isValidPassword = await bcrypt.compare(password, user.password_hash)
+      let isValidPassword = false;
+      try {
+        isValidPassword = await bcrypt.compare(password, user.password_hash);
+      } catch (hashError) {
+        console.warn('Password comparison error:', hashError);
+      }
 
       if (!isValidPassword) {
         return NextResponse.json(

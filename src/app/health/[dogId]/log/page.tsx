@@ -54,7 +54,7 @@ export default function HealthLogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -65,7 +65,7 @@ export default function HealthLogPage() {
 
   if (!dog) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-medium text-gray-900 mb-2">Dog not found</h2>
           <Link href="/health" className="text-[#3bbca8] hover:text-[#2daa96]">
@@ -77,7 +77,7 @@ export default function HealthLogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 px-4 py-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">

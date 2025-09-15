@@ -35,10 +35,15 @@ export default function DiaryPage() {
       });
       if (response.ok) {
         const data = await response.json();
+        console.log('API Response:', data);
         setDogs(data.data?.dogs || []);
         if (data.data?.dogs?.length > 0) {
           setSelectedDog(data.data.dogs[0]);
         }
+      } else {
+        console.error('API Error:', response.status, response.statusText);
+        const errorData = await response.json().catch(() => null);
+        console.error('Error details:', errorData);
       }
     } catch (error) {
       console.error('Error fetching dogs:', error);
@@ -49,7 +54,7 @@ export default function DiaryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dog diary...</p>
@@ -60,7 +65,7 @@ export default function DiaryPage() {
 
   if (dogs.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 px-4 py-6">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-sm p-12 text-center">
             <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
@@ -82,7 +87,7 @@ export default function DiaryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 px-4 py-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">

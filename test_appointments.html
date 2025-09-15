@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Appointments</title>
+</head>
+<body>
+    <h1>Appointments API Test</h1>
+    <div id="result"></div>
+    
+    <script>
+    async function testAppointments() {
+        const resultDiv = document.getElementById('result');
+        
+        try {
+            // Step 1: Login
+            resultDiv.innerHTML += '<p>Step 1: Logging in...</p>';
+            const loginResponse = await fetch('http://localhost:3000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: 'demo@vet.com',
+                    password: 'demo123',
+                    userType: 'partner'
+                })
+            });
+            
+            const loginData = await loginResponse.json();
+            if (!loginResponse.ok) {
+                throw new Error('Login failed: ' + loginData.message);
+            }
+            
+            resultDiv.innerHTML += '<p>✅ Login successful</p>';
+            
+            // Store token in localStorage like the app would
+            localStorage.setItem('woofadaar_token', loginData.token);
+            localStorage.setItem('user_type', 'partner');
+            
+            // Step 2: Fetch appointments
+            resultDiv.innerHTML += '<p>Step 2: Fetching appointments...</p>';
+            const appointmentsResponse = await fetch('http://localhost:3000/api/partner/appointments', {
+                headers: { 
+                    'Authorization': `Bearer ${loginData.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const appointmentsData = await appointmentsResponse.json();
+            if (!appointmentsResponse.ok) {
+                throw new Error('Appointments fetch failed: ' + appointmentsData.message);
+            }
+            
+            resultDiv.innerHTML += `<p>✅ Appointments fetched: ${appointmentsData.data.appointments.length} appointments</p>`;
+            resultDiv.innerHTML += '<h3>Appointments:</h3>';
+            appointmentsData.data.appointments.forEach((apt, index) => {
+                resultDiv.innerHTML += `<p>${index + 1}. ${apt.service_type} with ${apt.user.name} - ${apt.status}</p>`;
+            });
+            
+            resultDiv.innerHTML += '<p><strong>✅ Everything is working! You can now visit <a href="http://localhost:3000/partner/appointments" target="_blank">/partner/appointments</a></strong></p>';
+            
+        } catch (error) {
+            resultDiv.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+        }
+    }
+    
+    // Run the test
+    testAppointments();
+    </script>
+</body>
+</html>

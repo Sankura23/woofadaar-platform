@@ -67,10 +67,39 @@ export function verifyPartnerToken(token: string): PartnerTokenPayload | null {
   }
 }
 
-export function getPartnerFromRequest(request: NextRequest): PartnerTokenPayload | null {
-  const token = request.cookies.get('partner-token')?.value;
-  if (!token) {
-    return null;
+export function getPartnerFromRequest(request: NextRequest): { partnerId: string; email: string } | null {
+  // First try Bearer token from Authorization header
+  const authHeader = request.headers.get('authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+      if (decoded.userType === 'partner' && decoded.partnerId) {
+        return {
+          partnerId: decoded.partnerId,
+          email: decoded.email
+        };
+      }
+    } catch (error) {
+      console.error('JWT verification error:', error);
+    }
   }
-  return verifyPartnerToken(token);
+  
+  // Then try cookies for cookie-based auth
+  const cookieToken = request.cookies.get('partner-token')?.value;
+  if (cookieToken) {
+    try {
+      const decoded = jwt.verify(cookieToken, process.env.JWT_SECRET || 'your-secret-key') as any;
+      if (decoded.type === 'partner' && decoded.partnerId) {
+        return {
+          partnerId: decoded.partnerId,
+          email: decoded.email
+        };
+      }
+    } catch (error) {
+      console.error('Cookie JWT verification error:', error);
+    }
+  }
+  
+  return null;
 }

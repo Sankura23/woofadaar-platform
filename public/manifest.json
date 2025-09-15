@@ -1,22 +1,106 @@
 {
-  "name": "Woofadaar - Dog Parent Community",
+  "name": "Woofadaar - Dog Care Platform",
   "short_name": "Woofadaar",
-  "description": "The ultimate platform connecting dog parents with expert care, community support, and comprehensive health management",
+  "description": "Comprehensive pet care platform for dog owners - health tracking, community, expert consultations, and more",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#3bbca8",
   "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["lifestyle", "medical", "social"],
   "icons": [
     {
       "src": "/woofadaar-logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/woofadaar-logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/woofadaar-logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
     }
   ],
-  "categories": ["health", "pets", "lifestyle", "social"],
-  "lang": "en",
-  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Health Log",
+      "short_name": "Health",
+      "description": "Quickly log your dog's health information",
+      "url": "/health?quick=true",
+      "icons": [
+        {
+          "src": "/woofadaar-logo.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Community",
+      "short_name": "Community", 
+      "description": "Browse community questions and discussions",
+      "url": "/community",
+      "icons": [
+        {
+          "src": "/woofadaar-logo.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Find Expert",
+      "short_name": "Expert",
+      "description": "Find and consult with pet care experts",
+      "url": "/partners/directory?filter=vet",
+      "icons": [
+        {
+          "src": "/woofadaar-logo.svg",
+          "sizes": "96x96", 
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "AI Assistant",
+      "short_name": "AI Help",
+      "description": "Get instant AI-powered pet care advice",
+      "url": "/ai-assistant",
+      "icons": [
+        {
+          "src": "/woofadaar-logo.svg",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "images",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  },
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
   "prefer_related_applications": false
 }

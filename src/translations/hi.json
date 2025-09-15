@@ -239,5 +239,21 @@
     "changePhoto": "फोटो बदलें",
     "photoUploaded": "फोटो सफलतापूर्वक अपलोड हुआ",
     "photoUploadError": "फोटो अपलोड करने में विफल"
+  },
+  "language": {
+    "detection": "भाषा पहचान",
+    "detectedLanguage": "पहचानी गई भाषा",
+    "suggestedLanguage": "सुझाई गई भाषा",
+    "confidence": "विश्वसनीयता",
+    "translationRecommended": "अनुवाद की सिफारिश",
+    "switchLanguage": "भाषा बदलें",
+    "reDetect": "पुनः पहचानें",
+    "detectionDetails": "पहचान विवरण",
+    "contentLanguage": "सामग्री भाषा",
+    "mixed": "मिश्रित भाषाएं",
+    "autoDetect": "स्वतः भाषा पहचान",
+    "languagePreference": "भाषा प्राथमिकता",
+    "translationNeeded": "बेहतर पहुंच के लिए अनुवाद की आवश्यकता",
+    "lowConfidence": "कम पहचान विश्वसनीयता - मैनुअल समीक्षा की सिफारिश"
   }
 }

@@ -34,6 +34,7 @@ export default function AppointmentsPage() {
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
   const [meetingType, setMeetingType] = useState('in-person');
+  const [serviceType, setServiceType] = useState('consultation');
   const [notes, setNotes] = useState('');
   const [isBooking, setIsBooking] = useState(false);
   const [bookingResult, setBookingResult] = useState<any>(null);
@@ -49,10 +50,19 @@ export default function AppointmentsPage() {
       const response = await fetch('/api/partners?limit=50');
       if (response.ok) {
         const data = await response.json();
-        setPartners(data.partners || []);
+        if (data.success && data.partners) {
+          setPartners(data.partners);
+        } else if (data.partners) {
+          setPartners(data.partners);
+        } else {
+          setPartners([]);
+        }
+      } else {
+        setPartners([]);
       }
     } catch (error) {
       console.error('Error fetching partners:', error);
+      setPartners([]);
     } finally {
       setLoading(false);
     }
@@ -60,10 +70,17 @@ export default function AppointmentsPage() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch('/api/appointments/book');
+      const token = localStorage.getItem('woofadaar_token');
+      if (!token) return;
+      
+      const response = await fetch('/api/auth/working-appointments', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (response.ok) {
         const data = await response.json();
-        setAppointments(data.appointments || []);
+        setAppointments(data.data?.appointments || []);
       }
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -76,16 +93,34 @@ export default function AppointmentsPage() {
     setBookingResult(null);
 
     try {
-      const response = await fetch('/api/appointments/book', {
+      // Get the authentication token
+      const token = localStorage.getItem('woofadaar_token') || sessionStorage.getItem('woofadaar_token');
+      
+      if (!token) {
+        setBookingResult({
+          success: false,
+          message: 'Please login to book appointments. You will be redirected to the login page.',
+        });
+        // Redirect to login after a short delay
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+        return;
+      }
+      
+      const response = await fetch('/api/auth/working-appointments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           partner_id: selectedPartner,
-          appointment_date: appointmentDate,
-          appointment_time: appointmentTime,
-          meeting_type: meetingType,
+          appointment_date: `${appointmentDate}T${appointmentTime}:00.000Z`,
+          service_type: serviceType,
+          meeting_type: meetingType === 'in-person' ? 'in_person' : 
+                       meetingType === 'video' ? 'video_call' : 
+                       meetingType === 'phone' ? 'phone_call' : meetingType,
           notes,
         }),
       });
@@ -99,6 +134,7 @@ export default function AppointmentsPage() {
         setAppointmentDate('');
         setAppointmentTime('');
         setMeetingType('in-person');
+        setServiceType('consultation');
         setNotes('');
         // Refresh appointments
         fetchAppointments();
@@ -140,7 +176,7 @@ export default function AppointmentsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -183,27 +219,50 @@ export default function AppointmentsPage() {
               <div>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Book New Appointment</h2>
                 
-                <form onSubmit={handleBooking} className="space-y-6">
-                  {/* Partner Selection */}
-                  <div>
-                    <label htmlFor="partner" className="block text-sm font-medium text-gray-700 mb-2">
-                      Select Partner *
-                    </label>
-                    <select
-                      id="partner"
-                      value={selectedPartner}
-                      onChange={(e) => setSelectedPartner(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                      required
-                    >
-                      <option value="">Choose a partner...</option>
-                      {partners.map((partner) => (
-                        <option key={partner.id} value={partner.id}>
-                          {partner.business_name || partner.name} - {partner.partner_type} ({partner.location})
-                        </option>
-                      ))}
-                    </select>
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading partners...</p>
                   </div>
+                ) : (
+                  <form onSubmit={handleBooking} className="space-y-6">
+                    {/* Partner Selection */}
+                    <div>
+                      <label htmlFor="partner" className="block text-sm font-medium text-gray-700 mb-2">
+                        Select Partner *
+                      </label>
+                      {loading ? (
+                        <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                          Loading partners...
+                        </div>
+                      ) : partners.length === 0 ? (
+                        <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-yellow-50 text-yellow-700">
+                          No partners available. Please check back later or contact support.
+                        </div>
+                      ) : (
+                        <>
+                          <select
+                            id="partner"
+                            value={selectedPartner}
+                            onChange={(e) => setSelectedPartner(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            required
+                          >
+                            <option value="">Choose a partner...</option>
+                            {partners.map((partner) => (
+                              <option key={partner.id} value={partner.id}>
+                                {partner.business_name || `${partner.name}'s ${partner.partner_type === 'vet' ? 'Clinic' : partner.partner_type === 'trainer' ? 'Training' : partner.partner_type === 'groomer' ? 'Grooming' : partner.partner_type === 'corporate' ? 'Services' : 'Practice'}`} - {partner.partner_type.charAt(0).toUpperCase() + partner.partner_type.slice(1)} ({partner.location})
+                              </option>
+                            ))}
+                          </select>
+                        </>
+                      )}
+                      {partners.length > 0 && (
+                        <p className="mt-1 text-sm text-gray-500">
+                          Found {partners.length} partner(s) available for appointments
+                        </p>
+                      )}
+                    </div>
 
                   {/* Date and Time */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -235,6 +294,25 @@ export default function AppointmentsPage() {
                         required
                       />
                     </div>
+                  </div>
+
+                  {/* Service Type */}
+                  <div>
+                    <label htmlFor="service_type" className="block text-sm font-medium text-gray-700 mb-2">
+                      Service Type *
+                    </label>
+                    <select
+                      id="service_type"
+                      value={serviceType}
+                      onChange={(e) => setServiceType(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                    >
+                      <option value="consultation">🩺 General Consultation</option>
+                      <option value="treatment">💊 Treatment Session</option>
+                      <option value="training">🎾 Training Session</option>
+                      <option value="emergency">🚨 Emergency Consultation</option>
+                    </select>
                   </div>
 
                   {/* Meeting Type */}
@@ -270,6 +348,7 @@ export default function AppointmentsPage() {
                     />
                   </div>
 
+                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isBooking}
@@ -277,33 +356,18 @@ export default function AppointmentsPage() {
                   >
                     {isBooking ? 'Booking...' : 'Book Appointment'}
                   </button>
-                </form>
 
-                {/* Booking Result */}
-                {bookingResult && (
-                  <div className={`mt-6 p-4 rounded-lg ${
-                    bookingResult.success 
-                      ? 'bg-green-50 border border-green-200 text-green-800'
-                      : 'bg-red-50 border border-red-200 text-red-800'
-                  }`}>
-                    <h3 className="font-semibold mb-2">
-                      {bookingResult.success ? '✅ Appointment Booked Successfully' : '❌ Booking Failed'}
-                    </h3>
-                    <p>{bookingResult.message}</p>
-                    
-                    {bookingResult.data && (
-                      <div className="mt-4 p-3 bg-white rounded border">
-                        <h4 className="font-medium mb-2">Appointment Details:</h4>
-                        <div className="text-sm space-y-1">
-                          <p><strong>Appointment ID:</strong> {bookingResult.data.id}</p>
-                          <p><strong>Date:</strong> {new Date(bookingResult.data.appointment_date).toLocaleDateString()}</p>
-                          <p><strong>Time:</strong> {bookingResult.data.appointment_time}</p>
-                          <p><strong>Meeting Type:</strong> {bookingResult.data.meeting_type}</p>
-                          <p><strong>Status:</strong> {bookingResult.data.status}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  {/* Booking Result */}
+                  {bookingResult && (
+                    <div className={`p-4 rounded-md ${
+                      bookingResult.success 
+                        ? 'bg-green-50 border border-green-200 text-green-800' 
+                        : 'bg-red-50 border border-red-200 text-red-800'
+                    }`}>
+                      {bookingResult.message}
+                    </div>
+                  )}
+                </form>
                 )}
               </div>
             )}
@@ -314,54 +378,53 @@ export default function AppointmentsPage() {
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Appointment History</h2>
                 
                 {appointments.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">📅</div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments yet</h3>
-                    <p className="text-gray-600">Book your first appointment to get started!</p>
+                  <div className="text-center py-8">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <h3 className="text-lg font-medium text-gray-800 mb-2">No Appointments Found</h3>
+                      <p className="text-gray-600">
+                        You haven't booked any appointments yet. Book your first appointment above!
+                      </p>
+                    </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {appointments.map((appointment) => (
-                      <div key={appointment.id} className="bg-gray-50 rounded-lg p-6">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center space-x-3">
-                            <span className="text-2xl">{getMeetingTypeIcon(appointment.meeting_type)}</span>
-                            <div>
-                              <h3 className="text-lg font-semibold text-gray-900">{appointment.partner_name}</h3>
-                              <p className="text-sm text-gray-600">
-                                {new Date(appointment.appointment_date).toLocaleDateString()} at {appointment.appointment_time}
-                              </p>
-                            </div>
-                          </div>
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
-                            {appointment.status}
-                          </span>
+                <div className="space-y-4">
+                  {appointments.map((appointment) => (
+                    <div
+                      key={appointment.id}
+                      className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">
+                            {appointment.partner_name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {new Date(appointment.appointment_date).toLocaleDateString()} at{' '}
+                            {appointment.appointment_time}
+                          </p>
                         </div>
-                        
-                        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <span className="font-medium">Meeting Type:</span>
-                            <p className="text-gray-600 capitalize">{appointment.meeting_type.replace('-', ' ')}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Consultation Fee:</span>
-                            <p className="text-gray-600">₹{appointment.consultation_fee}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Booked On:</span>
-                            <p className="text-gray-600">{new Date(appointment.created_at).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                        
-                        {appointment.notes && (
-                          <div className="mt-4">
-                            <span className="font-medium text-sm">Notes:</span>
-                            <p className="text-gray-600 text-sm mt-1">{appointment.notes}</p>
-                          </div>
-                        )}
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                            appointment.status
+                          )}`}
+                        >
+                          {appointment.status}
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                      
+                      <div className="flex items-center justify-between text-sm text-gray-600">
+                        <span>{getMeetingTypeIcon(appointment.meeting_type)} {appointment.meeting_type}</span>
+                        <span>₹{appointment.consultation_fee}</span>
+                      </div>
+                      
+                      {appointment.notes && (
+                        <div className="mt-3 pt-3 border-t border-gray-100">
+                          <p className="text-sm text-gray-700">{appointment.notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
                 )}
               </div>
             )}

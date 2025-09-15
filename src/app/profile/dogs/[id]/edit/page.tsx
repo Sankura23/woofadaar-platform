@@ -16,7 +16,7 @@ export default function EditDogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-milk-white p-6">
+    <div className="min-h-screen bg-[#fef8e8] p-6">
       <div className="max-w-4xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">

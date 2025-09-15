@@ -66,7 +66,11 @@ export default function DailyLogPage() {
 
   const fetchUserDogs = async () => {
     try {
-      const response = await fetch('/api/dogs');
+      const response = await fetch('/api/dogs', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setDogs(data.data?.dogs || []);
@@ -119,10 +123,11 @@ export default function DailyLogPage() {
         photos: photos.length > 0 ? photos : null
       };
 
-      const response = await fetch('/api/health/daily-log', {
+      const response = await fetch('/api/health/log', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         },
         body: JSON.stringify(logData)
       });
@@ -143,7 +148,7 @@ export default function DailyLogPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -154,7 +159,7 @@ export default function DailyLogPage() {
 
   if (dogs.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 p-4">
         <div className="max-w-2xl mx-auto">
           <Card>
             <CardContent className="text-center py-12">
@@ -177,7 +182,7 @@ export default function DailyLogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 p-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">

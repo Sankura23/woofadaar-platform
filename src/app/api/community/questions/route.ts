@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
+import { categorizeQuestion } from '@/lib/ai-categorization';
+import { processQuestionForExperts } from '@/lib/expert-notification-service';
+import { moderateContent } from '@/lib/moderation-service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,7 +38,27 @@ export async function GET(request: NextRequest) {
 
     const questions = await prisma.communityQuestion.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        user_id: true,
+        dog_id: true,
+        title: true,
+        content: true,
+        tags: true,
+        category: true,
+        is_resolved: true,
+        best_answer_id: true,
+        view_count: true,
+        upvotes: true,
+        downvotes: true,
+        answer_count: true,
+        is_pinned: true,
+        is_featured: true,
+        status: true,
+        photo_url: true,
+        location: true,
+        created_at: true,
+        updated_at: true,
         user: {
           select: {
             id: true,
@@ -58,6 +81,7 @@ export async function GET(request: NextRequest) {
             is_best_answer: true,
             upvotes: true,
             downvotes: true,
+            is_verified_expert: true,
             user: {
               select: {
                 id: true,
@@ -84,10 +108,12 @@ export async function GET(request: NextRequest) {
           orderBy: { created_at: 'asc' },
           take: 3 // Limit to first 3 comments on homepage
         },
+        // Week 18 enhancements will be added after schema migration
         _count: {
           select: {
             answers: true,
-            comments: true
+            comments: true,
+            // views: true  // This field needs to be added to schema
           }
         }
       },
@@ -138,7 +164,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, content, tags, category, dogId, photoUrl, location } = body;
+    const { 
+      title, 
+      content, 
+      tags, 
+      category, 
+      dogId, 
+      photoUrl, 
+      location,
+      // Week 19 Phase 1 enhancements
+      templateId,
+      templateData,
+      // Week 18 enhancements
+      // imageUrls - not implemented in current schema
+      videoUrl,
+      isUrgent
+    } = body;
 
     if (!title || !content || !category) {
       return NextResponse.json(
@@ -156,18 +197,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the question
+    // Create the question with Week 19 enhancements
+    const questionData: any = {
+      user_id: 'userId' in user ? user.userId : user.partnerId,
+      dog_id: dogId || null,
+      title,
+      content,
+      tags: tags || [],
+      category,
+      photo_url: photoUrl || null,
+      location: location || null,
+      // Note: Week 18 enhancements will be added after schema migration
+    };
+
+    // Add template data if provided (Week 19 Phase 1)
+    if (templateData && Object.keys(templateData).length > 0) {
+      questionData.template_data = templateData;
+    }
+
     const question = await prisma.communityQuestion.create({
-      data: {
-        user_id: 'userId' in user ? user.userId : user.partnerId,
-        dog_id: dogId || null,
-        title,
-        content,
-        tags: tags || [],
-        category,
-        photo_url: photoUrl || null,
-        location: location || null
-      },
+      data: questionData,
       include: {
         user: {
           select: {
@@ -186,6 +235,61 @@ export async function POST(request: NextRequest) {
         }
       }
     });
+
+    // Run AI categorization and store results (Week 19 Phase 1)
+    try {
+      const categorization = await categorizeQuestion(title, content);
+      
+      await prisma.questionCategorization.create({
+        data: {
+          question_id: question.id,
+          suggested_category: categorization.primaryCategory.category,
+          suggested_tags: categorization.suggestedTags.map(t => t.tag),
+          confidence_score: categorization.overallConfidence,
+          categorization_method: categorization.method,
+          is_approved: categorization.overallConfidence > 0.8 // Auto-approve high confidence
+        }
+      });
+      
+      console.log(`AI categorization completed for question ${question.id}: ${categorization.primaryCategory.category} (${Math.round(categorization.overallConfidence * 100)}%)`);
+    } catch (categorizationError) {
+      console.warn('AI categorization failed, but question was created:', categorizationError);
+      // Continue without categorization - question creation succeeded
+    }
+
+    // Run content moderation (Week 19 Phase 2)
+    try {
+      const moderationResult = await moderateContent(
+        `${title} ${content}`,
+        'question',
+        'userId' in user ? user.userId : user.partnerId,
+        question.id
+      );
+
+      if (moderationResult.shouldFlag) {
+        console.log(`Question ${question.id} flagged for moderation: ${moderationResult.flagReasons.join(', ')}`);
+      }
+    } catch (moderationError) {
+      console.warn('Content moderation failed:', moderationError);
+      // Continue without moderation - question creation succeeded
+    }
+
+    // Notify matching experts (Week 19 Phase 2)
+    try {
+      const expertResult = await processQuestionForExperts(
+        question.id,
+        title,
+        content,
+        category,
+        tags || [],
+        false // isUrgent - would come from form data
+      );
+
+      console.log(`Expert notification processing completed: ${expertResult.notificationsScheduled} experts notified`);
+    } catch (expertError) {
+      console.warn('Expert notification failed:', expertError);
+      // Continue without expert notifications - question creation succeeded
+    }
 
     // Award points for posting a question
     await prisma.userEngagement.create({

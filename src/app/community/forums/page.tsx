@@ -89,7 +89,7 @@ export default function ForumsPage() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 min-h-screen py-8">
+      <div className="bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
@@ -121,7 +121,7 @@ export default function ForumsPage() {
 
   return (
     <ProtectedRoute>
-      <div className="bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 min-h-screen py-8">
+      <div className="bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
@@ -179,6 +179,13 @@ export default function ForumsPage() {
                       : 'All Forum Posts'
                     }
                   </h2>
+                  <Link 
+                    href="/community/forums/create"
+                    className="inline-flex items-center px-4 py-2 bg-[#76519f] text-white text-sm font-medium rounded-lg hover:bg-[#6a4a8f] transition-colors"
+                  >
+                    <span className="mr-2">✏️</span>
+                    Start Discussion
+                  </Link>
                 </div>
                 
                 {posts.length === 0 ? (
@@ -191,6 +198,13 @@ export default function ForumsPage() {
                         : 'Be the first to start a discussion in our community forums!'
                       }
                     </p>
+                    <Link 
+                      href="/community/forums/create"
+                      className="inline-flex items-center px-4 py-2 bg-[#76519f] text-white rounded-lg hover:bg-[#6a4a8f] transition-colors"
+                    >
+                      <span className="mr-2">✏️</span>
+                      Start Discussion
+                    </Link>
                   </div>
                 ) : (
                   posts.map((post) => (
@@ -226,9 +240,11 @@ export default function ForumsPage() {
                             </span>
                           </div>
                           
-                          <h3 className="text-lg font-medium text-gray-900 mb-2 hover:text-[#76519f] cursor-pointer">
-                            {post.title}
-                          </h3>
+                          <Link href={`/community/forums/${post.id}`}>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2 hover:text-[#76519f] cursor-pointer">
+                              {post.title}
+                            </h3>
+                          </Link>
                           
                           <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                             {post.content}

@@ -42,10 +42,13 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="bg-white rounded-2xl shadow-lg border border-[#f5f5f5] p-8 max-w-md mx-auto">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
+            <h3 className="text-lg font-semibold text-[#171717] mb-2">Loading...</h3>
+            <p className="text-[#525252]">Please wait while we verify your access</p>
+          </div>
         </div>
       </div>
     );
@@ -53,7 +56,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 flex items-center justify-center">
         <div className="max-w-md w-full mx-auto p-6">
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             <div className="text-6xl mb-4">🔒</div>

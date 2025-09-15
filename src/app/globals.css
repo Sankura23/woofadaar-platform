@@ -1,19 +1,55 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
   
+  /* Style Guide Primary Colors */
   --color-mint-teal: #3bbca8;
-  --color-purple: #76519f;
+  --color-muted-purple: #76519f;
   --color-burnt-orange: #e05a37;
   --color-warm-yellow: #ffa602;
+  
+  /* Style Guide Neutral Colors */
   --color-milk-white: #fef8e8;
-  --color-light-grey: #afaeac;
-  --color-dark-grey: #6b6a68;
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
   --color-black: #000000;
   
+  /* Style Guide Functional Colors */
+  --color-success: #099441;
+  --color-warning: #ffc107;
+  --color-error: #b71c1c;
+  --color-info: #1976d2;
+  
+  /* Legacy aliases for backward compatibility */
+  --color-purple: var(--color-muted-purple);
+  --color-light-grey: var(--color-neutral-400);
+  --color-dark-grey: var(--color-neutral-600);
+  
+  /* Primary brand colors */
   --color-primary: var(--color-mint-teal);
-  --color-secondary: var(--color-purple);
+  --color-secondary: var(--color-muted-purple);
+  
+  /* Typography scale following Style Guide */
+  --text-heading-1: 84px;
+  --text-heading-2: 60px;
+  --text-heading-3: 48px;
+  --text-heading-4: 36px;
+  --text-heading-5: 30px;
+  --text-heading-6: 24px;
+  --text-body-large: 20px;
+  --text-body: 16px;
+  --text-body-small: 14px;
+  --text-caption: 12px;
 }
 
 /* Mobile-first helpers */

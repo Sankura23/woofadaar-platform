@@ -260,13 +260,14 @@ export default function AdminDashboard() {
 
   const updatePartnerStatus = async (id: string, status: string) => {
     try {
-      const response = await fetch(`/api/partners/${id}/status`, {
+      // Use central partners PUT endpoint used elsewhere in the app
+      const response = await fetch('/api/partners', {
         method: 'PUT',
         headers: {
           'Authorization': 'Bearer admin-token',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ partner_id: id, status })
       });
 
       if (!response.ok) {

@@ -5,10 +5,13 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const timeframe = searchParams.get('timeframe') || 'all'; // all, week, month
+    const city = searchParams.get('city'); // Indian city filter
+    const breed = searchParams.get('breed'); // Indian dog breed filter
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    let dateFilter = {};
+    let dateFilter: any = {};
+    let userFilter: any = {};
     
     if (timeframe === 'week') {
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -18,8 +21,25 @@ export async function GET(request: NextRequest) {
       dateFilter = { created_at: { gte: oneMonthAgo } };
     }
 
+    // Add Indian context filters
+    if (city) {
+      userFilter.location = { contains: city, mode: 'insensitive' };
+    }
+    
+    if (breed) {
+      // This would need to join with dog profiles - simplified for now
+      userFilter.Dogs = {
+        some: {
+          breed: { contains: breed, mode: 'insensitive' }
+        }
+      };
+    }
+
     const leaderboard = await prisma.userPoints.findMany({
-      where: dateFilter,
+      where: {
+        ...dateFilter,
+        user: userFilter
+      },
       include: {
         user: {
           select: {
@@ -136,6 +156,10 @@ export async function GET(request: NextRequest) {
           averageLevel: Math.round((stats._avg.level || 1) * 10) / 10
         },
         timeframe,
+        filters: {
+          city,
+          breed
+        },
         pagination: {
           limit,
           offset,

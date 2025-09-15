@@ -1,0 +1,386 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Alert,
+  Switch,
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../App';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
+import { DogFormData, INDIAN_DOG_BREEDS, PERSONALITY_TRAITS, INDIAN_CITIES } from '../../types/dog';
+import { apiService } from '../../services/api';
+
+type AddDogScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'AddDog'>;
+};
+
+export default function AddDogScreen({ navigation }: AddDogScreenProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<DogFormData>({
+    name: '',
+    breed: 'Labrador Retriever',
+    age_months: 12,
+    weight_kg: 10,
+    gender: 'male',
+    health_id: '',
+    kennel_club_registration: '',
+    vaccination_status: 'up_to_date',
+    spayed_neutered: false,
+    microchip_id: '',
+    emergency_contact: '',
+    emergency_phone: '',
+    medical_notes: '',
+    personality_traits: [],
+    location: 'Mumbai',
+    photo_url: '',
+  });
+
+  const updateFormData = (field: keyof DogFormData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const togglePersonalityTrait = (trait: string) => {
+    setFormData(prev => ({
+      ...prev,
+      personality_traits: prev.personality_traits.includes(trait)
+        ? prev.personality_traits.filter(t => t !== trait)
+        : [...prev.personality_traits, trait]
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.breed) {
+      Alert.alert('Error', 'Please fill in the required fields (Name and Breed)');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const dogData = {
+        ...formData,
+        age: Math.floor(formData.age_months / 12), // Convert months to years for compatibility
+        weight: formData.weight_kg,
+      };
+      
+      await apiService.createDog(dogData);
+      Alert.alert(
+        'Success!',
+        `${formData.name} has been added to your pack!`,
+        [{ text: 'OK', onPress: () => navigation.navigate('Dogs') }]
+      );
+    } catch (error) {
+      Alert.alert('Error', 'Failed to create dog profile');
+      console.error('Create dog error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Card>
+          <CardHeader>
+            <CardTitle>🐕 Add Your Dog</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Basic Information */}
+            <Text style={styles.sectionTitle}>Basic Information</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Name *</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.name}
+                onChangeText={(value) => updateFormData('name', value)}
+                placeholder="Your dog's name"
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Breed *</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.breed}
+                  onValueChange={(value) => updateFormData('breed', value)}
+                  style={styles.picker}
+                >
+                  {INDIAN_DOG_BREEDS.map((breed) => (
+                    <Picker.Item key={breed} label={breed} value={breed} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              <View style={styles.halfInputContainer}>
+                <Text style={styles.label}>Age (months)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={formData.age_months.toString()}
+                  onChangeText={(value) => updateFormData('age_months', parseInt(value) || 0)}
+                  placeholder="12"
+                  keyboardType="numeric"
+                />
+              </View>
+
+              <View style={styles.halfInputContainer}>
+                <Text style={styles.label}>Weight (kg)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={formData.weight_kg.toString()}
+                  onChangeText={(value) => updateFormData('weight_kg', parseFloat(value) || 0)}
+                  placeholder="10"
+                  keyboardType="numeric"
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Gender</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.gender}
+                  onValueChange={(value) => updateFormData('gender', value)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Male" value="male" />
+                  <Picker.Item label="Female" value="female" />
+                </Picker>
+              </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Location</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.location}
+                  onValueChange={(value) => updateFormData('location', value)}
+                  style={styles.picker}
+                >
+                  {INDIAN_CITIES.map((city) => (
+                    <Picker.Item key={city} label={city} value={city} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+
+            {/* Health Information */}
+            <Text style={styles.sectionTitle}>Health Information</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Vaccination Status</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={formData.vaccination_status}
+                  onValueChange={(value) => updateFormData('vaccination_status', value)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Up to Date" value="up_to_date" />
+                  <Picker.Item label="Pending" value="pending" />
+                  <Picker.Item label="Not Started" value="not_started" />
+                </Picker>
+              </View>
+            </View>
+
+            <View style={styles.switchContainer}>
+              <Text style={styles.label}>Spayed/Neutered</Text>
+              <Switch
+                value={formData.spayed_neutered}
+                onValueChange={(value) => updateFormData('spayed_neutered', value)}
+                trackColor={{ false: '#767577', true: '#81b0ff' }}
+                thumbColor={formData.spayed_neutered ? '#f5dd4b' : '#f4f3f4'}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Medical Notes</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                value={formData.medical_notes}
+                onChangeText={(value) => updateFormData('medical_notes', value)}
+                placeholder="Any medical conditions, allergies, or notes..."
+                multiline
+                numberOfLines={3}
+              />
+            </View>
+
+            {/* Emergency Contact */}
+            <Text style={styles.sectionTitle}>Emergency Contact</Text>
+            
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Emergency Contact Name</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.emergency_contact}
+                onChangeText={(value) => updateFormData('emergency_contact', value)}
+                placeholder="Contact person name"
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Emergency Phone</Text>
+              <TextInput
+                style={styles.input}
+                value={formData.emergency_phone}
+                onChangeText={(value) => updateFormData('emergency_phone', value)}
+                placeholder="+91 XXXXX XXXXX"
+                keyboardType="phone-pad"
+              />
+            </View>
+
+            {/* Personality Traits */}
+            <Text style={styles.sectionTitle}>Personality Traits</Text>
+            <Text style={styles.subtitle}>Select all that apply:</Text>
+            
+            <View style={styles.traitsContainer}>
+              {PERSONALITY_TRAITS.map((trait) => (
+                <TouchableOpacity
+                  key={trait}
+                  style={[
+                    styles.traitButton,
+                    formData.personality_traits.includes(trait) && styles.traitButtonSelected
+                  ]}
+                  onPress={() => togglePersonalityTrait(trait)}
+                >
+                  <Text style={[
+                    styles.traitText,
+                    formData.personality_traits.includes(trait) && styles.traitTextSelected
+                  ]}>
+                    {trait}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <TouchableOpacity
+              style={[styles.submitButton, isLoading && styles.disabledButton]}
+              onPress={handleSubmit}
+              disabled={isLoading}
+            >
+              <Text style={styles.submitButtonText}>
+                {isLoading ? 'Adding Dog...' : 'Add Dog'}
+              </Text>
+            </TouchableOpacity>
+          </CardContent>
+        </Card>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+  },
+  scrollContainer: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1f2937',
+    marginTop: 20,
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 12,
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  halfInputContainer: {
+    flex: 1,
+    marginBottom: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    backgroundColor: '#ffffff',
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+  },
+  picker: {
+    height: 50,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  traitsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 20,
+  },
+  traitButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#ffffff',
+  },
+  traitButtonSelected: {
+    backgroundColor: '#2563eb',
+    borderColor: '#2563eb',
+  },
+  traitText: {
+    fontSize: 14,
+    color: '#374151',
+  },
+  traitTextSelected: {
+    color: '#ffffff',
+  },
+  submitButton: {
+    backgroundColor: '#10b981',
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  disabledButton: {
+    backgroundColor: '#9ca3af',
+  },
+  submitButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

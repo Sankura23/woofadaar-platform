@@ -111,4 +111,5 @@ export const logPerformance = (operation: string, duration: number, context?: Re
   });
 };
 
+export { logger };
 export default logger;

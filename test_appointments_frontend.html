@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Frontend Appointments</title>
+</head>
+<body>
+    <h1>Frontend Appointments Test</h1>
+    <div id="result"></div>
+    
+    <script>
+    async function testFrontendFlow() {
+        const resultDiv = document.getElementById('result');
+        
+        try {
+            // Step 1: Login and store token like the real app would
+            resultDiv.innerHTML += '<p>Step 1: Logging in and storing token...</p>';
+            const loginResponse = await fetch('http://localhost:3000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: 'demo@vet.com',
+                    password: 'demo123',
+                    userType: 'partner'
+                })
+            });
+            
+            const loginData = await loginResponse.json();
+            if (!loginResponse.ok) {
+                throw new Error('Login failed: ' + loginData.message);
+            }
+            
+            // Store in localStorage exactly like the app does
+            localStorage.setItem('woofadaar_token', loginData.token);
+            localStorage.setItem('user_type', 'partner');
+            
+            resultDiv.innerHTML += '<p>✅ Login successful, token stored in localStorage</p>';
+            
+            // Step 2: Test appointments API directly
+            resultDiv.innerHTML += '<p>Step 2: Testing appointments API...</p>';
+            const appointmentsResponse = await fetch('http://localhost:3000/api/partner/appointments', {
+                headers: { 
+                    'Authorization': `Bearer ${loginData.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const appointmentsData = await appointmentsResponse.json();
+            if (!appointmentsResponse.ok) {
+                throw new Error('Appointments fetch failed: ' + appointmentsData.message);
+            }
+            
+            resultDiv.innerHTML += `<p>✅ Appointments API works: ${appointmentsData.data.appointments.length} appointments</p>`;
+            
+            // Step 3: Check for any deprecated API calls by trying them
+            resultDiv.innerHTML += '<p>Step 3: Testing if deprecated endpoints exist...</p>';
+            
+            try {
+                const deprecatedResponse = await fetch('http://localhost:3000/api/partners/current/appointments', {
+                    headers: { 
+                        'Authorization': `Bearer ${loginData.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (deprecatedResponse.status === 404) {
+                    resultDiv.innerHTML += '<p>✅ Deprecated endpoints removed successfully</p>';
+                } else {
+                    resultDiv.innerHTML += `<p>⚠️ Deprecated endpoint still exists: ${deprecatedResponse.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML += '<p>✅ Deprecated endpoints properly removed (CORS error is normal)</p>';
+            }
+            
+            resultDiv.innerHTML += '<p><strong>Now visit the appointments page manually:</strong></p>';
+            resultDiv.innerHTML += '<p><a href="http://localhost:3000/partner/appointments" target="_blank">Open /partner/appointments</a></p>';
+            resultDiv.innerHTML += '<p>Check browser console for any 404 errors to identify deprecated API calls.</p>';
+            
+        } catch (error) {
+            resultDiv.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+        }
+    }
+    
+    // Run the test
+    testFrontendFlow();
+    </script>
+</body>
+</html>

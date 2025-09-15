@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { User, Settings, Shield, Download, Share2, Plus, Edit, Trash2, Eye, EyeOff, Camera, Upload } from 'lucide-react';
 import PrivacySettings from '@/components/profiles/PrivacySettings';
 import AccountSettings from '@/components/profiles/AccountSettings';
@@ -34,6 +34,7 @@ interface Dog {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,11 +55,19 @@ export default function ProfilePage() {
     });
   }, []);
 
+  // Check for settings parameter and auto-open modal
+  useEffect(() => {
+    const settingsParam = searchParams?.get('settings');
+    if (settingsParam === 'account' && userData) {
+      setShowAccountSettings(true);
+    }
+  }, [searchParams, userData]);
+
   const fetchUserData = async () => {
     if (fetchingUser) return; // Prevent duplicate requests
     setFetchingUser(true);
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch('/api/auth/working-user', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         }
@@ -69,9 +78,15 @@ export default function ProfilePage() {
         setUserData(data.user);
       } else if (response.status === 401) {
         router.push('/login');
+      } else if (response.status === 404) {
+        // User not found - this can happen with new registrations
+        // Redirect to onboarding
+        router.push('/onboarding');
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
+      // For any other error, redirect to onboarding as a safety measure
+      router.push('/onboarding');
     } finally {
       setFetchingUser(false);
     }
@@ -81,7 +96,7 @@ export default function ProfilePage() {
     if (fetchingDogs) return; // Prevent duplicate requests
     setFetchingDogs(true);
     try {
-      const response = await fetch('/api/dogs', {
+      const response = await fetch('/api/auth/working-dogs', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         }
@@ -151,7 +166,7 @@ export default function ProfilePage() {
       const imageUrl = uploadData.url;
 
       // Update user profile with new image URL
-      const updateResponse = await fetch('/api/user', {
+      const updateResponse = await fetch('/api/auth/working-user', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -197,12 +212,14 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-milk-white py-12">
+      <div className="min-h-screen bg-[#fef8e8] py-12">
         <div className="container mx-auto px-4">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-6"></div>
-            <div className="h-64 bg-gray-200 rounded mb-6"></div>
-            <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="text-center">
+            <div className="bg-white rounded-2xl shadow-lg border border-[#f5f5f5] p-8 max-w-md mx-auto">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
+              <h3 className="text-lg font-semibold text-[#171717] mb-2">Loading your profile...</h3>
+              <p className="text-[#525252]">Please wait while we fetch your data</p>
+            </div>
           </div>
         </div>
       </div>
@@ -211,10 +228,14 @@ export default function ProfilePage() {
 
   if (!userData) {
     return (
-      <div className="min-h-screen bg-milk-white py-12">
+      <div className="min-h-screen bg-[#fef8e8] py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <p className="text-gray-600">Failed to load profile data</p>
+            <div className="bg-white rounded-2xl shadow-lg border border-[#f5f5f5] p-8 max-w-md mx-auto">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3bbca8] mx-auto mb-4"></div>
+              <h3 className="text-lg font-semibold text-[#171717] mb-2">Setting up your profile...</h3>
+              <p className="text-[#525252]">This should only take a moment.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -222,7 +243,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 py-4 sm:py-6 lg:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 py-4 sm:py-6 lg:py-8">
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
         {/* Header */}
         <div className="mb-6 sm:mb-8 lg:mb-10">
@@ -415,6 +436,22 @@ export default function ProfilePage() {
                 >
                   <span className="text-gray-700 font-medium group-hover:text-gray-900 text-sm sm:text-base">Account Settings</span>
                   <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 group-hover:text-[#ffa602] transition-colors" />
+                </button>
+                <button
+                  onClick={() => router.push('/premium')}
+                  className="group w-full flex items-center justify-between p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl hover:from-blue-100 hover:to-purple-100 hover:shadow-md transition-all duration-200 border-2 border-blue-200 touch-target"
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="text-gray-700 font-medium group-hover:text-gray-900 text-sm sm:text-base">
+                      {userData.is_premium ? 'Manage Subscription' : 'Upgrade to Premium'}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {userData.is_premium ? 'View billing & usage' : 'Unlock all features + 14-day free trial'}
+                    </span>
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                    {userData.is_premium ? '✓ Premium' : '⭐ ₹99/mo'}
+                  </span>
                 </button>
               </div>
             </div>

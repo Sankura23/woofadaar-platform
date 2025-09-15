@@ -48,7 +48,7 @@ export default function AccountSettings({ userData, onClose, onUpdate }: Account
     setMessage(null);
 
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch('/api/auth/working-user', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -239,5 +239,21 @@
     "changePhoto": "Change Photo",
     "photoUploaded": "Photo uploaded successfully",
     "photoUploadError": "Failed to upload photo"
+  },
+  "language": {
+    "detection": "Language Detection",
+    "detectedLanguage": "Detected Language",
+    "suggestedLanguage": "Suggested Language",
+    "confidence": "Confidence",
+    "translationRecommended": "Translation Recommended",
+    "switchLanguage": "Switch Language",
+    "reDetect": "Re-detect",
+    "detectionDetails": "Detection Details",
+    "contentLanguage": "Content Language",
+    "mixed": "Mixed Languages",
+    "autoDetect": "Auto-detect Language",
+    "languagePreference": "Language Preference",
+    "translationNeeded": "Translation needed for better accessibility",
+    "lowConfidence": "Low detection confidence - manual review recommended"
   }
 }

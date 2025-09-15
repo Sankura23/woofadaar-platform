@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { MessageCircle, Send, ChevronUp } from 'lucide-react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import PointsDisplay from '@/components/gamification/PointsDisplay';
+import QuestionRecommendations from '@/components/community/QuestionRecommendations';
 
 interface Comment {
   id: string;
@@ -95,31 +96,72 @@ export default function CommunityPage() {
     try {
       setLoading(true);
       
-      // Fetch recent questions
-      const questionsResponse = await fetch('/api/community/questions?limit=5&sortBy=created_at&sortOrder=desc');
-      const questionsData = await questionsResponse.json();
-      
-      // Fetch recent forum posts
-      const postsResponse = await fetch('/api/community/forums?limit=5&sortBy=created_at&sortOrder=desc');
-      const postsData = await postsResponse.json();
-      
-      // Fetch forum categories
-      const categoriesResponse = await fetch('/api/community/forums/categories?isActive=true');
-      const categoriesData = await categoriesResponse.json();
+      // Use Promise.allSettled for better error handling and parallel requests
+      const [questionsResult, postsResult, categoriesResult] = await Promise.allSettled([
+        fetch('/api/community/questions?limit=5&sortBy=created_at&sortOrder=desc', {
+          signal: AbortSignal.timeout(10000) // 10 second timeout
+        }),
+        fetch('/api/community/forums?limit=5&sortBy=created_at&sortOrder=desc', {
+          signal: AbortSignal.timeout(10000)
+        }),
+        fetch('/api/community/forums/categories?isActive=true', {
+          signal: AbortSignal.timeout(10000)
+        })
+      ]);
 
-      if (questionsData.success) {
-        setQuestions(questionsData.data.questions);
+      // Process questions
+      if (questionsResult.status === 'fulfilled') {
+        try {
+          const questionsData = await questionsResult.value.json();
+          if (questionsData.success) {
+            setQuestions(questionsData.data.questions || []);
+          }
+        } catch (error) {
+          console.warn('Failed to parse questions data:', error);
+          setQuestions([]); // Set empty array as fallback
+        }
+      } else {
+        console.warn('Failed to fetch questions:', questionsResult.reason);
+        setQuestions([]);
       }
       
-      if (postsData.success) {
-        setForumPosts(postsData.data.posts);
+      // Process forum posts
+      if (postsResult.status === 'fulfilled') {
+        try {
+          const postsData = await postsResult.value.json();
+          if (postsData.success) {
+            setForumPosts(postsData.data.posts || []);
+          }
+        } catch (error) {
+          console.warn('Failed to parse posts data:', error);
+          setForumPosts([]);
+        }
+      } else {
+        console.warn('Failed to fetch posts:', postsResult.reason);
+        setForumPosts([]);
       }
       
-      if (categoriesData.success) {
-        setCategories(categoriesData.data.categories);
+      // Process categories
+      if (categoriesResult.status === 'fulfilled') {
+        try {
+          const categoriesData = await categoriesResult.value.json();
+          if (categoriesData.success) {
+            setCategories(categoriesData.data.categories || []);
+          }
+        } catch (error) {
+          console.warn('Failed to parse categories data:', error);
+          setCategories([]);
+        }
+      } else {
+        console.warn('Failed to fetch categories:', categoriesResult.reason);
+        setCategories([]);
       }
     } catch (error) {
       console.error('Error fetching community data:', error);
+      // Set fallback empty states
+      setQuestions([]);
+      setForumPosts([]);
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -224,7 +266,7 @@ export default function CommunityPage() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 min-h-screen py-8">
+      <div className="bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
@@ -256,7 +298,7 @@ export default function CommunityPage() {
 
   return (
     <ProtectedRoute>
-      <div className="bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 min-h-screen py-8">
+      <div className="bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 min-h-screen py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
@@ -265,7 +307,7 @@ export default function CommunityPage() {
           </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Link 
             href="/community/ask"
             className="bg-[#3bbca8] hover:bg-[#2daa96] text-white p-4 rounded-lg text-center transition-colors shadow-md hover:shadow-lg"
@@ -291,6 +333,15 @@ export default function CommunityPage() {
             <div className="text-2xl mb-2">👨‍⚕️</div>
             <div className="font-semibold">Find Experts</div>
             <div className="text-sm opacity-90">Connect with verified professionals</div>
+          </Link>
+          
+          <Link 
+            href="/community/success-stories"
+            className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-lg text-center transition-colors shadow-md hover:shadow-lg"
+          >
+            <div className="text-2xl mb-2">🏆</div>
+            <div className="font-semibold">Success Stories</div>
+            <div className="text-sm opacity-90">Celebrate inspiring journeys</div>
           </Link>
         </div>
 
@@ -631,6 +682,9 @@ export default function CommunityPage() {
           <div className="space-y-6">
             {/* Points Display */}
             <PointsDisplay showTransactions={true} />
+            
+            {/* Question Recommendations */}
+            <QuestionRecommendations />
             
             {/* Forum Categories */}
             <div className="bg-white rounded-lg p-6 shadow-sm">

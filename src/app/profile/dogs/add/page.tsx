@@ -9,12 +9,16 @@ export default function AddDogPage() {
 
   const handleSave = (success: boolean) => {
     if (success) {
-      router.push('/profile/dogs');
+      // Add a longer delay to ensure the API has fully processed the dog creation
+      setTimeout(() => {
+        // Use replace to avoid back button issues and add timestamp to force refresh
+        router.replace(`/profile/dogs?refresh=${Date.now()}&added=true`);
+      }, 1000);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-milk-white via-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#fef8e8] via-gray-50 to-gray-100 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6">

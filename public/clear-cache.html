@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Cache - Woofadaar</title>
+</head>
+<body>
+    <h1>Clearing Cache...</h1>
+    <p id="status">Working...</p>
+    
+    <script>
+        async function clearEverything() {
+            const status = document.getElementById('status');
+            
+            try {
+                // Unregister all service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('Unregistered service worker:', registration.scope);
+                    }
+                    status.innerHTML += '<br>✅ Service workers unregistered';
+                }
+                
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log('Deleted cache:', cacheName);
+                    }
+                    status.innerHTML += '<br>✅ All caches cleared';
+                }
+                
+                // Clear localStorage
+                localStorage.clear();
+                status.innerHTML += '<br>✅ LocalStorage cleared';
+                
+                // Clear sessionStorage
+                sessionStorage.clear();
+                status.innerHTML += '<br>✅ SessionStorage cleared';
+                
+                status.innerHTML += '<br><br>🎉 <strong>All cleared! Redirecting to login...</strong>';
+                
+                // Wait 2 seconds then redirect
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+                
+            } catch (error) {
+                status.innerHTML += '<br>❌ Error: ' + error.message;
+                console.error('Clear cache error:', error);
+            }
+        }
+        
+        // Start clearing immediately
+        clearEverything();
+    </script>
+</body>
+</html>
