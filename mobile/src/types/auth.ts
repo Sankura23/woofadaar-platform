@@ -17,6 +17,12 @@ export interface User {
   email: string;
   name: string;
   userType: 'pet-parent' | 'partner';
+  profileImage?: string;
+  profile_image_url?: string;
+  location?: string;
+  experience_level?: string;
+  preferred_language?: string;
+  phone?: string;
   createdAt: string;
 }
 
@@ -26,6 +32,15 @@ export interface Dog {
   breed: string;
   age: number;
   weight: number;
+  gender?: 'male' | 'female';
+  healthId?: string;
+  vaccination_status?: 'up_to_date' | 'pending' | 'not_started';
+  spayed_neutered?: boolean;
+  emergency_contact?: string;
+  emergency_phone?: string;
+  medical_notes?: string;
+  personality_traits?: string[];
+  location?: string;
   imageUrl?: string;
   userId: string;
   createdAt: string;

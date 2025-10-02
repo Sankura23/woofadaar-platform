@@ -8,20 +8,29 @@ import {
   SafeAreaView,
   Alert,
   ScrollView,
+  Image,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../App';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { useAuth } from '../../contexts/AuthContext';
+import { Colors, BorderRadius, Shadows, Spacing, Typography } from '../../theme/colors';
+
+const { width, height } = Dimensions.get('window');
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
+type LoginType = 'parent' | 'partner';
+
 export default function LoginScreen({ navigation }: LoginScreenProps) {
   const { login, isLoading } = useAuth();
-  const [email, setEmail] = useState('demo@woofadaar.com');
-  const [password, setPassword] = useState('demo123');
+  const [email, setEmail] = useState('e@c.com');
+  const [password, setPassword] = useState('Password');
+  const [loginType, setLoginType] = useState<LoginType>('parent');
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -31,11 +40,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
     try {
       await login(email, password);
-      Alert.alert(
-        'Success!', 
-        'Welcome back to Woofadaar!',
-        [{ text: 'OK', onPress: () => navigation.navigate('Dashboard') }]
-      );
+      // Navigation handled by App.tsx based on auth state
     } catch (error) {
       Alert.alert('Login Failed', 'Invalid email or password');
       console.error('Login error:', error);
@@ -44,39 +49,81 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back!</Text>
-          <Text style={styles.subtitle}>Login to your Woofadaar account</Text>
-        </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bounces={false}
+        >
+          {/* Logo Section */}
+          <View style={styles.logoSection}>
+            <Image
+              source={require('../../../assets/woofadaar-logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Login</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <View style={styles.inputContainer}>
+          {/* Login Form */}
+          <View style={styles.formContainer}>
+            {/* Tab Selector */}
+            <View style={styles.tabContainer}>
+              <TouchableOpacity
+                style={[styles.tab, loginType === 'parent' && styles.activeTab]}
+                onPress={() => setLoginType('parent')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.tabText, loginType === 'parent' && styles.activeTabText]}>
+                  Pet Parents
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.tab, loginType === 'partner' && styles.activeTab]}
+                onPress={() => setLoginType('partner')}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.tabText, loginType === 'partner' && styles.activeTabText]}>
+                  Partners
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.welcomeText}>
+              {loginType === 'parent'
+                ? 'Welcome back to your pet community'
+                : 'Welcome back, Partner!'}
+            </Text>
+
+            <View style={styles.inputGroup}>
               <Text style={styles.label}>Email</Text>
               <TextInput
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
-                placeholder="your@email.com"
+                placeholder="Enter your email"
+                placeholderTextColor={Colors.ui.textTertiary}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
+                autoCorrect={false}
               />
             </View>
 
-            <View style={styles.inputContainer}>
+            <View style={styles.inputGroup}>
               <Text style={styles.label}>Password</Text>
               <TextInput
                 style={styles.input}
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Enter your password"
+                placeholderTextColor={Colors.ui.textTertiary}
                 secureTextEntry
                 autoComplete="password"
+                autoCorrect={false}
               />
             </View>
 
@@ -84,31 +131,32 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
               style={[styles.loginButton, isLoading && styles.disabledButton]}
               onPress={handleLogin}
               disabled={isLoading}
+              activeOpacity={0.8}
             >
               <Text style={styles.loginButtonText}>
-                {isLoading ? 'Logging in...' : 'Login'}
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>OR</Text>
+              <View style={styles.dividerLine} />
+            </View>
 
             <View style={styles.linkContainer}>
               <Text style={styles.linkText}>Don't have an account? </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.link}>Register here</Text>
+                <Text style={styles.link}>Sign up</Text>
               </TouchableOpacity>
             </View>
-          </CardContent>
-        </Card>
-
-        <View style={styles.demoContainer}>
-          <Card>
-            <CardContent>
-              <Text style={styles.demoTitle}>🧪 Demo Credentials</Text>
-              <Text style={styles.demoText}>Email: demo@woofadaar.com</Text>
-              <Text style={styles.demoText}>Password: demo123</Text>
-            </CardContent>
-          </Card>
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -116,85 +164,136 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.ui.surface, // White background as per UI guideline
+  },
+  keyboardView: {
+    flex: 1,
   },
   scrollContainer: {
-    padding: 20,
+    flexGrow: 1,
+    paddingHorizontal: Spacing.mobile.margin,
+    paddingTop: 20, // Reduced top padding
   },
-  header: {
+  logoSection: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 8, // Reduced spacing between logo and form
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1f2937',
-    marginBottom: 8,
+  logo: {
+    width: width * 0.7,
+    height: 160,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
+  formContainer: {
+    backgroundColor: Colors.ui.surface,
+    borderRadius: BorderRadius.card,
+    padding: 24,
+    ...Shadows.card,
+    marginBottom: 40,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.ui.background,
+    borderRadius: BorderRadius.button,
+    padding: 4,
+    marginBottom: 24,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: BorderRadius.buttonSmall,
+    alignItems: 'center',
+  },
+  activeTab: {
+    backgroundColor: Colors.ui.surface,
+    ...Shadows.small,
+  },
+  tabText: {
+    fontSize: Typography.fontSizes.body1,
+    fontWeight: Typography.fontWeights.medium,
+    color: Colors.ui.textTertiary,
+  },
+  activeTabText: {
+    color: Colors.primary.mintTeal,
+    fontWeight: Typography.fontWeights.semiBold,
+  },
+  welcomeText: {
+    fontSize: Typography.fontSizes.body1,
+    color: Colors.ui.textSecondary,
+    fontWeight: Typography.fontWeights.medium,
     textAlign: 'center',
+    marginBottom: 24,
   },
-  inputContainer: {
+  inputGroup: {
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+    fontSize: Typography.fontSizes.body2,
+    fontWeight: Typography.fontWeights.semiBold,
+    color: Colors.ui.textPrimary,
     marginBottom: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
+    borderWidth: 1.5,
+    borderColor: Colors.ui.border,
+    borderRadius: BorderRadius.input,
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: '#ffffff',
+    paddingVertical: 14,
+    fontSize: Typography.fontSizes.body1,
+    backgroundColor: Colors.ui.surface,
+    color: Colors.ui.textPrimary,
   },
   loginButton: {
-    backgroundColor: '#2563eb',
+    backgroundColor: Colors.primary.mintTeal,
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: BorderRadius.button,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 8,
+    ...Shadows.small,
   },
   disabledButton: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: Colors.ui.textDisabled,
+    shadowOpacity: 0.1,
   },
   loginButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: Colors.ui.surface,
+    fontSize: Typography.fontSizes.body1,
+    fontWeight: Typography.fontWeights.bold,
+  },
+  forgotPassword: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  forgotPasswordText: {
+    color: Colors.primary.mintTeal,
+    fontSize: Typography.fontSizes.body2,
+    fontWeight: Typography.fontWeights.medium,
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.ui.divider,
+  },
+  dividerText: {
+    color: Colors.ui.textTertiary,
+    fontSize: Typography.fontSizes.caption,
+    fontWeight: Typography.fontWeights.medium,
+    marginHorizontal: 12,
   },
   linkContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
   },
   linkText: {
-    color: '#6b7280',
-    fontSize: 14,
+    color: Colors.ui.textSecondary,
+    fontSize: Typography.fontSizes.body1,
   },
   link: {
-    color: '#2563eb',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  demoContainer: {
-    marginTop: 30,
-  },
-  demoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#059669',
-    marginBottom: 8,
-  },
-  demoText: {
-    fontSize: 14,
-    color: '#4b5563',
-    fontFamily: 'monospace',
+    color: Colors.primary.mintTeal,
+    fontSize: Typography.fontSizes.body1,
+    fontWeight: Typography.fontWeights.semiBold,
   },
 });

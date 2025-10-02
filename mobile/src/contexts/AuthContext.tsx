@@ -35,12 +35,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const token = await AsyncStorage.getItem('authToken');
       if (token) {
-        const currentUser = await apiService.getCurrentUser();
-        setUser(currentUser);
+        try {
+          const currentUser = await apiService.getCurrentUser();
+          setUser(currentUser);
+        } catch (userError) {
+          // Token is likely invalid or expired, remove it silently
+          await AsyncStorage.removeItem('authToken');
+          setUser(null);
+        }
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
-      await AsyncStorage.removeItem('authToken');
+      // Only log if it's not a typical auth failure
+      console.log('Auth check error:', error);
     } finally {
       setIsLoading(false);
     }

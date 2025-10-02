@@ -53,7 +53,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ user });
+    // Transform the response to match mobile app expectations
+    const transformedUser = {
+      ...user,
+      userType: 'pet-parent' as const,
+      createdAt: user.created_at
+    };
+
+    return NextResponse.json({ user: transformedUser });
   } catch (error) {
     console.error('Database error:', error);
     return NextResponse.json(
@@ -158,9 +165,16 @@ export async function PUT(request: NextRequest) {
       }
     });
 
+    // Transform the response to match mobile app expectations
+    const transformedUpdatedUser = {
+      ...updatedUser,
+      userType: 'pet-parent' as const,
+      createdAt: updatedUser.created_at
+    };
+
     return NextResponse.json({
       message: 'Profile updated successfully',
-      user: updatedUser
+      user: transformedUpdatedUser
     });
 
   } catch (error) {

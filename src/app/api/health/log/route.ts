@@ -2,6 +2,29 @@ import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/db';
 
+// Helper functions to convert string values to database types
+function convertFoodAmountToNumber(amount: string): number {
+  const foodAmountMap: { [key: string]: number } = {
+    'None': 0,
+    'Very Little': 0.25,
+    'Half Portion': 0.5,
+    'Normal': 1.0,
+    'More than Usual': 1.5
+  };
+  return foodAmountMap[amount] || 1.0;
+}
+
+function convertWaterIntakeToNumber(intake: string): number {
+  const waterIntakeMap: { [key: string]: number } = {
+    'Very Low': 0.25,
+    'Low': 0.5,
+    'Normal': 1.0,
+    'High': 1.5,
+    'Very High': 2.0
+  };
+  return waterIntakeMap[intake] || 1.0;
+}
+
 // POST /api/health/log - Create or update health log entry
 export async function POST(request: NextRequest) {
   try {
@@ -85,7 +108,25 @@ export async function POST(request: NextRequest) {
 
       // Create or update health log entry in database
       const logDateParsed = new Date(log_date);
-      
+
+      // Convert string values to appropriate database types
+      const convertedData = {
+        food_amount: food_amount ? convertFoodAmountToNumber(food_amount) : null,
+        food_type,
+        water_intake: water_intake ? convertWaterIntakeToNumber(water_intake) : null,
+        exercise_duration,
+        exercise_type,
+        mood_score: mood_rating || mood_score,
+        bathroom_frequency,
+        weight_kg,
+        temperature_celsius,
+        notes,
+        photos: photos || [],
+        symptoms: symptoms || [],
+        energy_level,
+        appetite_level,
+      };
+
       const healthLog = await prisma.healthLog.upsert({
         where: {
           dog_id_log_date: {
@@ -94,40 +135,14 @@ export async function POST(request: NextRequest) {
           }
         },
         update: {
-          food_amount,
-          food_type,
-          water_intake,
-          exercise_duration,
-          exercise_type,
-          mood_score: mood_rating || mood_score, // Use mood_rating if available, fall back to mood_score
-          bathroom_frequency,
-          weight_kg,
-          temperature_celsius,
-          notes,
-          photos: photos || [],
-          symptoms: symptoms || [],
-          energy_level,
-          appetite_level,
+          ...convertedData,
           updated_at: new Date()
         },
         create: {
           user_id: userId,
           dog_id: dog_id,
           log_date: logDateParsed,
-          food_amount,
-          food_type,
-          water_intake,
-          exercise_duration,
-          exercise_type,
-          mood_score: mood_rating || mood_score,
-          bathroom_frequency,
-          weight_kg,
-          temperature_celsius,
-          notes,
-          photos: photos || [],
-          symptoms: symptoms || [],
-          energy_level,
-          appetite_level
+          ...convertedData
         },
         select: {
           id: true,

@@ -75,7 +75,7 @@ export default function DogsPage() {
 
   const fetchDogs = async () => {
     try {
-      const response = await fetch(`/api/auth/working-dogs?t=${Date.now()}&r=${Math.random()}`, {
+      const response = await fetch(`/api/dogs?t=${Date.now()}&r=${Math.random()}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`,
           'Cache-Control': 'no-cache, no-store, must-revalidate',

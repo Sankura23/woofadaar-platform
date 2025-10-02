@@ -45,7 +45,7 @@ export default function OnboardingPage() {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch('/api/auth/working-user', {
+      const response = await fetch('/api/user', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         }
@@ -66,7 +66,7 @@ export default function OnboardingPage() {
 
   const fetchDogs = async () => {
     try {
-      const response = await fetch(`/api/auth/working-dogs?t=${Date.now()}`, {
+      const response = await fetch(`/api/dogs?t=${Date.now()}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         },

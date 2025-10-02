@@ -4,18 +4,18 @@
     "slug": "woofadaar",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/woofadaar-icon.jpg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/woofadaar-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.woofadaar.app",
-      "buildNumber": "1",
+      "buildNumber": "3",
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to take photos of your dog.",
         "NSPhotoLibraryUsageDescription": "This app accesses your photo library to select dog photos.",
@@ -25,7 +25,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/woofadaar-icon.jpg",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -41,6 +41,20 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "packagerOpts": {
+      "config": "metro.config.js"
+    },
+    "developer": {
+      "tool": "expo-cli"
+    },
+    "metro": {
+      "resolver": {
+        "assetExts": ["bin", "txt", "jpg", "png", "json", "mp4", "ttf", "woff", "woff2"]
+      }
     }
   }
 }

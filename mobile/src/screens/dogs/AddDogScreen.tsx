@@ -10,22 +10,24 @@ import {
   Alert,
   Switch,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { Ionicons } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../App';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { DogFormData, INDIAN_DOG_BREEDS, PERSONALITY_TRAITS, INDIAN_CITIES } from '../../types/dog';
 import { apiService } from '../../services/api';
+import ModalPicker from '../../components/ModalPicker';
 
 type AddDogScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'AddDog'>;
 };
 
+
 export default function AddDogScreen({ navigation }: AddDogScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<DogFormData>({
     name: '',
-    breed: 'Labrador Retriever',
+    breed: '',
     age_months: 12,
     weight_kg: 10,
     gender: 'male',
@@ -68,7 +70,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
         age: Math.floor(formData.age_months / 12), // Convert months to years for compatibility
         weight: formData.weight_kg,
       };
-      
+
       await apiService.createDog(dogData);
       Alert.alert(
         'Success!',
@@ -93,7 +95,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
           <CardContent>
             {/* Basic Information */}
             <Text style={styles.sectionTitle}>Basic Information</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Name *</Text>
               <TextInput
@@ -101,23 +103,19 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
                 value={formData.name}
                 onChangeText={(value) => updateFormData('name', value)}
                 placeholder="Your dog's name"
+                placeholderTextColor="#9ca3af"
                 autoCapitalize="words"
               />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Breed *</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.breed}
-                  onValueChange={(value) => updateFormData('breed', value)}
-                  style={styles.picker}
-                >
-                  {INDIAN_DOG_BREEDS.map((breed) => (
-                    <Picker.Item key={breed} label={breed} value={breed} />
-                  ))}
-                </Picker>
-              </View>
+              <ModalPicker
+                selectedValue={formData.breed}
+                items={INDIAN_DOG_BREEDS.map(breed => ({ label: breed, value: breed }))}
+                onValueChange={(value) => updateFormData('breed', value)}
+                placeholder="Select breed"
+              />
             </View>
 
             <View style={styles.row}>
@@ -128,6 +126,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
                   value={formData.age_months.toString()}
                   onChangeText={(value) => updateFormData('age_months', parseInt(value) || 0)}
                   placeholder="12"
+                  placeholderTextColor="#9ca3af"
                   keyboardType="numeric"
                 />
               </View>
@@ -139,6 +138,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
                   value={formData.weight_kg.toString()}
                   onChangeText={(value) => updateFormData('weight_kg', parseFloat(value) || 0)}
                   placeholder="10"
+                  placeholderTextColor="#9ca3af"
                   keyboardType="numeric"
                 />
               </View>
@@ -146,49 +146,42 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Gender</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.gender}
-                  onValueChange={(value) => updateFormData('gender', value)}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Male" value="male" />
-                  <Picker.Item label="Female" value="female" />
-                </Picker>
-              </View>
+              <ModalPicker
+                selectedValue={formData.gender}
+                items={[
+                  { label: 'Male', value: 'male' },
+                  { label: 'Female', value: 'female' }
+                ]}
+                onValueChange={(value) => updateFormData('gender', value)}
+                placeholder="Select gender"
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Location</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.location}
-                  onValueChange={(value) => updateFormData('location', value)}
-                  style={styles.picker}
-                >
-                  {INDIAN_CITIES.map((city) => (
-                    <Picker.Item key={city} label={city} value={city} />
-                  ))}
-                </Picker>
-              </View>
+              <ModalPicker
+                selectedValue={formData.location}
+                items={INDIAN_CITIES.map(city => ({ label: city, value: city }))}
+                onValueChange={(value) => updateFormData('location', value)}
+                placeholder="Select location"
+              />
             </View>
 
             {/* Health Information */}
             <Text style={styles.sectionTitle}>Health Information</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Vaccination Status</Text>
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.vaccination_status}
-                  onValueChange={(value) => updateFormData('vaccination_status', value)}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Up to Date" value="up_to_date" />
-                  <Picker.Item label="Pending" value="pending" />
-                  <Picker.Item label="Not Started" value="not_started" />
-                </Picker>
-              </View>
+              <ModalPicker
+                selectedValue={formData.vaccination_status}
+                items={[
+                  { label: 'Up to Date', value: 'up_to_date' },
+                  { label: 'Pending', value: 'pending' },
+                  { label: 'Not Started', value: 'not_started' }
+                ]}
+                onValueChange={(value) => updateFormData('vaccination_status', value)}
+                placeholder="Select status"
+              />
             </View>
 
             <View style={styles.switchContainer}>
@@ -196,8 +189,8 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
               <Switch
                 value={formData.spayed_neutered}
                 onValueChange={(value) => updateFormData('spayed_neutered', value)}
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={formData.spayed_neutered ? '#f5dd4b' : '#f4f3f4'}
+                trackColor={{ false: '#d1d5db', true: '#3bbca8' }}
+                thumbColor={formData.spayed_neutered ? '#ffffff' : '#f4f3f4'}
               />
             </View>
 
@@ -208,6 +201,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
                 value={formData.medical_notes}
                 onChangeText={(value) => updateFormData('medical_notes', value)}
                 placeholder="Any medical conditions, allergies, or notes..."
+                placeholderTextColor="#9ca3af"
                 multiline
                 numberOfLines={3}
               />
@@ -215,7 +209,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
 
             {/* Emergency Contact */}
             <Text style={styles.sectionTitle}>Emergency Contact</Text>
-            
+
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Emergency Contact Name</Text>
               <TextInput
@@ -223,6 +217,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
                 value={formData.emergency_contact}
                 onChangeText={(value) => updateFormData('emergency_contact', value)}
                 placeholder="Contact person name"
+                placeholderTextColor="#9ca3af"
                 autoCapitalize="words"
               />
             </View>
@@ -234,6 +229,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
                 value={formData.emergency_phone}
                 onChangeText={(value) => updateFormData('emergency_phone', value)}
                 placeholder="+91 XXXXX XXXXX"
+                placeholderTextColor="#9ca3af"
                 keyboardType="phone-pad"
               />
             </View>
@@ -241,7 +237,7 @@ export default function AddDogScreen({ navigation }: AddDogScreenProps) {
             {/* Personality Traits */}
             <Text style={styles.sectionTitle}>Personality Traits</Text>
             <Text style={styles.subtitle}>Select all that apply:</Text>
-            
+
             <View style={styles.traitsContainer}>
               {PERSONALITY_TRAITS.map((trait) => (
                 <TouchableOpacity
@@ -285,6 +281,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 20,
+    paddingBottom: 100,
   },
   sectionTitle: {
     fontSize: 18,
@@ -323,19 +320,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 16,
     backgroundColor: '#ffffff',
+    color: '#374151',
   },
   textArea: {
     height: 80,
     textAlignVertical: 'top',
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 8,
-    backgroundColor: '#ffffff',
-  },
-  picker: {
-    height: 50,
   },
   switchContainer: {
     flexDirection: 'row',
@@ -358,8 +347,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   traitButtonSelected: {
-    backgroundColor: '#2563eb',
-    borderColor: '#2563eb',
+    backgroundColor: '#3bbca8',
+    borderColor: '#3bbca8',
   },
   traitText: {
     fontSize: 14,
@@ -369,11 +358,16 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   submitButton: {
-    backgroundColor: '#10b981',
+    backgroundColor: '#3bbca8',
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
     marginTop: 20,
+    shadowColor: '#3bbca8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   disabledButton: {
     backgroundColor: '#9ca3af',

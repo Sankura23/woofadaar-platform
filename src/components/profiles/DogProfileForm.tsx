@@ -108,7 +108,7 @@ export default function DogProfileForm({ dogId, onSave }: {
   const loadDogData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/auth/working-dogs/${dogId}`, {
+      const response = await fetch(`/api/dogs/${dogId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         }
@@ -374,7 +374,7 @@ export default function DogProfileForm({ dogId, onSave }: {
         birthday: formData.birthday || undefined
       };
 
-      const url = dogId ? `/api/auth/working-dogs/${dogId}` : '/api/auth/working-dogs';
+      const url = dogId ? `/api/dogs/${dogId}` : '/api/dogs';
       const method = dogId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

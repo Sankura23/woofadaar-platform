@@ -25,6 +25,27 @@
       "created_at": "2025-08-19T08:20:40.333Z",
       "birthday": "",
       "updated_at": "2025-08-20T10:06:52.987Z"
+    },
+    {
+      "id": "dog-1758992140156-5ghq6ms7d",
+      "user_id": "user-1755591601326-jjhicbky8",
+      "name": "Poppy",
+      "breed": "Poodle",
+      "age_months": 15,
+      "weight_kg": 5,
+      "gender": "male",
+      "photo_url": "https://res.cloudinary.com/dzsrrmjfa/image/upload/v1758992133/woofadaar/htqmr0rmpxdxtaf7fqve.jpg",
+      "health_id": "WOFPOPOO135140",
+      "vaccination_status": "up_to_date",
+      "spayed_neutered": false,
+      "microchip_id": null,
+      "emergency_contact": "Matt",
+      "emergency_phone": "98345102398",
+      "personality_traits": [],
+      "location": "Pune, Maharashtra",
+      "medical_notes": null,
+      "created_at": "2025-09-27T16:55:40.156Z",
+      "updated_at": "2025-09-27T16:55:40.156Z"
     }
   ],
   "user-1755596390615-3lnqgw9qb": [],

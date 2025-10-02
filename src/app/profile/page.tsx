@@ -67,7 +67,7 @@ export default function ProfilePage() {
     if (fetchingUser) return; // Prevent duplicate requests
     setFetchingUser(true);
     try {
-      const response = await fetch('/api/auth/working-user', {
+      const response = await fetch('/api/user', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         }
@@ -96,7 +96,7 @@ export default function ProfilePage() {
     if (fetchingDogs) return; // Prevent duplicate requests
     setFetchingDogs(true);
     try {
-      const response = await fetch('/api/auth/working-dogs', {
+      const response = await fetch('/api/dogs', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('woofadaar_token')}`
         }
@@ -166,7 +166,7 @@ export default function ProfilePage() {
       const imageUrl = uploadData.url;
 
       // Update user profile with new image URL
-      const updateResponse = await fetch('/api/auth/working-user', {
+      const updateResponse = await fetch('/api/user', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
