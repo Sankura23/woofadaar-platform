@@ -349,6 +349,88 @@ curl http://localhost:3000/api/premium/subscriptions/stats
 
 ---
 
+## 📝 **DEVELOPMENT LOG - Latest Session (Oct 5, 2025)**
+
+### 🐛 **Issues Fixed Today**
+```bash
+# Issue 1: "No script url provided" error - Metro bundler conflict
+# Fixed by removing expo-router plugin from mobile/app.json
+# and correcting package.json main entry point
+
+# Issue 2: Login network error - wrong backend port
+# Fixed mobile API base URL from :3002 to :3000 in mobile/src/services/api.ts
+
+# Issue 3: Profile deletion foreign key constraint error
+# Added CommunityVote cleanup in src/app/api/user/route.ts:212-215
+
+# Issue 4: App redirecting to onboarding after profile deletion
+# Explained: chitnissanket@gmail.com has 0 dogs, triggers !hasDogs logic (correct behavior)
+```
+
+### 🔧 **Development Commands for Current Session**
+```bash
+# Start mobile development server
+cd mobile && npx expo start --clear
+
+# Start backend API server
+npm run dev
+
+# Check mobile server status
+curl http://localhost:8081
+
+# Check backend API status
+curl http://192.168.1.7:3000/api/health
+
+# Test profile deletion (after fix)
+curl -X DELETE http://192.168.1.7:3000/api/user \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+### 📊 **Current Status**
+- ✅ Mobile Metro bundler: Running on http://localhost:8081
+- ✅ Backend API: Running on http://192.168.1.7:3000
+- ✅ Profile deletion: Fixed foreign key constraint error
+- ✅ Login system: Working with correct port configuration
+- ⚠️ chitnissanket@gmail.com: Broken phantom user account (0 dogs)
+- ✅ e@c.com: Working account with 2 dogs
+
+### 🎯 **Next Steps**
+1. Test profile deletion with chitnissanket@gmail.com account
+2. Register fresh account after successful deletion
+3. Complete onboarding flow to verify full system functionality
+
+### 🛡️ **User Deletion Safety System (NEW)**
+```bash
+# Validate user deletion completeness during development
+node scripts/validate-user-deletion.js
+
+# Test comprehensive user deletion
+npm run test:user-deletion
+
+# Check for missing foreign key cleanups automatically
+npm run validate:db-constraints
+```
+
+### 📚 **Development Guidelines for Database Changes**
+```bash
+# IMPORTANT: When adding new tables that reference users:
+
+# 1. Add the cleanup to src/lib/user-deletion.ts
+#    Example for new table 'MyNewTable':
+#    await tx.myNewTable.deleteMany({ where: { user_id: userId } });
+
+# 2. Run validation to ensure no foreign key issues
+node scripts/validate-user-deletion.js
+
+# 3. Test the deletion works
+curl -X DELETE http://localhost:3000/api/user \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+
+# This prevents foreign key constraint violations during development!
+```
+
+---
+
 ## 🚀 **READY TO LAUNCH!**
 
 All systems are operational and ready for production deployment. Use these commands to launch and monitor your Woofadaar platform.

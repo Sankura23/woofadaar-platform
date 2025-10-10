@@ -42,9 +42,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router"
-    ],
+    "plugins": [],
+    "scheme": "woofadaar",
+    "updates": {
+      "enabled": false
+    },
     "packagerOpts": {
       "config": "metro.config.js"
     },

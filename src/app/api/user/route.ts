@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/db';
+import { deleteUserCompletely } from '../../../lib/user-deletion';
 
 interface DecodedToken {
   userId: string;
@@ -184,4 +185,29 @@ export async function PUT(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}
+
+// DELETE /api/user - Delete current user profile and all associated data
+export async function DELETE(request: NextRequest) {
+  const userId = await verifyToken(request);
+
+  if (!userId) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    // Use comprehensive deletion function that handles all foreign key constraints
+    const result = await deleteUserCompletely(userId);
+
+    return NextResponse.json({
+      message: result.message
+    });
+
+  } catch (error) {
+    console.error('Database error during profile deletion:', error);
+    return NextResponse.json(
+      { message: 'Failed to delete profile. Please try again.' },
+      { status: 500 }
+    );
+  }
+}

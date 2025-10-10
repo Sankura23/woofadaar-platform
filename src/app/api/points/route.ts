@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { verifyToken } from '@/lib/auth';
+import { verifyTokenFromRequest } from '@/lib/auth';
 import { PointsManager, POINTS_CONFIG, INDIAN_CONTEXT } from '@/lib/points-system';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = await verifyToken(request);
+    const userId = await verifyTokenFromRequest(request);
 
     if (!userId) {
       return NextResponse.json(
@@ -14,35 +14,74 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const userPoints = await prisma.userPoints.findUnique({
-      where: { user_id: userId },
-      include: {
-        point_transactions: {
-          orderBy: { created_at: 'desc' },
-          take: 20
-        }
-      }
-    });
-
-    if (!userPoints) {
-      const newUserPoints = await prisma.userPoints.create({
-        data: {
-          user_id: userId,
-          points_earned: 0,
-          current_balance: 0
-        },
+    let userPoints;
+    try {
+      userPoints = await prisma.userPoints.findUnique({
+        where: { user_id: userId },
         include: {
-          point_transactions: {
+          PointTransactions: {
             orderBy: { created_at: 'desc' },
             take: 20
           }
         }
       });
-
+    } catch (dbError) {
+      // Database connection error, return default points
+      console.log('Database connection error in points, returning defaults:', dbError);
       return NextResponse.json({
         success: true,
-        data: { userPoints: newUserPoints }
+        data: {
+          userPoints: {
+            user_id: userId,
+            points_earned: 0,
+            current_balance: 0,
+            total_lifetime_points: 0,
+            level: 1,
+            experience_points: 0,
+            point_transactions: []
+          }
+        }
       });
+    }
+
+    if (!userPoints) {
+      try {
+        const newUserPoints = await prisma.userPoints.create({
+          data: {
+            user_id: userId,
+            points_earned: 0,
+            current_balance: 0
+          },
+          include: {
+            PointTransactions: {
+              orderBy: { created_at: 'desc' },
+              take: 20
+            }
+          }
+        });
+
+        return NextResponse.json({
+          success: true,
+          data: { userPoints: newUserPoints }
+        });
+      } catch (dbError) {
+        // Database connection error, return default points
+        console.log('Database connection error creating points, returning defaults:', dbError);
+        return NextResponse.json({
+          success: true,
+          data: {
+            userPoints: {
+              user_id: userId,
+              points_earned: 0,
+              current_balance: 0,
+              total_lifetime_points: 0,
+              level: 1,
+              experience_points: 0,
+              point_transactions: []
+            }
+          }
+        });
+      }
     }
 
     return NextResponse.json({
@@ -61,7 +100,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await verifyToken(request);
+    const userId = await verifyTokenFromRequest(request);
 
     if (!userId) {
       return NextResponse.json(

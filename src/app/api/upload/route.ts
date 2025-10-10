@@ -68,14 +68,16 @@ export async function POST(request: NextRequest) {
       const base64 = buffer.toString('base64');
       const dataURI = `data:${file.type};base64,${base64}`;
 
-      // Upload to Cloudinary
+      // Upload to Cloudinary with timeout and retry
       const uploadResponse = await cloudinary.uploader.upload(dataURI, {
         folder: 'woofadaar',
         transformation: [
           { width: 500, height: 500, crop: 'fill' },
           { quality: 'auto' }
         ],
-        resource_type: 'image'
+        resource_type: 'image',
+        timeout: 60000, // 60 seconds timeout
+        chunk_size: 6000000 // 6MB chunks for large files
       });
 
       return NextResponse.json({
@@ -95,14 +97,16 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Upload to Cloudinary with specified transformations
+      // Upload to Cloudinary with specified transformations and timeout
       const uploadResponse = await cloudinary.uploader.upload(image, {
         folder: 'woofadaar',
         transformation: [
           { width: 500, height: 500, crop: 'fill' },
           { quality: 'auto' }
         ],
-        resource_type: 'image'
+        resource_type: 'image',
+        timeout: 60000, // 60 seconds timeout
+        chunk_size: 6000000 // 6MB chunks for large files
       });
 
       return NextResponse.json({

@@ -24,6 +24,24 @@ export function verifyToken(token: string): JWTPayload | null {
   }
 }
 
+export async function verifyTokenFromRequest(request: NextRequest): Promise<string | null> {
+  try {
+    const token = getTokenFromRequest(request);
+    if (!token) {
+      return null;
+    }
+
+    const payload = verifyToken(token);
+    if (!payload) {
+      return null;
+    }
+
+    return isPetParent(payload) ? payload.userId : null;
+  } catch (error) {
+    return null;
+  }
+}
+
 export function getTokenFromRequest(request: NextRequest): string | null {
   // First try Bearer token from Authorization header (localStorage)
   const authHeader = request.headers.get('authorization')

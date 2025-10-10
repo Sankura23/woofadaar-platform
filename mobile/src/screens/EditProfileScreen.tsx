@@ -50,13 +50,39 @@ export default function EditProfileScreen({ navigation }: any) {
   }, [user]);
 
   const pickImage = async () => {
+    const options = [
+      { text: 'Camera', onPress: () => launchCamera() },
+      { text: 'Gallery', onPress: () => launchGallery() },
+    ];
+
+    // Add remove option if user has a photo
+    if (selectedImage || formData.profile_image_url) {
+      options.push({ text: 'Remove Photo', onPress: () => removePhoto() });
+    }
+
+    options.push({ text: 'Cancel', style: 'cancel' });
+
     Alert.alert(
-      'Select Photo',
-      'Choose how you want to select a photo',
+      'Profile Photo',
+      'Choose an option',
+      options
+    );
+  };
+
+  const removePhoto = () => {
+    Alert.alert(
+      'Remove Photo',
+      'Are you sure you want to remove your profile photo?',
       [
-        { text: 'Camera', onPress: () => launchCamera() },
-        { text: 'Gallery', onPress: () => launchGallery() },
         { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            setSelectedImage(null);
+            setFormData(prev => ({ ...prev, profile_image_url: '' }));
+          }
+        }
       ]
     );
   };
@@ -72,7 +98,7 @@ export default function EditProfileScreen({ navigation }: any) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.7,
+      quality: 0.5,
     });
 
     if (!result.canceled && result.assets[0]) {
@@ -92,7 +118,7 @@ export default function EditProfileScreen({ navigation }: any) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.7,
+      quality: 0.5,
     });
 
     if (!result.canceled && result.assets[0]) {
@@ -111,7 +137,14 @@ export default function EditProfileScreen({ navigation }: any) {
       Alert.alert('Success', 'Photo uploaded successfully!');
     } catch (error: any) {
       console.error('Image upload error:', error);
-      Alert.alert('Error', error?.message || 'Failed to upload image. Please try again.');
+      let errorMessage = 'Failed to upload image. Please try again.';
+
+      if (error?.message?.toLowerCase().includes('timeout') ||
+          error?.message?.toLowerCase().includes('network')) {
+        errorMessage = 'Upload timed out. Please check your internet connection and try again.';
+      }
+
+      Alert.alert('Upload Failed', errorMessage);
       setSelectedImage(null);
     } finally {
       setImageLoading(false);

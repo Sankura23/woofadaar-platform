@@ -7,14 +7,18 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email, password, location, experience_level } = await request.json()
 
-    // Check if user exists (with error handling)
+    // Check if user exists
     let existingUser = null;
     try {
       existingUser = await prisma.user.findUnique({
         where: { email }
       })
     } catch (dbError) {
-      console.warn('Database error during user check, proceeding with demo registration:', dbError);
+      console.error('Database error during user check:', dbError);
+      return NextResponse.json(
+        { message: 'Registration failed due to database error. Please try again.' },
+        { status: 500 }
+      );
     }
 
     if (existingUser) {
@@ -60,23 +64,16 @@ export async function POST(request: NextRequest) {
         }
       });
     } catch (dbError) {
-      console.warn('Database error during user creation, using demo registration:', dbError);
-      // Create a demo user object for development
-      user = {
-        id: userId,
-        name,
-        email,
-        password_hash: hashedPassword,
-        location: location || null,
-        experience_level: experience_level || 'beginner',
-        created_at: new Date(),
-        updated_at: new Date()
-      };
+      console.error('Database error during user creation:', dbError);
+      return NextResponse.json(
+        { message: 'Registration failed due to database error. Please try again.' },
+        { status: 500 }
+      );
     }
 
     // Generate JWT
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      { userId: user.id, email: user.email, userType: 'pet-parent' },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     )

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, verifyTokenFromRequest } from '@/lib/auth';
 import { categorizeQuestion } from '@/lib/ai-categorization';
 import { processQuestionForExperts } from '@/lib/expert-notification-service';
 import { moderateContent } from '@/lib/moderation-service';
@@ -18,9 +18,12 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'created_at';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
 
+    // Get current user ID for user-specific data (optional for public viewing)
+    const currentUserId = await verifyTokenFromRequest(request);
+
     // Build where clause
     const where: any = { status };
-    
+
     if (category) where.category = category;
     if (tags && tags.length > 0) where.tags = { hasSome: tags };
     if (isResolved !== null) where.is_resolved = isResolved === 'true';
@@ -115,7 +118,16 @@ export async function GET(request: NextRequest) {
             comments: true,
             // views: true  // This field needs to be added to schema
           }
-        }
+        },
+        // Include vote information if user is authenticated
+        ...(currentUserId && {
+          votes: {
+            where: { user_id: currentUserId },
+            select: {
+              vote_type: true
+            }
+          }
+        })
       },
       orderBy,
       take: limit,
@@ -124,10 +136,25 @@ export async function GET(request: NextRequest) {
 
     const total = await prisma.communityQuestion.count({ where });
 
+    // Process questions to add user-specific vote information
+    const processedQuestions = questions.map((question: any) => {
+      const userVote = currentUserId && question.votes && question.votes.length > 0
+        ? question.votes[0].vote_type
+        : null;
+
+      // Remove the votes array from the response and add userVote field
+      const { votes, ...questionWithoutVotes } = question;
+
+      return {
+        ...questionWithoutVotes,
+        userVote // 'up', 'down', or null
+      };
+    });
+
     return NextResponse.json({
       success: true,
       data: {
-        questions,
+        questions: processedQuestions,
         pagination: {
           total,
           limit,

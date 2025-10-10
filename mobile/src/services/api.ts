@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User, Dog, HealthLog, Question, Answer } from '../types/auth';
 
-const BASE_URL = 'http://192.168.1.7:3001'; // Your local development server
+const BASE_URL = 'http://192.168.1.7:3000'; // Your local development server
 
 class ApiService {
   public BASE_URL = BASE_URL;
@@ -92,27 +92,62 @@ class ApiService {
   }
 
   async uploadProfileImage(imageUri: string): Promise<string> {
+    console.log('=== UPLOAD DEBUG START ===');
+    console.log('Image URI:', imageUri);
+    console.log('Image URI type:', typeof imageUri);
+
     const formData = new FormData();
-    formData.append('file', {
+    console.log('FormData created:', typeof formData);
+
+    // For React Native, we need to ensure proper file object format
+    // Detect file type from URI extension or default to jpeg
+    let fileType = 'image/jpeg';
+    let fileName = 'profile.jpg';
+
+    if (imageUri.toLowerCase().includes('.png')) {
+      fileType = 'image/png';
+      fileName = 'profile.png';
+    } else if (imageUri.toLowerCase().includes('.jpg') || imageUri.toLowerCase().includes('.jpeg')) {
+      fileType = 'image/jpeg';
+      fileName = 'profile.jpg';
+    }
+
+    const fileObject = {
       uri: imageUri,
-      type: 'image/jpeg',
-      name: 'profile.jpg',
-    } as any);
+      type: fileType,
+      name: fileName,
+    };
+    console.log('File object:', fileObject);
+
+    formData.append('file', fileObject as any);
+    console.log('File appended to FormData');
 
     const token = await this.getAuthToken();
-    console.log('Upload token:', token ? 'exists' : 'missing');
+    console.log('Upload token exists:', !!token);
+    console.log('Upload token length:', token?.length || 0);
 
     const url = `${BASE_URL}/api/upload`;
     console.log('Upload URL:', url);
 
     try {
+      console.log('Making fetch request...');
+
+      // Add timeout to prevent upload hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
+          // DO NOT set Content-Type for FormData in React Native - let fetch handle it
         },
         body: formData,
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+      console.log('Fetch request completed');
 
       console.log('Upload response status:', response.status);
 
@@ -120,20 +155,61 @@ class ApiService {
       console.log('Upload response:', responseText);
 
       if (!response.ok) {
-        throw new Error(`Upload failed: ${response.status} - ${responseText}`);
+        let errorMessage = 'Upload failed';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          // Response isn't JSON, use status text
+        }
+
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please try logging in again.');
+        } else if (response.status === 413) {
+          throw new Error('Image file is too large. Please select a smaller image (max 5MB).');
+        } else if (response.status === 400) {
+          throw new Error(errorMessage.includes('file') ? 'Invalid image format. Please select a JPEG or PNG image.' : errorMessage);
+        } else if (response.status >= 500) {
+          throw new Error('Server error occurred. Please try again in a few moments.');
+        } else {
+          throw new Error(`Upload failed: ${errorMessage}`);
+        }
       }
 
       const result = JSON.parse(responseText);
       const imageUrl = result.secure_url || result.url || result.imageUrl;
 
       if (!imageUrl) {
-        throw new Error('No image URL returned from server');
+        throw new Error('Upload completed but no image URL was returned. Please try again.');
       }
 
+      console.log('=== UPLOAD DEBUG SUCCESS ===');
       return imageUrl;
-    } catch (error) {
+    } catch (error: any) {
+      console.log('=== UPLOAD DEBUG ERROR ===');
       console.error('Image upload error:', error);
-      throw error;
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
+      console.error('Error name:', error?.name);
+      console.log('=== UPLOAD DEBUG END ===');
+
+      // Provide user-friendly error messages for common issues
+      if (error.name === 'AbortError') {
+        throw new Error('Upload timed out. Please try again with a smaller image or check your internet connection.');
+      } else if (error.message.includes('Network request failed')) {
+        throw new Error('Network error. Please check your internet connection and try again.');
+      } else if (error.message.includes('timeout')) {
+        throw new Error('Upload timed out. Please try again with a smaller image.');
+      } else if (error.message.includes('Authentication failed') ||
+                 error.message.includes('Invalid image format') ||
+                 error.message.includes('too large') ||
+                 error.message.includes('Server error')) {
+        // Re-throw our custom user-friendly errors
+        throw error;
+      } else {
+        // Generic fallback for unexpected errors
+        throw new Error('Photo upload failed. Please try again or select a different image.');
+      }
     }
   }
 
@@ -164,6 +240,10 @@ class ApiService {
         return response.user || response;
       }
     }
+  }
+
+  async deleteUserProfile(): Promise<void> {
+    await this.request<void>('/user', { method: 'DELETE' });
   }
 
   // Dogs methods
@@ -245,53 +325,33 @@ class ApiService {
     });
   }
 
-  // Community methods - using AsyncStorage to persist questions and replies
+  // Community methods - using backend API for user-specific vote data
   async getQuestions(): Promise<any[]> {
     try {
-      // First, check if we have stored questions with user modifications (upvotes, etc.)
-      const storedQuestions = await AsyncStorage.getItem('woofadaar_questions');
-      const storedUpvotes = await AsyncStorage.getItem('woofadaar_upvotes'); // Track upvotes separately
-      const upvotes = storedUpvotes ? JSON.parse(storedUpvotes) : {};
-
-      // Try to get fresh data from API
+      // Try to get fresh data from API (now includes user-specific vote data)
       let apiQuestions = [];
       try {
         const response = await this.request<any>('/community/questions');
         apiQuestions = response.data?.questions || [];
       } catch (apiError) {
         console.log('API call failed, using stored data');
-      }
-
-      // If we have API data, merge it with stored data to preserve user interactions
-      let questions = [];
-      if (apiQuestions.length > 0) {
-        // Use API data as base, but preserve user interactions from storage
-        const storedQuestionsMap = storedQuestions ?
-          JSON.parse(storedQuestions).reduce((map: any, q: any) => {
-            map[q.id] = q;
-            return map;
-          }, {}) : {};
-
-        questions = apiQuestions.map((apiQuestion: any) => {
-          const storedQuestion = storedQuestionsMap[apiQuestion.id];
-
-          // Preserve user interactions from stored data
-          return {
-            ...apiQuestion,
-            upvotes: storedQuestion?.upvotes !== undefined ? storedQuestion.upvotes : apiQuestion.upvotes || 0,
-            view_count: storedQuestion?.view_count !== undefined ? storedQuestion.view_count : apiQuestion.view_count || 0,
-            hasUpvoted: upvotes[apiQuestion.id] || false,
-            _count: apiQuestion._count || { answers: 0 },
-            answer_count: 0 // Will be updated below
-          };
-        });
-      } else if (storedQuestions) {
-        // No API data, use stored questions
-        questions = JSON.parse(storedQuestions);
-      } else {
-        // No data at all
+        // Fall back to stored questions if API fails
+        const storedQuestions = await AsyncStorage.getItem('woofadaar_questions');
+        if (storedQuestions) {
+          return JSON.parse(storedQuestions);
+        }
         return [];
       }
+
+      // Process API response to maintain backward compatibility with frontend
+      let questions = apiQuestions.map((apiQuestion: any) => {
+        return {
+          ...apiQuestion,
+          hasUpvoted: apiQuestion.userVote === 'up',
+          _count: apiQuestion._count || { answers: 0 },
+          answer_count: 0 // Will be updated below
+        };
+      });
 
       // Update answer counts from actual reply storage
       for (const question of questions) {
@@ -310,12 +370,9 @@ class ApiService {
           // Keep existing count if we can't get replies
           question.answer_count = question._count?.answers || 0;
         }
-
-        // Apply stored upvote state
-        question.hasUpvoted = upvotes[question.id] || false;
       }
 
-      // Save updated questions back to storage
+      // Save updated questions back to storage for offline use
       await AsyncStorage.setItem('woofadaar_questions', JSON.stringify(questions));
 
       return questions;
@@ -357,6 +414,7 @@ class ApiService {
           id: '1',
           name: 'Sakshi Gaikwad',
           profile_image_url: undefined,
+          is_verified: false,
         },
         _count: { answers: 0 },
         answer_count: 0,
@@ -381,28 +439,33 @@ class ApiService {
     return this.request<Question>(`/community/questions/${questionId}`);
   }
 
-  async getQuestionReplies(questionId: string): Promise<any[]> {
+  async getQuestionReplies(questionId: string, forceRefresh: boolean = false): Promise<any[]> {
     try {
-      // Try to get from AsyncStorage first
-      const stored = await AsyncStorage.getItem(`woofadaar_replies_${questionId}`);
-      if (stored) {
-        return JSON.parse(stored);
+      // If force refresh is requested, skip cache and go directly to API
+      if (!forceRefresh) {
+        // Try to get from AsyncStorage first
+        const stored = await AsyncStorage.getItem(`woofadaar_replies_${questionId}`);
+        if (stored) {
+          return JSON.parse(stored);
+        }
       }
 
       // Try API
       const response = await this.request<any>(`/community/questions/${questionId}/answers`);
       const answers = response.data?.answers || [];
 
-      if (answers.length > 0) {
-        await AsyncStorage.setItem(`woofadaar_replies_${questionId}`, JSON.stringify(answers));
-      }
+      // Always update cache with fresh API data
+      await AsyncStorage.setItem(`woofadaar_replies_${questionId}`, JSON.stringify(answers));
 
       return answers;
     } catch (error) {
       console.error('Failed to load replies:', error);
-      // Try AsyncStorage again
-      const stored = await AsyncStorage.getItem(`woofadaar_replies_${questionId}`);
-      return stored ? JSON.parse(stored) : [];
+      // Only fall back to cache if forceRefresh was not requested and API failed
+      if (!forceRefresh) {
+        const stored = await AsyncStorage.getItem(`woofadaar_replies_${questionId}`);
+        return stored ? JSON.parse(stored) : [];
+      }
+      return [];
     }
   }
 
@@ -431,7 +494,7 @@ class ApiService {
       if (questionIndex >= 0) {
         // Ensure _count object exists
         if (!questions[questionIndex]._count) {
-          questions[questionIndex]._count = { answers: 0 };
+          questions[questionIndex]._count = { answers: 0, comments: 0 };
         }
         questions[questionIndex]._count.answers = existingReplies.length;
         questions[questionIndex].answer_count = existingReplies.length;
@@ -451,6 +514,7 @@ class ApiService {
           id: '1',
           name: 'Sakshi Gaikwad',
           profile_image_url: undefined,
+          is_verified: false,
         },
       };
 
@@ -465,7 +529,7 @@ class ApiService {
       if (questionIndex >= 0) {
         // Ensure _count object exists
         if (!questions[questionIndex]._count) {
-          questions[questionIndex]._count = { answers: 0 };
+          questions[questionIndex]._count = { answers: 0, comments: 0 };
         }
         questions[questionIndex]._count.answers = existingReplies.length;
         questions[questionIndex].answer_count = existingReplies.length;
@@ -473,6 +537,107 @@ class ApiService {
       }
 
       return newReply;
+    }
+  }
+
+  async deleteReply(questionId: string, replyId: string): Promise<void> {
+    try {
+      // Try API first
+      await this.request(`/community/questions/${questionId}/answers/${replyId}`, {
+        method: 'DELETE',
+      });
+    } catch (error) {
+      // Handle locally if API fails
+    }
+
+    // Remove from local storage
+    const replies = await this.getQuestionReplies(questionId);
+    const filteredReplies = replies.filter(r => r.id !== replyId);
+    await AsyncStorage.setItem(`woofadaar_replies_${questionId}`, JSON.stringify(filteredReplies));
+
+    // Update question answer count
+    const questions = await this.getQuestions();
+    const questionIndex = questions.findIndex(q => q.id === questionId);
+    if (questionIndex >= 0) {
+      if (!questions[questionIndex]._count) {
+        questions[questionIndex]._count = { answers: 0, comments: 0 };
+      }
+      questions[questionIndex]._count.answers = filteredReplies.length;
+      questions[questionIndex].answer_count = filteredReplies.length;
+      await AsyncStorage.setItem('woofadaar_questions', JSON.stringify(questions));
+    }
+  }
+
+  async editReply(questionId: string, replyId: string, content: string): Promise<any> {
+    try {
+      // Try API first
+      const result = await this.request(`/community/questions/${questionId}/answers/${replyId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ content }),
+      });
+
+      // Update local storage
+      const replies = await this.getQuestionReplies(questionId);
+      const replyIndex = replies.findIndex(r => r.id === replyId);
+      if (replyIndex >= 0) {
+        replies[replyIndex] = { ...replies[replyIndex], content, edited_at: new Date().toISOString() };
+        await AsyncStorage.setItem(`woofadaar_replies_${questionId}`, JSON.stringify(replies));
+      }
+
+      return result;
+    } catch (error) {
+      // Handle locally if API fails
+      const replies = await this.getQuestionReplies(questionId);
+      const replyIndex = replies.findIndex(r => r.id === replyId);
+      if (replyIndex >= 0) {
+        replies[replyIndex] = { ...replies[replyIndex], content, edited_at: new Date().toISOString() };
+        await AsyncStorage.setItem(`woofadaar_replies_${questionId}`, JSON.stringify(replies));
+        return replies[replyIndex];
+      }
+      throw error;
+    }
+  }
+
+  async reportReply(questionId: string, replyId: string, reason: string): Promise<void> {
+    try {
+      await this.request(`/community/questions/${questionId}/answers/${replyId}/report`, {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+      });
+    } catch (error) {
+      // Store report locally if API fails
+      const reports = await AsyncStorage.getItem('woofadaar_reports');
+      const reportsList = reports ? JSON.parse(reports) : [];
+      reportsList.push({
+        questionId,
+        replyId,
+        reason,
+        timestamp: new Date().toISOString(),
+      });
+      await AsyncStorage.setItem('woofadaar_reports', JSON.stringify(reportsList));
+    }
+  }
+
+  async toggleReplyReaction(questionId: string, replyId: string, reaction: string): Promise<void> {
+    try {
+      await this.request(`/community/questions/${questionId}/answers/${replyId}/reactions`, {
+        method: 'POST',
+        body: JSON.stringify({ reaction }),
+      });
+    } catch (error) {
+      // Handle locally
+      const reactionsKey = `woofadaar_reactions_${questionId}_${replyId}`;
+      const reactions = await AsyncStorage.getItem(reactionsKey);
+      const reactionData = reactions ? JSON.parse(reactions) : {};
+
+      // Toggle reaction
+      if (reactionData[reaction]) {
+        delete reactionData[reaction];
+      } else {
+        reactionData[reaction] = true;
+      }
+
+      await AsyncStorage.setItem(reactionsKey, JSON.stringify(reactionData));
     }
   }
 
@@ -502,46 +667,30 @@ class ApiService {
   // Question upvote methods
   async updateQuestionUpvote(questionId: string, isUpvoted: boolean): Promise<void> {
     try {
-      // Get current upvote state to calculate the difference
-      const storedUpvotes = await AsyncStorage.getItem('woofadaar_upvotes');
-      const upvotes = storedUpvotes ? JSON.parse(storedUpvotes) : {};
-      const previouslyUpvoted = upvotes[questionId] || false;
+      // Use the backend voting API instead of local storage
+      // If isUpvoted is true, vote up; if false, it will toggle off the existing vote (if any)
+      const response = await this.request(`/community/questions/${questionId}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({ type: 'up' }),
+      });
 
-      // Update stored upvotes
-      upvotes[questionId] = isUpvoted;
-      await AsyncStorage.setItem('woofadaar_upvotes', JSON.stringify(upvotes));
-
-      // Update question in stored questions directly
+      // Update the local cache with the response data
       const storedQuestions = await AsyncStorage.getItem('woofadaar_questions');
       if (storedQuestions) {
         const questions = JSON.parse(storedQuestions);
         const questionIndex = questions.findIndex((q: any) => q.id === questionId);
         if (questionIndex >= 0) {
-          questions[questionIndex].hasUpvoted = isUpvoted;
-
-          // Update upvote count based on the change
-          const currentUpvotes = questions[questionIndex].upvotes || 0;
-          if (isUpvoted && !previouslyUpvoted) {
-            // User is upvoting
-            questions[questionIndex].upvotes = currentUpvotes + 1;
-          } else if (!isUpvoted && previouslyUpvoted) {
-            // User is removing upvote
-            questions[questionIndex].upvotes = Math.max(0, currentUpvotes - 1);
-          }
+          // Update the question with the response data
+          questions[questionIndex].upvotes = response.data.upvotes;
+          questions[questionIndex].downvotes = response.data.downvotes;
+          questions[questionIndex].hasUpvoted = response.data.userVote === 'up';
 
           await AsyncStorage.setItem('woofadaar_questions', JSON.stringify(questions));
         }
       }
 
-      // Try API call (but don't fail if it doesn't work)
-      try {
-        await this.request(`/community/questions/${questionId}/upvote`, {
-          method: 'POST',
-          body: JSON.stringify({ upvote: isUpvoted }),
-        });
-      } catch (apiError) {
-        console.log('API upvote failed, but local storage updated');
-      }
+      // Clean up the old local storage voting system
+      await AsyncStorage.removeItem('woofadaar_upvotes');
     } catch (error) {
       console.error('Error updating upvote:', error);
       throw error;
@@ -569,4 +718,6 @@ class ApiService {
   }
 }
 
-export const apiService = new ApiService();
+const apiService = new ApiService();
+export { apiService };
+export default apiService;

@@ -62,7 +62,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
           {/* Logo Section */}
           <View style={styles.logoSection}>
             <Image
-              source={require('../../../assets/woofadaar-logo.png')}
+              source={require('../../../assets/woofadaar-logo-final.png')}
               style={styles.logo}
               resizeMode="contain"
             />
@@ -172,15 +172,15 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: Spacing.mobile.margin,
-    paddingTop: 20, // Reduced top padding
+    paddingTop: 40,
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: 8, // Reduced spacing between logo and form
+    marginBottom: 20,
   },
   logo: {
-    width: width * 0.7,
-    height: 160,
+    width: width * 0.55,
+    height: 140,
   },
   formContainer: {
     backgroundColor: Colors.ui.surface,

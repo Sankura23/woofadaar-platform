@@ -11,6 +11,7 @@ import {
   Image,
   ActionSheetIOS,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { RouteProp } from '@react-navigation/native';
@@ -33,13 +34,35 @@ export default function EditDogScreen({ route, navigation }: EditDogScreenProps)
     breed: dog.breed || '',
     age_months: dog.age_months || 0,
     weight_kg: dog.weight_kg || 0,
-    gender: dog.gender || '',
+    gender: dog.gender ? dog.gender.charAt(0).toUpperCase() + dog.gender.slice(1).toLowerCase() : '',
     color: dog.color || '',
     microchip_id: dog.microchip_id || '',
     photo_url: dog.photo_url || '',
   });
 
   const [loading, setLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
+
+  const uploadImage = async (imageUri: string) => {
+    setImageLoading(true);
+    try {
+      const imageUrl = await apiService.uploadProfileImage(imageUri);
+      setFormData({ ...formData, photo_url: imageUrl });
+      Alert.alert('Success', 'Photo uploaded successfully!');
+    } catch (error: any) {
+      console.error('Image upload error:', error);
+      let errorMessage = 'Failed to upload image. Please try again.';
+
+      if (error?.message?.toLowerCase().includes('timeout') ||
+          error?.message?.toLowerCase().includes('network')) {
+        errorMessage = 'Upload timed out. Please check your internet connection and try again.';
+      }
+
+      Alert.alert('Upload Failed', errorMessage);
+    } finally {
+      setImageLoading(false);
+    }
+  };
 
   const handleImagePicker = async () => {
     const showActionSheet = () => {
@@ -85,7 +108,7 @@ export default function EditDogScreen({ route, navigation }: EditDogScreenProps)
       });
 
       if (!result.canceled && result.assets[0]) {
-        setFormData({ ...formData, photo_url: result.assets[0].uri });
+        uploadImage(result.assets[0].uri);
       }
     };
 
@@ -104,7 +127,7 @@ export default function EditDogScreen({ route, navigation }: EditDogScreenProps)
       });
 
       if (!result.canceled && result.assets[0]) {
-        setFormData({ ...formData, photo_url: result.assets[0].uri });
+        uploadImage(result.assets[0].uri);
       }
     };
 
@@ -124,7 +147,12 @@ export default function EditDogScreen({ route, navigation }: EditDogScreenProps)
 
     try {
       setLoading(true);
-      await apiService.updateDog(dog.id, formData);
+      // Convert gender back to lowercase for API
+      const dataToSave = {
+        ...formData,
+        gender: formData.gender.toLowerCase()
+      };
+      await apiService.updateDog(dog.id, dataToSave);
       Alert.alert('Success', 'Dog information updated successfully!', [
         { text: 'OK', onPress: () => navigation.goBack() }
       ]);
@@ -178,7 +206,7 @@ export default function EditDogScreen({ route, navigation }: EditDogScreenProps)
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Photo Section */}
         <View style={styles.photoSection}>
-          <TouchableOpacity style={styles.photoContainer} onPress={handleImagePicker}>
+          <TouchableOpacity style={styles.photoContainer} onPress={handleImagePicker} disabled={imageLoading}>
             {formData.photo_url ? (
               <Image source={{ uri: formData.photo_url }} style={styles.photo} />
             ) : (
@@ -188,7 +216,11 @@ export default function EditDogScreen({ route, navigation }: EditDogScreenProps)
               </View>
             )}
             <View style={styles.photoOverlay}>
-              <Ionicons name="camera" size={20} color={Colors.ui.surface} />
+              {imageLoading ? (
+                <ActivityIndicator size="small" color={Colors.ui.surface} />
+              ) : (
+                <Ionicons name="camera" size={20} color={Colors.ui.surface} />
+              )}
             </View>
           </TouchableOpacity>
         </View>

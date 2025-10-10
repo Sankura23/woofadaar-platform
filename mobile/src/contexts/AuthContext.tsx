@@ -7,10 +7,12 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  needsOnboarding: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string, location?: string, experienceLevel?: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuthStatus: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +32,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   const checkAuthStatus = async () => {
     try {
@@ -38,10 +41,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
           const currentUser = await apiService.getCurrentUser();
           setUser(currentUser);
+
+          // Check if user has completed onboarding
+          const onboardingCompleted = await AsyncStorage.getItem('onboardingCompleted');
+
+          // Also check if user has dogs (more reliable indicator of completed onboarding)
+          let hasDogs = false;
+          try {
+            const dogs = await apiService.getDogs();
+            hasDogs = dogs.length > 0;
+          } catch (dogsError) {
+            console.log('Could not fetch dogs for onboarding check:', dogsError);
+          }
+
+          // User needs onboarding if they haven't completed it AND don't have dogs
+          const needsOnboardingCheck = !onboardingCompleted && !hasDogs;
+          setNeedsOnboarding(needsOnboardingCheck);
         } catch (userError) {
           // Token is likely invalid or expired, remove it silently
           await AsyncStorage.removeItem('authToken');
+          await AsyncStorage.removeItem('onboardingCompleted');
           setUser(null);
+          setNeedsOnboarding(false);
         }
       }
     } catch (error) {
@@ -66,16 +87,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const register = async (
-    email: string, 
-    password: string, 
-    name: string, 
-    location: string = '', 
+    email: string,
+    password: string,
+    name: string,
+    location: string = '',
     experienceLevel: string = 'beginner'
   ) => {
     setIsLoading(true);
     try {
       const result = await apiService.register(email, password, name);
       setUser(result.user);
+      // New users need onboarding
+      setNeedsOnboarding(true);
     } catch (error) {
       console.error('Registration failed:', error);
       throw error;
@@ -89,10 +112,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await apiService.logout();
       setUser(null);
+      await AsyncStorage.removeItem('onboardingCompleted');
+      setNeedsOnboarding(false);
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const completeOnboarding = async () => {
+    try {
+      await AsyncStorage.setItem('onboardingCompleted', 'true');
+      setNeedsOnboarding(false);
+    } catch (error) {
+      console.error('Failed to save onboarding completion:', error);
     }
   };
 
@@ -104,10 +138,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isLoading,
     isAuthenticated: !!user,
+    needsOnboarding,
     login,
     register,
     logout,
     checkAuthStatus,
+    completeOnboarding,
   };
 
   return (

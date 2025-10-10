@@ -84,11 +84,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
 
     try {
       await register(email, password, finalName, finalLocation, experienceLevel);
-      Alert.alert(
-        'Success!',
-        `Welcome to Woofadaar, ${finalName}!`,
-        [{ text: 'OK', onPress: () => navigation.navigate('Dashboard') }]
-      );
+      // No popup needed - user will see personalized welcome on the Welcome screen
     } catch (error) {
       Alert.alert('Registration Failed', 'Email might already be registered');
       console.error('Registration error:', error);
@@ -111,7 +107,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
             <View style={styles.titleContainer}>
               <Text style={styles.title}>Join </Text>
               <Image
-                source={require('../../../assets/woofadaar-logo.png')}
+                source={require('../../../assets/woofadaar-logo-final.png')}
                 style={styles.inlineLogo}
                 resizeMode="contain"
               />
@@ -334,8 +330,8 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   inlineLogo: {
-    width: 160,
-    height: 35,
+    width: 220,
+    height: 50,
     marginLeft: 8,
     marginRight: 0,
     marginTop: 0,

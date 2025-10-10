@@ -22,6 +22,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Colors, BorderRadius, Shadows, Spacing } from '../../theme/colors';
 import { apiService } from '../../services/api';
 import { CommunityStackParamList } from '../../navigation/BottomTabs';
+import { QuestionSkeleton } from '../../components/SkeletonLoader';
 
 const { width } = Dimensions.get('window');
 
@@ -64,9 +65,16 @@ interface Question {
 export default function CommunityScreen({ navigation, route }: CommunityScreenProps) {
   const { user } = useAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [cachedQuestions, setCachedQuestions] = useState<Question[]>([]);
+  const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<'recent' | 'popular' | 'unanswered'>('recent');
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const ITEMS_PER_PAGE = 20;
   const scrollViewRef = useRef<ScrollView>(null);
   const [askModalVisible, setAskModalVisible] = useState(false);
   const [newQuestion, setNewQuestion] = useState({ title: '', content: '', category: 'health' });
@@ -81,7 +89,13 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   const [analyzing, setAnalyzing] = useState(false);
 
   useEffect(() => {
-    loadQuestions();
+    if (cachedQuestions.length > 0) {
+      // If we have cached data, just apply the filter
+      applyTabFilter(cachedQuestions);
+    } else {
+      // If no cached data, load from API
+      loadQuestions();
+    }
   }, [activeTab]);
 
   // Handle scroll to top when route params change
@@ -90,6 +104,25 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }
   }, [route?.params?.scrollToTop]);
+
+  // Handle updated question data from detail screen
+  useEffect(() => {
+    if (route?.params?.updatedQuestion) {
+      const { id, answer_count } = route.params.updatedQuestion;
+      // Update the cached questions
+      const updateCachedQuestions = (questionsData: Question[]) => {
+        return questionsData.map(q =>
+          q.id === id ? { ...q, answer_count } : q
+        );
+      };
+
+      setCachedQuestions(prev => updateCachedQuestions(prev));
+      setQuestions(prev => updateCachedQuestions(prev));
+
+      // Clear the route params to prevent re-processing
+      navigation.setParams({ updatedQuestion: null });
+    }
+  }, [route?.params?.updatedQuestion, navigation]);
 
   // Debounced AI analysis when user types
   useEffect(() => {
@@ -104,9 +137,21 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
     return () => clearTimeout(timeoutId);
   }, [newQuestion.title, newQuestion.content]);
 
-  const loadQuestions = async () => {
+  const loadQuestions = async (forceRefresh = false) => {
+    const now = Date.now();
+    const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes
+
+    // Use cached data if it's fresh and not a forced refresh
+    if (!forceRefresh && cachedQuestions.length > 0 && (now - lastFetchTime) < CACHE_DURATION) {
+      setLoading(false);
+      setRefreshing(false);
+      // Apply current tab filter to cached data
+      applyTabFilter(cachedQuestions);
+      return;
+    }
+
     try {
-      setLoading(true);
+      setLoading(cachedQuestions.length === 0); // Only show loading if no cached data
       const response = await apiService.getQuestions();
       const formattedQuestions = response.map((q: any) => ({
         ...q,
@@ -117,32 +162,70 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
         answer_count: q.answer_count !== undefined ? q.answer_count : (q._count?.answers || 0)
       }));
 
-      // Sort based on active tab
-      let sortedQuestions = [...formattedQuestions];
-      if (activeTab === 'popular') {
-        sortedQuestions.sort((a, b) => b.upvotes - a.upvotes);
-      } else if (activeTab === 'unanswered') {
-        sortedQuestions = sortedQuestions.filter(q => q.answer_count === 0);
-      } else {
-        // Recent - sort by created_at
-        sortedQuestions.sort((a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-      }
+      // Cache the fresh data
+      setCachedQuestions(formattedQuestions);
+      setLastFetchTime(now);
 
-      setQuestions(sortedQuestions);
+      // Apply current tab filter
+      applyTabFilter(formattedQuestions);
     } catch (error) {
       console.error('Failed to load questions:', error);
-      setQuestions([]);
+      // If we have cached data, use it; otherwise show empty
+      if (cachedQuestions.length > 0) {
+        applyTabFilter(cachedQuestions);
+      } else {
+        setQuestions([]);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
 
+  const applyTabFilter = (questionsData: Question[], resetPagination = true) => {
+    let sortedQuestions = [...questionsData];
+    if (activeTab === 'popular') {
+      sortedQuestions.sort((a, b) => b.upvotes - a.upvotes);
+    } else if (activeTab === 'unanswered') {
+      sortedQuestions = sortedQuestions.filter(q => q.answer_count === 0);
+    } else {
+      // Recent - sort by created_at
+      sortedQuestions.sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+
+    if (resetPagination) {
+      // Show first page only
+      const paginatedQuestions = sortedQuestions.slice(0, ITEMS_PER_PAGE);
+      setQuestions(paginatedQuestions);
+      setCurrentPage(1);
+      setHasMoreData(sortedQuestions.length > ITEMS_PER_PAGE);
+    } else {
+      // Add to existing questions (for load more)
+      const newQuestions = sortedQuestions.slice(0, currentPage * ITEMS_PER_PAGE);
+      setQuestions(newQuestions);
+      setHasMoreData(sortedQuestions.length > newQuestions.length);
+    }
+  };
+
+  const loadMoreQuestions = () => {
+    if (loadingMore || !hasMoreData) return;
+
+    setLoadingMore(true);
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      applyTabFilter(cachedQuestions, false);
+      setLoadingMore(false);
+    }, 300);
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
-    loadQuestions();
+    loadQuestions(true); // Force refresh
   };
 
   const analyzeQuestionWithAI = async () => {
@@ -234,7 +317,10 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
       setNewQuestion({ title: '', content: '', category: 'health' });
       setAiAnalysis(null);
       setAnalyzing(false);
-      loadQuestions();
+      // Invalidate cache and force refresh
+      setCachedQuestions([]);
+      setLastFetchTime(0);
+      loadQuestions(true);
       Alert.alert('Success', 'Your question has been posted!');
     } catch (error) {
       console.error('Failed to post question:', error);
@@ -384,10 +470,10 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
         <TouchableOpacity
           style={styles.statItem}
-          onPress={() => navigation.navigate('QuestionDetail', { questionId: item.id, scrollToReplies: true })}
+          onPress={() => navigation.navigate('QuestionDetail', { questionId: item.id, question: item, scrollToReplies: true })}
         >
           <Ionicons name="chatbubble-outline" size={18} color={Colors.ui.textSecondary} />
-          <Text style={styles.statText}>{item.answer_count}</Text>
+          <Text style={styles.statText}>{item.answer_count !== undefined ? item.answer_count : (item._count?.answers || 0)}</Text>
         </TouchableOpacity>
 
         <View style={styles.statItem}>
@@ -466,8 +552,12 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
         {/* Questions List */}
         {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={Colors.primary.mintTeal} />
+          <View style={styles.questionsContainer}>
+            <QuestionSkeleton />
+            <QuestionSkeleton />
+            <QuestionSkeleton />
+            <QuestionSkeleton />
+            <QuestionSkeleton />
           </View>
         ) : questions.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -488,6 +578,20 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
             scrollEnabled={false}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             contentContainerStyle={{ paddingHorizontal: Spacing.mobile.margin }}
+            onEndReached={loadMoreQuestions}
+            onEndReachedThreshold={0.3}
+            ListFooterComponent={() =>
+              loadingMore ? (
+                <View style={styles.loadMoreContainer}>
+                  <ActivityIndicator size="small" color={Colors.primary.mintTeal} />
+                  <Text style={styles.loadMoreText}>Loading more questions...</Text>
+                </View>
+              ) : !hasMoreData && questions.length > 0 ? (
+                <View style={styles.endContainer}>
+                  <Text style={styles.endText}>You've reached the end!</Text>
+                </View>
+              ) : null
+            }
           />
         )}
       </ScrollView>
@@ -646,11 +750,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.primary.mutedPurple,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 50,
+  questionsContainer: {
+    paddingHorizontal: Spacing.mobile.margin,
   },
   emptyContainer: {
     flex: 1,
@@ -830,6 +931,27 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 16,
+  },
+  loadMoreContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    gap: 8,
+  },
+  loadMoreText: {
+    fontSize: 14,
+    color: Colors.ui.textSecondary,
+    fontWeight: '500',
+  },
+  endContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  endText: {
+    fontSize: 14,
+    color: Colors.ui.textTertiary,
+    fontWeight: '500',
   },
 
   // Modal Styles

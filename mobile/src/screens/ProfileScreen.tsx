@@ -14,7 +14,6 @@ import {
   RefreshControl,
 } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/AuthContext';
 import { apiService } from '../services/api';
 import { Colors, Spacing } from '../theme/colors';
@@ -45,6 +44,7 @@ export default function ProfileScreen({ navigation, route }: any) {
   });
 
   const pickImage = async () => {
+    console.log('=== PICK IMAGE BUTTON PRESSED ===');
     Alert.alert(
       'Select Photo',
       'Choose how you want to select a photo',
@@ -76,12 +76,15 @@ export default function ProfileScreen({ navigation, route }: any) {
   };
 
   const launchGallery = async () => {
+    console.log('=== LAUNCH GALLERY CALLED ===');
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    console.log('Gallery permission status:', status);
     if (status !== 'granted') {
       Alert.alert('Sorry, we need photo library permissions!');
       return;
     }
 
+    console.log('Opening gallery...');
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -89,8 +92,12 @@ export default function ProfileScreen({ navigation, route }: any) {
       quality: 0.7,
     });
 
+    console.log('Gallery result:', result);
     if (!result.canceled && result.assets[0]) {
+      console.log('Image selected, calling uploadImage with URI:', result.assets[0].uri);
       uploadImage(result.assets[0].uri);
+    } else {
+      console.log('Gallery selection canceled or no assets');
     }
   };
 
@@ -101,14 +108,26 @@ export default function ProfileScreen({ navigation, route }: any) {
       const imageUrl = await apiService.uploadProfileImage(imageUri);
       console.log('Upload successful, URL:', imageUrl);
 
-      // Update profile with new image URL
-      await apiService.updateUserProfile({ profile_image_url: imageUrl });
-      await checkAuthStatus(); // Refresh user data
+      // The upload API already updates the profile, so just refresh the user data
+      await checkAuthStatus(); // Refresh user data to show new image
 
       Alert.alert('Success', 'Profile photo updated successfully!');
     } catch (error: any) {
       console.error('Image upload error:', error);
-      Alert.alert('Error', error?.message || 'Failed to upload image. Please try again.');
+
+      // Show user-friendly error message
+      const errorMessage = error?.message || 'Failed to upload image. Please try again.';
+      Alert.alert('Upload Failed', errorMessage, [
+        {
+          text: 'Try Again',
+          onPress: () => pickImage(),
+          style: 'default'
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        }
+      ]);
     } finally {
       setImageLoading(false);
     }
@@ -193,6 +212,40 @@ export default function ProfileScreen({ navigation, route }: any) {
     );
   };
 
+  const handleDeleteProfile = () => {
+    console.log('handleDeleteProfile function called');
+    Alert.alert(
+      'Delete Profile',
+      'Are you sure you want to delete your profile? This action cannot be undone and will permanently delete all your data.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            console.log('User confirmed profile deletion, calling API...');
+            try {
+              // Call API to delete profile
+              await apiService.deleteUserProfile();
+              console.log('Profile deletion API call successful');
+              Alert.alert(
+                'Profile Deleted',
+                'Your profile has been successfully deleted.',
+                [{ text: 'OK', onPress: () => logout() }]
+              );
+            } catch (error) {
+              console.error('Profile deletion failed:', error);
+              Alert.alert(
+                'Error',
+                'Failed to delete profile. Please try again or contact support.'
+              );
+            }
+          }
+        },
+      ]
+    );
+  };
+
   const menuSections = [
     {
       title: 'Account',
@@ -210,6 +263,14 @@ export default function ProfileScreen({ navigation, route }: any) {
           title: 'Subscription',
           subtitle: 'Premium features',
           icon: 'card-outline',
+          iconFamily: 'ionicons' as const,
+          hasArrow: true,
+        },
+        {
+          id: 'delete-profile',
+          title: 'Delete Profile',
+          subtitle: 'Permanently delete your account',
+          icon: 'trash-outline',
           iconFamily: 'ionicons' as const,
           hasArrow: true,
         },
@@ -293,10 +354,14 @@ export default function ProfileScreen({ navigation, route }: any) {
   };
 
   const handleMenuPress = (item: MenuItem) => {
+    console.log('Menu item pressed:', item.id, item.title);
     if (item.action) {
       item.action();
     } else if (item.id === 'edit-profile') {
       navigation.navigate('EditProfile');
+    } else if (item.id === 'delete-profile') {
+      console.log('Delete profile menu item pressed, calling handleDeleteProfile');
+      handleDeleteProfile();
     } else if (item.id === 'language') {
       Alert.alert('Language Settings', 'Language selection: English/Hindi');
       // TODO: Implement language selector
@@ -355,13 +420,6 @@ export default function ProfileScreen({ navigation, route }: any) {
                   </Text>
                 </View>
               )}
-              <TouchableOpacity style={styles.editAvatarButton} onPress={pickImage}>
-                {imageLoading ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <Ionicons name="camera" size={16} color="#FFFFFF" />
-                )}
-              </TouchableOpacity>
             </View>
             <Text style={styles.userName}>{user?.name || 'Pet Parent'}</Text>
             <Text style={styles.userEmail}>{user?.email || 'user@example.com'}</Text>
@@ -399,8 +457,12 @@ export default function ProfileScreen({ navigation, route }: any) {
                       styles.menuItem,
                       index === section.items.length - 1 && styles.lastMenuItem,
                     ]}
-                    onPress={() => handleMenuPress(item)}
+                    onPress={() => {
+                      console.log('TouchableOpacity pressed for item:', item.id, item.title);
+                      handleMenuPress(item);
+                    }}
                     disabled={item.hasSwitch}
+                    activeOpacity={0.7}
                   >
                     <View style={styles.menuItemLeft}>
                       <View style={styles.iconContainer}>
