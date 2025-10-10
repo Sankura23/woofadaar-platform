@@ -241,7 +241,7 @@ export async function POST(request: NextRequest) {
     const { action } = body;
 
     switch (action) {
-      case 'submit_claim':
+      case 'submit_claim': {
         const {
           dog_id,
           provider_id,
@@ -307,8 +307,9 @@ export async function POST(request: NextRequest) {
           },
           premium_feature: true
         });
+      }
 
-      case 'connect_provider':
+      case 'connect_provider': {
         const { provider_id, dog_id, plan_type } = body;
 
         if (!provider_id || !dog_id || !plan_type) {
@@ -347,6 +348,7 @@ export async function POST(request: NextRequest) {
           },
           premium_feature: true
         });
+      }
 
       default:
         return NextResponse.json({

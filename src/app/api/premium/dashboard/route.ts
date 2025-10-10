@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
       consultation_uses: featureUsage.filter(f => f.feature_id.includes('consultation')).length,
       insurance_uses: featureUsage.filter(f => f.feature_id.includes('insurance')).length,
       support_uses: featureUsage.filter(f => f.feature_id.includes('support')).length,
-      most_used_features: this.getMostUsedFeatures(featureUsage)
+      most_used_features: getMostUsedFeatures(featureUsage)
     };
 
     // Get recent health analytics for primary dog
@@ -202,7 +202,7 @@ export async function GET(request: NextRequest) {
     const unredeemedRewards = recentRewards.filter(r => !r.redeemed);
 
     // Calculate premium value delivered
-    const premiumValue = this.calculatePremiumValue(
+    const premiumValue = calculatePremiumValue(
       creditBalance,
       loyaltyStatus,
       featureUsage.length,
@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
         premium_since: subscription.start_date,
         loyalty_tier: loyaltyStatus?.current_tier || 'bronze',
         total_dogs: dogs.length,
-        active_features: this.getActiveFeaturesCount(featureUsage)
+        active_features: getActiveFeaturesCount(featureUsage)
       },
       quick_stats: {
         consultation_credits_available: creditBalance?.available_credits || 0,
@@ -229,7 +229,7 @@ export async function GET(request: NextRequest) {
       feature_usage: {
         timeframe_days: timeframeDays,
         ...usageStats,
-        usage_trend: this.calculateUsageTrend(featureUsage, timeframeDays)
+        usage_trend: calculateUsageTrend(featureUsage, timeframeDays)
       },
       health_overview: healthInsights ? {
         overall_score: healthInsights.overall_health_score,
@@ -302,7 +302,7 @@ export async function GET(request: NextRequest) {
         priority_booking_available: true
       },
       premium_value: premiumValue,
-      recommendations: this.generateDashboardRecommendations(
+      recommendations: generateDashboardRecommendations(
         creditBalance,
         loyaltyStatus,
         featureUsage,
@@ -312,7 +312,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Track dashboard access
-    await this.trackFeatureUsage(userId, 'premium_dashboard_access');
+    await trackFeatureUsage(userId, 'premium_dashboard_access');
 
     return NextResponse.json({
       success: true,
@@ -324,16 +324,17 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error generating premium dashboard:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to load premium dashboard',
         message: error instanceof Error ? error.message : 'Internal server error'
       },
       { status: 500 }
     );
   }
+}
 
-  // Helper methods
-  static getMostUsedFeatures(featureUsage: any[]): Array<{feature: string, count: number}> {
+// Helper methods
+function getMostUsedFeatures(featureUsage: any[]): Array<{feature: string, count: number}> {
     const featureCounts: {[key: string]: number} = {};
     
     featureUsage.forEach(usage => {
@@ -347,12 +348,12 @@ export async function GET(request: NextRequest) {
       .slice(0, 5);
   }
 
-  static getActiveFeaturesCount(featureUsage: any[]): number {
+function getActiveFeaturesCount(featureUsage: any[]): number {
     const uniqueFeatures = new Set(featureUsage.map(usage => usage.feature_id));
     return uniqueFeatures.size;
   }
 
-  static calculateUsageTrend(featureUsage: any[], timeframeDays: number): string {
+function calculateUsageTrend(featureUsage: any[], timeframeDays: number): string {
     if (featureUsage.length < 2) return 'stable';
 
     const halfwayPoint = Date.now() - (timeframeDays * 24 * 60 * 60 * 1000) / 2;
@@ -366,7 +367,7 @@ export async function GET(request: NextRequest) {
     return 'stable';
   }
 
-  static calculatePremiumValue(
+function calculatePremiumValue(
     creditBalance: any,
     loyaltyStatus: any,
     featureUsageCount: number,
@@ -399,7 +400,7 @@ export async function GET(request: NextRequest) {
     };
   }
 
-  static generateDashboardRecommendations(
+function generateDashboardRecommendations(
     creditBalance: any,
     loyaltyStatus: any,
     featureUsage: any[],
@@ -441,7 +442,7 @@ export async function GET(request: NextRequest) {
     return recommendations.slice(0, 5); // Limit to top 5 recommendations
   }
 
-  static async trackFeatureUsage(userId: string, featureName: string): Promise<void> {
+async function trackFeatureUsage(userId: string, featureName: string): Promise<void> {
     try {
       await prisma.featureUsageLog.create({
         data: {
@@ -458,4 +459,3 @@ export async function GET(request: NextRequest) {
       console.error('Error tracking feature usage:', error);
     }
   }
-}

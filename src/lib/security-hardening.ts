@@ -2,8 +2,6 @@
 // Comprehensive security implementation for Indian market compliance
 
 import { NextRequest } from 'next/server';
-import { rateLimit } from 'express-rate-limit';
-import helmet from 'helmet';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
@@ -405,20 +403,37 @@ class SecurityHardeningService {
 // Export singleton instance
 export const securityService = SecurityHardeningService.getInstance();
 
-// Security middleware functions
+// Simple rate limiting for Next.js (replace with proper solution in production)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
 export function createSecurityMiddleware() {
   return {
-    rateLimit: rateLimit({
-      windowMs: SECURITY_CONFIG.RATE_LIMITS.GLOBAL.windowMs,
-      max: SECURITY_CONFIG.RATE_LIMITS.GLOBAL.max,
-      message: 'Too many requests from this IP',
-      standardHeaders: true,
-      legacyHeaders: false,
-    }),
-    
-    helmet: helmet({
-      contentSecurityPolicy: false, // We handle CSP manually
-      crossOriginEmbedderPolicy: false // For Razorpay compatibility
+    // Simple in-memory rate limiting (replace with Redis in production)
+    rateLimit: (windowMs: number, max: number) => (request: NextRequest) => {
+      const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+      const now = Date.now();
+      const key = `${ip}:${windowMs}`;
+
+      const record = rateLimitStore.get(key);
+      if (!record || now > record.resetTime) {
+        rateLimitStore.set(key, { count: 1, resetTime: now + windowMs });
+        return { allowed: true, remaining: max - 1 };
+      }
+
+      if (record.count >= max) {
+        return { allowed: false, remaining: 0 };
+      }
+
+      record.count++;
+      return { allowed: true, remaining: max - record.count };
+    },
+
+    // Basic security headers (replace helmet functionality)
+    securityHeaders: () => ({
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'strict-origin-when-cross-origin'
     })
   };
 }
