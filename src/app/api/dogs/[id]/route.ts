@@ -141,10 +141,10 @@ export async function PUT(
       photo_url
     } = body;
 
-    // Validation
-    if (!name || !breed || !age_months || !weight_kg || !gender || !location) {
+    // Validation - only require core dog info
+    if (!name || !breed || !age_months || !weight_kg) {
       return NextResponse.json(
-        { message: 'Missing required fields' },
+        { message: 'Missing required fields: name, breed, age_months, weight_kg' },
         { status: 400 }
       );
     }

@@ -329,6 +329,7 @@ export async function POST(request: NextRequest) {
     // Award points for posting a question
     await prisma.userEngagement.create({
       data: {
+        id: `eng_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         user_id: 'userId' in user ? user.userId : user.partnerId,
         action_type: 'question_posted',
         points_earned: 10,
@@ -346,6 +347,7 @@ export async function POST(request: NextRequest) {
     if (questionCount === 1) {
       await prisma.userBadge.create({
         data: {
+          id: `badge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           user_id: 'userId' in user ? user.userId : user.partnerId,
           badge_type: 'first_question',
           badge_name: 'First Question',

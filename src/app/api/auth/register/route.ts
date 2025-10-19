@@ -2,28 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import prisma from '@/lib/db'
+import { randomUUID } from 'crypto'
 
 export async function POST(request: NextRequest) {
   try {
     const { name, email, password, location, experience_level } = await request.json()
 
-    // Check if user exists
-    let existingUser = null;
-    try {
-      existingUser = await prisma.user.findUnique({
-        where: { email }
-      })
-    } catch (dbError) {
-      console.error('Database error during user check:', dbError);
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { message: 'Registration failed due to database error. Please try again.' },
-        { status: 500 }
-      );
-    }
-
-    if (existingUser) {
-      return NextResponse.json(
-        { message: 'User already exists' },
+        { message: 'Name, email and password are required' },
         { status: 400 }
       )
     }
@@ -31,14 +18,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user with error handling
-    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    let user = null;
-    
     try {
-      user = await prisma.user.create({
+      // Try to create user in database
+      const user = await prisma.user.create({
         data: {
-          id: userId,
+          id: randomUUID(),
           name,
           email,
           password_hash: hashedPassword,
@@ -48,47 +32,40 @@ export async function POST(request: NextRequest) {
         }
       })
 
-      // Create initial UserPoints record for gamification
-      await prisma.userPoints.create({
-        data: {
-          user_id: userId,
-          points_earned: 0,
-          points_spent: 0,
-          current_balance: 0,
-          total_lifetime_points: 0,
-          level: 1,
-          experience_points: 0,
-          streak_count: 0,
-          achievements: [],
-          badges: []
+      // Generate JWT
+      const token = jwt.sign(
+        { userId: user.id, email: user.email, userType: 'pet-parent' },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+      )
+
+      return NextResponse.json({
+        message: 'Registration successful! Welcome to Woofadaar!',
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          location: user.location,
+          experience_level: user.experience_level
         }
-      });
-    } catch (dbError) {
-      console.error('Database error during user creation:', dbError);
-      return NextResponse.json(
-        { message: 'Registration failed due to database error. Please try again.' },
-        { status: 500 }
-      );
-    }
+      })
 
-    // Generate JWT
-    const token = jwt.sign(
-      { userId: user.id, email: user.email, userType: 'pet-parent' },
-      process.env.JWT_SECRET!,
-      { expiresIn: '7d' }
-    )
+    } catch (dbError: any) {
+      console.error('Database error during registration:', dbError)
 
-    return NextResponse.json({
-      message: 'Registration successful! Welcome to Woofadaar!',
-      token,
-      user: { 
-        id: user.id, 
-        name: user.name, 
-        email: user.email,
-        location: user.location,
-        experience_level: user.experience_level
+      if (dbError.code === 'P2002') {
+        return NextResponse.json(
+          { message: 'Email already exists' },
+          { status: 409 }
+        )
       }
-    })
+
+      return NextResponse.json(
+        { message: 'Registration failed. Please check your connection and try again.' },
+        { status: 500 }
+      )
+    }
 
   } catch (error) {
     console.error('Registration error:', error)

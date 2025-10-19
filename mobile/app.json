@@ -47,12 +47,6 @@
     "updates": {
       "enabled": false
     },
-    "packagerOpts": {
-      "config": "metro.config.js"
-    },
-    "developer": {
-      "tool": "expo-cli"
-    },
     "metro": {
       "resolver": {
         "assetExts": ["bin", "txt", "jpg", "png", "json", "mp4", "ttf", "woff", "woff2"]

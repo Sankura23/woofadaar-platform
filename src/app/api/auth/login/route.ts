@@ -139,56 +139,9 @@ export async function POST(request: NextRequest) {
       }
 
       if (!user) {
-        // Demo user authentication for development
-        const demoUsers = [
-          {
-            email: 'demo@user.com',
-            password: 'demo123',
-            user: {
-              id: 'demo-user-123',
-              name: 'Demo User',
-              email: 'demo@user.com',
-              barks_points: 100,
-              is_premium: false
-            }
-          },
-          {
-            email: 'e@c.com',
-            password: 'Password',
-            user: {
-              id: 'user-1755769240167-fgxpbr06x',
-              name: 'Sakshi Gaikwad',
-              email: 'e@c.com',
-              barks_points: 0,
-              is_premium: false
-            }
-          }
-        ];
-
-        const demoUser = demoUsers.find(u => u.email === email && u.password === password);
-
-        if (demoUser) {
-          const token = jwt.sign(
-            {
-              userId: demoUser.user.id,
-              email: demoUser.user.email,
-              userType: 'pet-parent'
-            },
-            process.env.JWT_SECRET!,
-            { expiresIn: '7d' }
-          );
-
-          return NextResponse.json({
-            message: 'Login successful',
-            token,
-            userType: 'pet-parent',
-            user: demoUser.user
-          });
-        }
-
         return NextResponse.json(
-          { message: 'Invalid credentials' },
-          { status: 401 }
+          { message: 'Database connection error. Please try again later.' },
+          { status: 503 }
         )
       }
 

@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
         forum_post_id: forum_post_id || null
       },
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             name: true,
@@ -158,10 +158,11 @@ export async function GET(request: NextRequest) {
     if (answerId) where.answer_id = answerId;
     if (forumPostId) where.forum_post_id = forumPostId;
 
+    // Fetch comments
     const comments = await prisma.communityComment.findMany({
       where,
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             name: true,

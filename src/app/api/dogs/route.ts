@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/db';
+import { randomUUID } from 'crypto';
 
 // POST /api/dogs - Create a new dog profile (simplified version)
 export async function POST(request: NextRequest) {
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
     try {
       const dog = await prisma.dog.create({
         data: {
+          id: randomUUID(),
           user_id: userId,
           name: body.name,
           breed: body.breed,
@@ -80,36 +82,11 @@ export async function POST(request: NextRequest) {
       }, { status: 201 });
 
     } catch (dbError) {
-      // Database connection error, return demo dog profile
-      console.log('Database connection error creating dog, returning demo profile:', dbError);
-
-      const demoDog = {
-        id: `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        user_id: userId,
-        name: body.name,
-        breed: body.breed,
-        age_months: body.age_months ? Number(body.age_months) : 0,
-        weight_kg: body.weight_kg ? Number(body.weight_kg) : 0,
-        gender: body.gender || 'unknown',
-        photo_url: body.photo_url || null,
-        medical_notes: body.medical_notes || null,
-        health_id: finalHealthId,
-        emergency_contact: body.emergency_contact || '',
-        emergency_phone: body.emergency_phone || '',
-        personality_traits: body.personality_traits || [],
-        vaccination_status: body.vaccination_status || 'unknown',
-        spayed_neutered: Boolean(body.spayed_neutered),
-        microchip_id: body.microchip_id || null,
-        location: body.location || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
+      console.error('Database connection error creating dog:', dbError);
       return NextResponse.json({
-        success: true,
-        message: 'Dog profile created successfully (demo mode)',
-        data: { dog: demoDog }
-      }, { status: 201 });
+        success: false,
+        message: 'Unable to save dog profile. Please check your connection and try again.'
+      }, { status: 500 });
     }
 
   } catch (error) {
@@ -204,18 +181,11 @@ export async function GET(request: NextRequest) {
       });
 
     } catch (dbError) {
-      // Database connection error, return empty dogs list
-      console.log('Database connection error retrieving dogs, returning empty list:', dbError);
-
-      console.log(`Retrieved 0 dogs for user ${userId} via /api/dogs: []`);
-
+      console.error('Database connection error retrieving dogs:', dbError);
       return NextResponse.json({
-        success: true,
-        data: {
-          dogs: [],
-          total: 0
-        }
-      });
+        success: false,
+        message: 'Unable to retrieve dog profiles. Please check your connection and try again.'
+      }, { status: 500 });
     }
 
   } catch (error) {

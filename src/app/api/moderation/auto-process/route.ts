@@ -263,7 +263,7 @@ export async function PUT(request: NextRequest) {
 
     if (contentType === 'question') {
       query = { status: 'active' };
-      includeClause = { user: { select: { id: true } } };
+      includeClause = { User: { select: { id: true } } };
     }
 
     // This is a simplified example - in production, you'd handle each content type

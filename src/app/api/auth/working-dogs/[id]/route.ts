@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/db';
+import { getDogById, updateDogInStorage } from '@/lib/demo-storage';
 
 // GET /api/auth/working-dogs/[id] - Get specific dog by ID from database
 export async function GET(
@@ -78,11 +79,36 @@ export async function GET(
       });
 
     } catch (dbError) {
-      console.error('Database error fetching dog:', dbError);
-      return NextResponse.json({
-        success: false,
-        message: 'Database error'
-      }, { status: 500 });
+      console.error('Database error fetching dog, trying demo storage fallback:', dbError);
+
+      // Fallback to demo storage
+      try {
+        const dog = await getDogById(userId, dogId);
+        if (!dog) {
+          return NextResponse.json({
+            success: false,
+            message: 'Dog not found or does not belong to user'
+          }, { status: 404 });
+        }
+
+        console.log(`Retrieved dog ${dogId} from demo storage for user ${userId}:`, {
+          dogName: dog.name,
+          dogBreed: dog.breed,
+          hasHealthId: !!dog.health_id
+        });
+
+        return NextResponse.json({
+          success: true,
+          data: { dog }
+        });
+
+      } catch (storageError) {
+        console.error('Demo storage fallback failed:', storageError);
+        return NextResponse.json({
+          success: false,
+          message: 'Failed to fetch dog profile'
+        }, { status: 500 });
+      }
     }
 
   } catch (error) {
@@ -136,14 +162,16 @@ export async function PUT(
     const dogId = params.id;
     const body = await request.json();
 
-    // Basic validation
-    if (!body.name || !body.breed || !body.age_months || !body.weight_kg || !body.location || !body.emergency_contact || !body.emergency_phone) {
+    // Basic validation - only require core dog info
+    if (!body.name || !body.breed || !body.age_months || !body.weight_kg) {
       return NextResponse.json({
         success: false,
-        message: 'Missing required fields',
+        message: 'Missing required fields: name, breed, age_months, weight_kg',
         errors: [
-          { field: 'emergency_contact', message: 'Emergency contact is required' },
-          { field: 'emergency_phone', message: 'Emergency phone is required' }
+          { field: 'name', message: 'Dog name is required' },
+          { field: 'breed', message: 'Dog breed is required' },
+          { field: 'age_months', message: 'Dog age is required' },
+          { field: 'weight_kg', message: 'Dog weight is required' }
         ]
       }, { status: 400 });
     }
@@ -165,10 +193,10 @@ export async function PUT(
           vaccination_status: body.vaccination_status || 'up_to_date',
           spayed_neutered: Boolean(body.spayed_neutered),
           microchip_id: body.microchip_id || null,
-          emergency_contact: body.emergency_contact.trim(),
-          emergency_phone: body.emergency_phone.trim(),
+          emergency_contact: body.emergency_contact ? body.emergency_contact.trim() : null,
+          emergency_phone: body.emergency_phone ? body.emergency_phone.trim() : null,
           personality_traits: Array.isArray(body.personality_traits) ? body.personality_traits : [],
-          location: body.location.trim(),
+          location: body.location ? body.location.trim() : null,
           medical_notes: body.medical_notes ? body.medical_notes.trim() : null
         }
       });
@@ -185,11 +213,66 @@ export async function PUT(
       });
 
     } catch (dbError) {
-      console.error('Database error updating dog:', dbError);
-      return NextResponse.json({
-        success: false,
-        message: 'Failed to update dog profile'
-      }, { status: 500 });
+      console.error('Database error updating dog, trying demo storage fallback:', dbError);
+
+      // Fallback to demo storage
+      try {
+        // Get existing dog from demo storage
+        const existingDog = await getDogById(userId, dogId);
+        if (!existingDog) {
+          return NextResponse.json({
+            success: false,
+            message: 'Dog not found'
+          }, { status: 404 });
+        }
+
+        // Create updated dog object
+        const updatedDog = {
+          ...existingDog,
+          name: body.name.trim(),
+          breed: body.breed === 'Other' && body.customBreed ? body.customBreed.trim() : body.breed.trim(),
+          age_months: Number(body.age_months),
+          weight_kg: Number(body.weight_kg),
+          gender: body.gender,
+          photo_url: body.photo_url || null,
+          vaccination_status: body.vaccination_status || 'up_to_date',
+          spayed_neutered: Boolean(body.spayed_neutered),
+          microchip_id: body.microchip_id || null,
+          emergency_contact: body.emergency_contact ? body.emergency_contact.trim() : null,
+          emergency_phone: body.emergency_phone ? body.emergency_phone.trim() : null,
+          personality_traits: Array.isArray(body.personality_traits) ? body.personality_traits : [],
+          location: body.location ? body.location.trim() : null,
+          medical_notes: body.medical_notes ? body.medical_notes.trim() : null,
+          updated_at: new Date().toISOString()
+        };
+
+        // Update in demo storage
+        const success = await updateDogInStorage(userId, dogId, updatedDog);
+        if (!success) {
+          return NextResponse.json({
+            success: false,
+            message: 'Failed to update dog profile in storage'
+          }, { status: 500 });
+        }
+
+        console.log(`Updated dog ${dogId} in demo storage for user ${userId}:`, {
+          dogName: updatedDog.name,
+          dogBreed: updatedDog.breed
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: 'Dog profile updated successfully (demo storage)',
+          data: { dog: updatedDog }
+        });
+
+      } catch (storageError) {
+        console.error('Demo storage fallback failed:', storageError);
+        return NextResponse.json({
+          success: false,
+          message: 'Failed to update dog profile'
+        }, { status: 500 });
+      }
     }
 
   } catch (error) {
