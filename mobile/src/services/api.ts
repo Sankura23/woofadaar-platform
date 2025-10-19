@@ -349,28 +349,13 @@ class ApiService {
           ...apiQuestion,
           hasUpvoted: apiQuestion.userVote === 'up',
           _count: apiQuestion._count || { answers: 0 },
-          answer_count: 0 // Will be updated below
+          // Use answer_count from the backend - it's the source of truth
+          answer_count: apiQuestion.answer_count || 0
         };
       });
 
-      // Update answer counts from actual reply storage
-      for (const question of questions) {
-        try {
-          const replies = await this.getQuestionReplies(question.id);
-          const replyCount = replies.length;
-
-          // Ensure _count object exists
-          if (!question._count) {
-            question._count = { answers: 0 };
-          }
-          question._count.answers = replyCount;
-          question.answer_count = replyCount;
-        } catch (error) {
-          console.log(`Error getting replies for question ${question.id}:`, error);
-          // Keep existing count if we can't get replies
-          question.answer_count = question._count?.answers || 0;
-        }
-      }
+      // Don't update answer counts locally - trust the backend
+      // The backend already provides the correct answer_count
 
       // Save updated questions back to storage for offline use
       await AsyncStorage.setItem('woofadaar_questions', JSON.stringify(questions));
@@ -439,16 +424,10 @@ class ApiService {
     return this.request<Question>(`/community/questions/${questionId}`);
   }
 
-  async getQuestionReplies(questionId: string, forceRefresh: boolean = false): Promise<any[]> {
+  async getQuestionReplies(questionId: string, forceRefresh: boolean = true): Promise<any[]> {
     try {
-      // If force refresh is requested, skip cache and go directly to API
-      if (!forceRefresh) {
-        // Try to get from AsyncStorage first
-        const stored = await AsyncStorage.getItem(`woofadaar_replies_${questionId}`);
-        if (stored) {
-          return JSON.parse(stored);
-        }
-      }
+      // ALWAYS force refresh to get latest data from backend - disabled cache to fix sync issues
+      // Skip cache completely
 
       // Try API
       const response = await this.request<any>(`/community/questions/${questionId}/answers`);
@@ -502,8 +481,19 @@ class ApiService {
       }
 
       return result;
-    } catch (error) {
-      // If API fails, create locally
+    } catch (error: any) {
+      console.error('Failed to create reply via API:', error);
+
+      // Check if this is an authentication error (HTTP 401)
+      if (error?.message?.includes('status: 401') || error?.message?.includes('authentication') || error?.message?.includes('unauthorized')) {
+        // Clear the invalid token
+        await AsyncStorage.removeItem('authToken');
+        console.warn('Authentication failed when creating reply. Token cleared.');
+        throw new Error('Please log in again to post comments. Your session has expired.');
+      }
+
+      // For other errors, still create locally but log the issue
+      console.warn('Creating reply locally due to API error:', error.message);
       const newReply = {
         id: Date.now().toString(),
         content,

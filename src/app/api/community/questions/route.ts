@@ -62,14 +62,14 @@ export async function GET(request: NextRequest) {
         location: true,
         created_at: true,
         updated_at: true,
-        user: {
+        User: {
           select: {
             id: true,
             name: true,
             profile_image_url: true
           }
         },
-        dog: {
+        Dog: {
           select: {
             id: true,
             name: true,
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
             photo_url: true
           }
         },
-        answers: {
+        CommunityAnswer: {
           where: { status: 'active' },
           select: {
             id: true,
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
             upvotes: true,
             downvotes: true,
             is_verified_expert: true,
-            user: {
+            User: {
               select: {
                 id: true,
                 name: true,
@@ -94,13 +94,13 @@ export async function GET(request: NextRequest) {
             }
           }
         },
-        comments: {
+        CommunityComment: {
           where: { status: 'active' },
           select: {
             id: true,
             content: true,
             created_at: true,
-            user: {
+            User: {
               select: {
                 id: true,
                 name: true,
@@ -114,14 +114,18 @@ export async function GET(request: NextRequest) {
         // Week 18 enhancements will be added after schema migration
         _count: {
           select: {
-            answers: true,
-            comments: true,
+            CommunityAnswer: {
+              where: { status: 'active' }
+            },
+            CommunityComment: {
+              where: { status: 'active' }
+            },
             // views: true  // This field needs to be added to schema
           }
         },
         // Include vote information if user is authenticated
         ...(currentUserId && {
-          votes: {
+          CommunityVote: {
             where: { user_id: currentUserId },
             select: {
               vote_type: true
@@ -138,12 +142,12 @@ export async function GET(request: NextRequest) {
 
     // Process questions to add user-specific vote information
     const processedQuestions = questions.map((question: any) => {
-      const userVote = currentUserId && question.votes && question.votes.length > 0
-        ? question.votes[0].vote_type
+      const userVote = currentUserId && question.CommunityVote && question.CommunityVote.length > 0
+        ? question.CommunityVote[0].vote_type
         : null;
 
-      // Remove the votes array from the response and add userVote field
-      const { votes, ...questionWithoutVotes } = question;
+      // Remove the CommunityVote array from the response and add userVote field
+      const { CommunityVote, ...questionWithoutVotes } = question;
 
       return {
         ...questionWithoutVotes,
@@ -191,13 +195,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { 
-      title, 
-      content, 
-      tags, 
-      category, 
-      dogId, 
-      photoUrl, 
+    const {
+      title,
+      content,
+      tags,
+      category,
+      dogId,
+      photoUrl,
       location,
       // Week 19 Phase 1 enhancements
       templateId,
@@ -224,8 +228,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Generate unique ID for the question
+    const questionId = `cmq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     // Create the question with Week 19 enhancements
     const questionData: any = {
+      id: questionId,
       user_id: 'userId' in user ? user.userId : user.partnerId,
       dog_id: dogId || null,
       title,
@@ -245,14 +253,14 @@ export async function POST(request: NextRequest) {
     const question = await prisma.communityQuestion.create({
       data: questionData,
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             name: true,
             profile_image_url: true
           }
         },
-        dog: {
+        Dog: {
           select: {
             id: true,
             name: true,
@@ -266,7 +274,7 @@ export async function POST(request: NextRequest) {
     // Run AI categorization and store results (Week 19 Phase 1)
     try {
       const categorization = await categorizeQuestion(title, content);
-      
+
       await prisma.questionCategorization.create({
         data: {
           question_id: question.id,
@@ -277,7 +285,7 @@ export async function POST(request: NextRequest) {
           is_approved: categorization.overallConfidence > 0.8 // Auto-approve high confidence
         }
       });
-      
+
       console.log(`AI categorization completed for question ${question.id}: ${categorization.primaryCategory.category} (${Math.round(categorization.overallConfidence * 100)}%)`);
     } catch (categorizationError) {
       console.warn('AI categorization failed, but question was created:', categorizationError);
@@ -359,4 +367,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}

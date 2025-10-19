@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
         status: 'active'
       },
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             name: true,
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             reputation: true
           }
         },
-        dog: {
+        Dog: {
           select: {
             id: true,
             name: true,
@@ -37,10 +37,10 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             photo_url: true
           }
         },
-        answers: {
+        CommunityAnswer: {
           where: { status: 'active' },
           include: {
-            user: {
+            User: {
               select: {
                 id: true,
                 name: true,
@@ -48,10 +48,10 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
                 reputation: true
               }
             },
-            comments: {
+            CommunityComment: {
               where: { status: 'active' },
               include: {
-                user: {
+                User: {
                   select: {
                     id: true,
                     name: true,
@@ -68,10 +68,10 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             { created_at: 'asc' }
           ]
         },
-        comments: {
+        CommunityComment: {
           where: { status: 'active' },
           include: {
-            user: {
+            User: {
               select: {
                 id: true,
                 name: true,
@@ -173,14 +173,14 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
         updated_at: new Date()
       },
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             name: true,
             profile_image_url: true
           }
         },
-        dog: {
+        Dog: {
           select: {
             id: true,
             name: true,

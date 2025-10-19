@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../contexts/AuthContext';
@@ -63,6 +64,7 @@ interface Question {
 }
 
 export default function CommunityScreen({ navigation, route }: CommunityScreenProps) {
+  console.log('🔍 CommunityScreen component rendered');
   const { user } = useAuth();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [cachedQuestions, setCachedQuestions] = useState<Question[]>([]);
@@ -88,15 +90,22 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   } | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
 
+  // Initial data load when component mounts
   useEffect(() => {
+    console.log('🔍 CommunityScreen initial mount useEffect');
+    loadQuestions();
+  }, []);
+
+  // Handle tab changes
+  useEffect(() => {
+    console.log('🔍 CommunityScreen activeTab useEffect triggered - activeTab:', activeTab, 'cachedQuestions.length:', cachedQuestions.length);
     if (cachedQuestions.length > 0) {
       // If we have cached data, just apply the filter
+      console.log('🔍 Using cached data, applying filter');
       applyTabFilter(cachedQuestions);
-    } else {
-      // If no cached data, load from API
-      loadQuestions();
     }
-  }, [activeTab]);
+    // Don't load from API here - that's handled by the initial mount useEffect
+  }, [activeTab, cachedQuestions]);
 
   // Handle scroll to top when route params change
   useEffect(() => {
@@ -138,21 +147,14 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   }, [newQuestion.title, newQuestion.content]);
 
   const loadQuestions = async (forceRefresh = false) => {
-    const now = Date.now();
-    const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes
-
-    // Use cached data if it's fresh and not a forced refresh
-    if (!forceRefresh && cachedQuestions.length > 0 && (now - lastFetchTime) < CACHE_DURATION) {
-      setLoading(false);
-      setRefreshing(false);
-      // Apply current tab filter to cached data
-      applyTabFilter(cachedQuestions);
-      return;
-    }
+    // ALWAYS FETCH FRESH DATA - cache disabled to fix reply count sync issues
+    await AsyncStorage.removeItem('woofadaar_questions');
 
     try {
       setLoading(cachedQuestions.length === 0); // Only show loading if no cached data
       const response = await apiService.getQuestions();
+      console.log('🔍 API Response received:', response?.length, 'questions');
+
       const formattedQuestions = response.map((q: any) => ({
         ...q,
         // Keep the hasUpvoted state from the API response (which loads from AsyncStorage)
@@ -162,11 +164,14 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
         answer_count: q.answer_count !== undefined ? q.answer_count : (q._count?.answers || 0)
       }));
 
+      console.log('🔍 Formatted questions:', formattedQuestions?.length, 'questions');
+
       // Cache the fresh data
       setCachedQuestions(formattedQuestions);
-      setLastFetchTime(now);
+      setLastFetchTime(Date.now());
 
       // Apply current tab filter
+      console.log('🔍 About to apply tab filter to', formattedQuestions?.length, 'questions');
       applyTabFilter(formattedQuestions);
     } catch (error) {
       console.error('Failed to load questions:', error);
@@ -183,27 +188,36 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   };
 
   const applyTabFilter = (questionsData: Question[], resetPagination = true) => {
+    console.log('🔍 applyTabFilter called with:', questionsData?.length, 'questions, activeTab:', activeTab);
+
     let sortedQuestions = [...questionsData];
+    console.log('🔍 After spread operator:', sortedQuestions?.length, 'questions');
+
     if (activeTab === 'popular') {
       sortedQuestions.sort((a, b) => b.upvotes - a.upvotes);
+      console.log('🔍 After popular sort:', sortedQuestions?.length, 'questions');
     } else if (activeTab === 'unanswered') {
       sortedQuestions = sortedQuestions.filter(q => q.answer_count === 0);
+      console.log('🔍 After unanswered filter:', sortedQuestions?.length, 'questions');
     } else {
       // Recent - sort by created_at
       sortedQuestions.sort((a, b) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
+      console.log('🔍 After recent sort:', sortedQuestions?.length, 'questions');
     }
 
     if (resetPagination) {
       // Show first page only
       const paginatedQuestions = sortedQuestions.slice(0, ITEMS_PER_PAGE);
+      console.log('🔍 About to setQuestions with:', paginatedQuestions?.length, 'questions (ITEMS_PER_PAGE:', ITEMS_PER_PAGE, ')');
       setQuestions(paginatedQuestions);
       setCurrentPage(1);
       setHasMoreData(sortedQuestions.length > ITEMS_PER_PAGE);
     } else {
       // Add to existing questions (for load more)
       const newQuestions = sortedQuestions.slice(0, currentPage * ITEMS_PER_PAGE);
+      console.log('🔍 About to setQuestions (load more) with:', newQuestions?.length, 'questions');
       setQuestions(newQuestions);
       setHasMoreData(sortedQuestions.length > newQuestions.length);
     }
@@ -482,7 +496,7 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
         </View>
 
         <View style={styles.authorSection}>
-          <Text style={styles.authorName}>{item.user.name}</Text>
+          <Text style={styles.authorName}>{item.user?.name || 'Unknown User'}</Text>
           <Text style={styles.timeText}>{formatTimeAgo(item.created_at)}</Text>
         </View>
       </View>
@@ -551,6 +565,11 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
         </View>
 
         {/* Questions List */}
+        {(() => {
+          console.log('🔍 RENDER: Current questions state length:', questions?.length, 'loading:', loading);
+          console.log('🔍 RENDER: Questions array:', questions);
+          return null;
+        })()}
         {loading ? (
           <View style={styles.questionsContainer}>
             <QuestionSkeleton />

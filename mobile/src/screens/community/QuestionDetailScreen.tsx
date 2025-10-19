@@ -145,6 +145,9 @@ export default function QuestionDetailScreen({ navigation, route }: QuestionDeta
     try {
       setLoading(true);
 
+      // Clear any cached replies to force fresh data
+      await AsyncStorage.removeItem(`woofadaar_replies_${questionId}`);
+
       // Use the same data source as CommunityScreen for consistency
       if (route.params.question) {
         // Preserve the upvote state from the community screen
@@ -261,9 +264,25 @@ export default function QuestionDetailScreen({ navigation, route }: QuestionDeta
 
       setReplyText('');
       Alert.alert('Success', 'Your reply has been posted!');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to submit reply:', error);
-      Alert.alert('Error', 'Failed to submit reply. Please try again.');
+
+      // Check if it's an authentication error
+      if (error?.message?.includes('log in again') || error?.message?.includes('session has expired')) {
+        Alert.alert(
+          'Session Expired',
+          error.message,
+          [
+            { text: 'OK', onPress: () => {
+              // Navigate back to login - the auth context will handle this
+              // since the token was cleared in the API service
+              navigation.navigate('Login');
+            }}
+          ]
+        );
+      } else {
+        Alert.alert('Error', 'Failed to submit reply. Please try again.');
+      }
     } finally {
       setSubmittingReply(false);
     }
@@ -560,7 +579,7 @@ export default function QuestionDetailScreen({ navigation, route }: QuestionDeta
               </View>
 
               <View style={styles.authorSection}>
-                <Text style={styles.authorName}>{question.user.name}</Text>
+                <Text style={styles.authorName}>{question.user?.name || 'Unknown User'}</Text>
                 <Text style={styles.timeText}>{formatTimeAgo(question.created_at)}</Text>
               </View>
             </View>
