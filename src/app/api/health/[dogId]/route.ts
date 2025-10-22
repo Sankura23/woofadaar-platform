@@ -58,6 +58,7 @@ export async function GET(
       });
 
       if (!dog) {
+        console.warn(`Dog not found for user ${userId}, dogId: ${dogId}`);
         return NextResponse.json(
           { error: 'Dog not found or access denied' },
           { status: 404 }
@@ -67,33 +68,39 @@ export async function GET(
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - days);
 
-      // Get health logs from database
-      const recentLogs = await prisma.healthLog.findMany({
-        where: {
-          dog_id: dogId,
-          log_date: {
-            gte: dateFrom
+      // Get health logs from database (with error handling)
+      let recentLogs = [];
+      try {
+        recentLogs = await prisma.healthLog.findMany({
+          where: {
+            dog_id: dogId,
+            log_date: {
+              gte: dateFrom
+            }
+          },
+          orderBy: {
+            log_date: 'desc'
+          },
+          take: 20,
+          select: {
+            id: true,
+            dog_id: true,
+            log_date: true,
+            mood_score: true,
+            energy_level: true,
+            appetite_level: true,
+            exercise_duration: true,
+            weight_kg: true,
+            temperature_celsius: true,
+            symptoms: true,
+            notes: true,
+            created_at: true
           }
-        },
-        orderBy: {
-          log_date: 'desc'
-        },
-        take: 20,
-        select: {
-          id: true,
-          dog_id: true,
-          log_date: true,
-          mood_score: true,
-          energy_level: true,
-          appetite_level: true,
-          exercise_duration: true,
-          weight_kg: true,
-          temperature_celsius: true,
-          symptoms: true,
-          notes: true,
-          created_at: true
-        }
-      });
+        });
+      } catch (logsError) {
+        console.warn('Could not fetch health logs:', logsError);
+        recentLogs = [];
+      }
 
       // Get medications and appointments from database (with error handling)
       let activeMedications = [];
@@ -136,7 +143,7 @@ export async function GET(
             appointment_date: 'asc'
           },
           include: {
-            partner: {
+            Partner: {
               select: {
                 name: true,
                 business_name: true

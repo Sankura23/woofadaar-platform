@@ -16,6 +16,8 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
@@ -109,6 +111,7 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   };
 
   const handleOpenAskModal = () => {
+    console.log('🎯 Ask button pressed - opening modal');
     setAskModalVisible(true);
     askSlideAnim.setValue(600); // Reset position
     // Slide up animation
@@ -206,6 +209,15 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
     }
     // Don't load from API here - that's handled by the initial mount useEffect
   }, [filters.sortBy, cachedQuestions]);
+
+  // Handle category filter changes
+  useEffect(() => {
+    console.log('🎯 Category filter changed to:', filters.category);
+    if (cachedQuestions.length > 0) {
+      console.log('🎯 Applying category filter to cached questions');
+      applyTabFilter(cachedQuestions);
+    }
+  }, [filters.category]);
 
   // Handle scroll to top when route params change
   useEffect(() => {
@@ -318,6 +330,12 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
     let sortedQuestions = [...questionsData];
     console.log('🔍 After spread operator:', sortedQuestions?.length, 'questions');
+
+    // Apply category filter first
+    if (filters.category && filters.category !== 'all') {
+      sortedQuestions = sortedQuestions.filter(q => q.category === filters.category);
+      console.log('🎯 After category filter (' + filters.category + '):', sortedQuestions?.length, 'questions');
+    }
 
     if (filters.sortBy === 'popular') {
       sortedQuestions.sort((a, b) => b.upvotes - a.upvotes);
@@ -607,11 +625,11 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      health: '#86efac',
-      behavior: '#fbbf24',
-      training: '#a78bfa',
-      food: '#fda4af',
-      local: '#93c5fd',
+      health: '#e05a37',
+      behavior: '#76519f',
+      training: '#ffa602',
+      food: '#4ECDC4',
+      local: '#FF6B6B',
       default: '#e5e7eb',
     };
     return colors[category] || colors.default;
@@ -619,11 +637,11 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
   const getCategoryTextColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      health: '#166534',
-      behavior: '#854d0e',
-      training: '#6b21a8',
-      food: '#be123c',
-      local: '#1e40af',
+      health: '#ffffff',
+      behavior: '#ffffff',
+      training: '#000000',
+      food: '#ffffff',
+      local: '#ffffff',
       default: '#6b7280',
     };
     return colors[category] || colors.default;
@@ -875,7 +893,10 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
           <TouchableOpacity
             style={styles.modalOverlay}
             activeOpacity={1}
-            onPress={handleCloseAskModal}
+            onPress={() => {
+              Keyboard.dismiss();
+              handleCloseAskModal();
+            }}
           />
           <Animated.View style={[styles.modalContent, { transform: [{ translateY: askSlideAnim }] }]}>
             <View style={styles.modalHeader}>
@@ -891,6 +912,8 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
               placeholderTextColor={Colors.ui.textTertiary}
               value={newQuestion.title}
               onChangeText={(text) => setNewQuestion({ ...newQuestion, title: text })}
+              returnKeyType="next"
+              blurOnSubmit={false}
             />
 
             <TextInput
@@ -902,6 +925,8 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
               multiline
               numberOfLines={5}
               textAlignVertical="top"
+              returnKeyType="done"
+              blurOnSubmit={true}
             />
 
             {/* AI Smart Score Section */}
@@ -1615,4 +1640,5 @@ const styles = StyleSheet.create({
     padding: 24,
     paddingTop: 60,
   },
+
 });

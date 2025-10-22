@@ -78,6 +78,7 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   const [loadingMore, setLoadingMore] = useState(false);
   const ITEMS_PER_PAGE = 20;
   const scrollViewRef = useRef<ScrollView>(null);
+  const [filters, setFilters] = useState({ category: 'all' });
   const [askModalVisible, setAskModalVisible] = useState(false);
   const [newQuestion, setNewQuestion] = useState({ title: '', content: '', category: 'health' });
   const [submittingQuestion, setSubmittingQuestion] = useState(false);
@@ -100,9 +101,13 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
   useEffect(() => {
     console.log('🔍 CommunityScreen activeTab useEffect triggered - activeTab:', activeTab, 'cachedQuestions.length:', cachedQuestions.length);
     if (cachedQuestions.length > 0) {
-      // If we have cached data, just apply the filter
-      console.log('🔍 Using cached data, applying filter');
-      applyTabFilter(cachedQuestions);
+      // If we have cached data, apply both tab and category filters
+      console.log('🔍 Using cached data, applying both tab and category filters');
+      if (filters.category && filters.category !== 'all') {
+        applyCategoryFilter(cachedQuestions);
+      } else {
+        applyTabFilter(cachedQuestions);
+      }
     }
     // Don't load from API here - that's handled by the initial mount useEffect
   }, [activeTab, cachedQuestions]);
@@ -133,6 +138,16 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
     }
   }, [route?.params?.updatedQuestion, navigation]);
 
+  // Handle category filter changes - apply filtering on cached data like tabs
+  useEffect(() => {
+    console.log('🔍 Category filter changed to:', filters.category);
+    if (cachedQuestions.length > 0) {
+      // If we have cached data, just apply the filter
+      console.log('🔍 Using cached data for category filtering');
+      applyCategoryFilter(cachedQuestions);
+    }
+  }, [filters.category]);
+
   // Debounced AI analysis when user types
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -152,7 +167,7 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
     try {
       setLoading(cachedQuestions.length === 0); // Only show loading if no cached data
-      const response = await apiService.getQuestions();
+      const response = await apiService.getQuestions(); // Load ALL questions, filter client-side
       console.log('🔍 API Response received:', response?.length, 'questions');
 
       const formattedQuestions = response.map((q: any) => ({
@@ -220,6 +235,44 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
       console.log('🔍 About to setQuestions (load more) with:', newQuestions?.length, 'questions');
       setQuestions(newQuestions);
       setHasMoreData(sortedQuestions.length > newQuestions.length);
+    }
+  };
+
+  const applyCategoryFilter = (questionsData: Question[], resetPagination = true) => {
+    console.log('🔍 applyCategoryFilter called with:', questionsData?.length, 'questions, category:', filters.category);
+
+    let filteredQuestions = [...questionsData];
+
+    // Apply category filter
+    if (filters.category && filters.category !== 'all') {
+      filteredQuestions = filteredQuestions.filter(q => q.category === filters.category);
+      console.log('🔍 After category filter:', filteredQuestions?.length, 'questions for category:', filters.category);
+    }
+
+    // Apply current tab sorting to the filtered questions
+    if (activeTab === 'popular') {
+      filteredQuestions.sort((a, b) => b.upvotes - a.upvotes);
+    } else if (activeTab === 'unanswered') {
+      filteredQuestions = filteredQuestions.filter(q => q.answer_count === 0);
+    } else {
+      // Recent - sort by created_at
+      filteredQuestions.sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+
+    if (resetPagination) {
+      // Show first page only
+      const paginatedQuestions = filteredQuestions.slice(0, ITEMS_PER_PAGE);
+      console.log('🔍 About to setQuestions with:', paginatedQuestions?.length, 'filtered questions');
+      setQuestions(paginatedQuestions);
+      setCurrentPage(1);
+      setHasMoreData(filteredQuestions.length > ITEMS_PER_PAGE);
+    } else {
+      // Add to existing questions (for load more)
+      const newQuestions = filteredQuestions.slice(0, currentPage * ITEMS_PER_PAGE);
+      setQuestions(newQuestions);
+      setHasMoreData(filteredQuestions.length > newQuestions.length);
     }
   };
 
@@ -535,6 +588,49 @@ export default function CommunityScreen({ navigation, route }: CommunityScreenPr
 
         {/* Quick Actions */}
         <QuickActions />
+
+        {/* Category Filter Cards */}
+        <View style={styles.categoryFiltersContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryFiltersScroll}
+          >
+            {[
+              { key: 'all', label: 'All', color: Colors.primary.mutedPurple },
+              { key: 'health', label: 'Health', color: '#86efac' },
+              { key: 'behavior', label: 'Behavior', color: '#fbbf24' },
+              { key: 'training', label: 'Training', color: '#a78bfa' },
+              { key: 'feeding', label: 'Feeding', color: '#fda4af' },
+              { key: 'local', label: 'Local', color: '#93c5fd' },
+            ].map((category) => (
+              <TouchableOpacity
+                key={category.key}
+                style={[
+                  styles.categoryFilterCard,
+                  {
+                    backgroundColor: filters.category === category.key ? category.color : Colors.ui.surface,
+                    borderColor: filters.category === category.key ? category.color : Colors.ui.border,
+                  }
+                ]}
+                onPress={() => setFilters({ category: category.key })}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    styles.categoryFilterText,
+                    {
+                      color: filters.category === category.key ? '#FFFFFF' : Colors.ui.textSecondary,
+                      fontWeight: filters.category === category.key ? '700' : '500',
+                    }
+                  ]}
+                >
+                  {category.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
         {/* Tabs */}
         <View style={styles.tabsContainer}>
@@ -1144,6 +1240,27 @@ const styles = StyleSheet.create({
   suggestedTagText: {
     fontSize: 11,
     color: Colors.primary.mintTeal,
+    fontWeight: '500',
+  },
+
+  // Category Filter Cards
+  categoryFiltersContainer: {
+    marginBottom: 20,
+  },
+  categoryFiltersScroll: {
+    paddingHorizontal: Spacing.mobile.margin,
+    gap: 12,
+  },
+  categoryFilterCard: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.button,
+    borderWidth: 1,
+    marginRight: 8,
+    ...Shadows.small,
+  },
+  categoryFilterText: {
+    fontSize: 14,
     fontWeight: '500',
   },
 });

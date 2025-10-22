@@ -326,12 +326,19 @@ class ApiService {
   }
 
   // Community methods - using backend API for user-specific vote data
-  async getQuestions(): Promise<any[]> {
+  async getQuestions(filters?: { category?: string }): Promise<any[]> {
     try {
       // Try to get fresh data from API (now includes user-specific vote data)
       let apiQuestions = [];
       try {
-        const response = await this.request<any>('/community/questions');
+        // Build query parameters
+        const queryParams = new URLSearchParams();
+        if (filters?.category && filters.category !== 'all') {
+          queryParams.append('category', filters.category);
+        }
+        const endpoint = `/community/questions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+        const response = await this.request<any>(endpoint);
         apiQuestions = response.data?.questions || [];
       } catch (apiError) {
         console.log('API call failed, using stored data');
@@ -432,6 +439,20 @@ class ApiService {
       // Try API
       const response = await this.request<any>(`/community/questions/${questionId}/answers`);
       const answers = response.data?.answers || [];
+
+      console.log('📱 Mobile API - Got answers from backend:', answers.length);
+      if (answers.length > 0) {
+        console.log('📱 Mobile API - First answer user data:', JSON.stringify({
+          id: answers[0].id,
+          content: answers[0].content,
+          user: answers[0].user,
+          User: answers[0].User,
+          hasUser: !!answers[0].user,
+          hasUserCapital: !!answers[0].User,
+          userName: answers[0].user?.name,
+          userNameCapital: answers[0].User?.name
+        }));
+      }
 
       // Always update cache with fresh API data
       await AsyncStorage.setItem(`woofadaar_replies_${questionId}`, JSON.stringify(answers));

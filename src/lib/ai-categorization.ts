@@ -60,7 +60,7 @@ const CATEGORY_DEFINITIONS = {
     ],
     weight: 1.0
   },
-  feeding: {
+  food: {
     keywords: [
       'food', 'feeding', 'diet', 'nutrition', 'kibble', 'wet food', 'dry food', 'treats',
       'snacks', 'homemade', 'raw diet', 'barf', 'portion', 'amount', 'frequency',
@@ -228,7 +228,7 @@ const calculateSemanticCategoryScore = (
       { phrase: /\b(training|obedience|commands|socialization|calm|reactive)\b/g, score: 0.4 },
       { phrase: /\b(won't listen|doesn't come|ignores|stubborn|difficult)\b/g, score: 0.3 }
     ],
-    feeding: [
+    food: [
       { phrase: /\b(food|diet|eating|nutrition|meal|treats|appetite|weight|hungry)\b/g, score: 0.3 },
       { phrase: /\b(won't eat|picky eater|allergies|overweight|underweight|portion)\b/g, score: 0.4 },
       { phrase: /\b(brand|recipe|homemade|raw diet|kibble|wet food)\b/g, score: 0.2 }
@@ -254,7 +254,7 @@ const calculateSemanticCategoryScore = (
   if (intentData.type === 'problem_statement' && ['health', 'behavior'].includes(category)) {
     semanticScore += 0.2;
   }
-  if (intentData.type === 'help_request' && ['training', 'feeding'].includes(category)) {
+  if (intentData.type === 'help_request' && ['training', 'food'].includes(category)) {
     semanticScore += 0.15;
   }
   
@@ -266,7 +266,7 @@ const generateSemanticCategoryReason = (category: string, score: number, intentD
   const baseReasons = {
     health: 'Health-related query detected',
     behavior: 'Behavioral concern identified',
-    feeding: 'Nutrition or feeding topic detected',
+    food: 'Nutrition or feeding topic detected',
     training: 'Training or learning request identified',
     local: 'Location-specific question detected',
     general: 'General pet care question'
@@ -287,7 +287,7 @@ const generateCategoryReason = (category: string, score: number): string => {
   const reasons = {
     health: 'Contains health-related keywords and medical terminology',
     behavior: 'Discusses behavioral issues or training needs',
-    feeding: 'Focuses on diet, nutrition, or feeding concerns',
+    food: 'Focuses on diet, nutrition, or feeding concerns',
     training: 'Related to dog training, commands, or learning',
     local: 'Seeking location-specific information or services',
     general: 'General dog care inquiry or broad topic'
@@ -358,7 +358,7 @@ const generateTagSuggestions = (
     const categoryTags = {
       health: ['medical', 'symptoms', 'diagnosis', 'treatment'],
       behavior: ['training-needed', 'behavioral-issue', 'socialization'],
-      feeding: ['nutrition', 'diet-advice', 'food-recommendation'],
+      food: ['nutrition', 'diet-advice', 'food-recommendation'],
       training: ['obedience', 'tricks', 'commands', 'puppy-training'],
       local: ['location-specific', 'service-recommendation'],
       general: ['advice-needed', 'beginner-friendly']

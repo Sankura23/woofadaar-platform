@@ -121,6 +121,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         // New vote
         await tx.communityVote.create({
           data: {
+            id: `vote_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             user_id: userId,
             question_id: questionId,
             vote_type: type
@@ -162,6 +163,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       try {
         await prisma.userEngagement.create({
           data: {
+            id: `eng_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             user_id: userId,
             action_type: type === 'up' ? 'upvoted' : 'downvoted',
             points_earned: 1,

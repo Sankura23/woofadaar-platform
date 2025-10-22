@@ -149,7 +149,6 @@ export default function BannerCarousel({ banners, onBannerPress }: BannerCarouse
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
   },
   scrollContent: {
     paddingHorizontal: 20,

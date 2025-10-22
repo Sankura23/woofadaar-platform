@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
     // Award points for commenting
     await prisma.userEngagement.create({
       data: {
+        id: `eng_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         user_id: userId,
         action_type: 'comment_posted',
         points_earned: 5,
@@ -118,6 +119,7 @@ export async function POST(request: NextRequest) {
     if (commentCount === 1) {
       await prisma.userBadge.create({
         data: {
+          id: `badge_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           user_id: userId,
           badge_type: 'first_comment',
           badge_name: 'First Comment',

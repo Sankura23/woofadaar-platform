@@ -37,9 +37,25 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
         }
       });
 
+      console.log('📋 Fetched answers for question:', questionId, 'Count:', answers.length);
+      if (answers.length > 0) {
+        console.log('📋 First answer user data:', JSON.stringify({
+          id: answers[0].id,
+          user: answers[0].User,
+          hasUserData: !!answers[0].User,
+          userName: answers[0].User?.name
+        }));
+      }
+
+      // Transform User to user for mobile app compatibility
+      const answersWithCorrectUserField = answers.map(answer => ({
+        ...answer,
+        user: answer.User  // Copy User to user field
+      }));
+
       return NextResponse.json({
         success: true,
-        data: { answers }
+        data: { answers: answersWithCorrectUserField }
       });
 
     } catch (dbError) {
@@ -86,9 +102,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const body = await request.json();
     const { content, photo_url } = body;
 
-    if (!content || content.trim().length < 10) {
+    console.log('📝 Creating answer - received body:', JSON.stringify(body));
+    console.log('📝 Content received:', content, 'Length:', content?.length);
+    console.log('📝 Content after trim:', content?.trim(), 'Length:', content?.trim()?.length);
+
+    if (!content || content.trim().length < 3) {
+      console.log('❌ Answer validation failed - content too short');
       return NextResponse.json(
-        { success: false, error: 'Answer content must be at least 10 characters long' },
+        { success: false, error: 'Answer content must be at least 3 characters long' },
         { status: 400 }
       );
     }
@@ -97,6 +118,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       // Create answer in database
       const answer = await prisma.communityAnswer.create({
         data: {
+          id: `ans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           question_id: questionId,
           user_id: userId,
           content: content.trim(),
@@ -126,9 +148,23 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         }
       });
 
+      console.log('✅ Answer created successfully:', JSON.stringify({
+        id: answer.id,
+        content: answer.content,
+        user: answer.User,
+        hasUserData: !!answer.User,
+        userName: answer.User?.name
+      }));
+
+      // Transform User to user for mobile app compatibility
+      const answerWithCorrectUserField = {
+        ...answer,
+        user: answer.User  // Copy User to user field
+      };
+
       return NextResponse.json({
         success: true,
-        data: { answer }
+        data: { answer: answerWithCorrectUserField }
       });
 
     } catch (dbError) {

@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate category
-    const validCategories = ['health', 'behavior', 'feeding', 'training', 'local', 'general'];
+    const validCategories = ['health', 'behavior', 'food', 'training', 'local', 'general'];
     if (!validCategories.includes(category)) {
       return NextResponse.json(
         { success: false, error: 'Invalid category' },

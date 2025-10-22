@@ -451,11 +451,11 @@ export default function QuestionDetailScreen({ navigation, route }: QuestionDeta
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      health: '#86efac',
-      behavior: '#fbbf24',
-      training: '#a78bfa',
-      food: '#fda4af',
-      local: '#93c5fd',
+      health: '#e05a37',
+      behavior: '#76519f',
+      training: '#ffa602',
+      food: '#4ECDC4',
+      local: '#FF6B6B',
       default: '#e5e7eb',
     };
     return colors[category] || colors.default;
@@ -463,11 +463,11 @@ export default function QuestionDetailScreen({ navigation, route }: QuestionDeta
 
   const getCategoryTextColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      health: '#166534',
-      behavior: '#854d0e',
-      training: '#6b21a8',
-      food: '#be123c',
-      local: '#1e40af',
+      health: '#ffffff',
+      behavior: '#ffffff',
+      training: '#000000',
+      food: '#ffffff',
+      local: '#ffffff',
       default: '#6b7280',
     };
     return colors[category] || colors.default;

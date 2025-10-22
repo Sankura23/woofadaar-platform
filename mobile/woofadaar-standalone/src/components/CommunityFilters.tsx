@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   categoryButtonActive: {
-    transform: [{ scale: 1.05 }],
+    transform: [{ scale: 1.15 }],
     ...Shadows.medium,
   },
   askButton: {

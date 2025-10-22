@@ -326,12 +326,21 @@ class ApiService {
   }
 
   // Community methods - using backend API for user-specific vote data
-  async getQuestions(): Promise<any[]> {
+  async getQuestions(filters?: { category?: string }): Promise<any[]> {
     try {
-      console.log('🔥 Fetching questions from API...');
+      console.log('🔥 Fetching questions from API with filters:', filters);
+
+      // Build query parameters
+      const queryParams = new URLSearchParams();
+      if (filters?.category && filters.category !== 'all') {
+        queryParams.append('category', filters.category);
+      }
+
+      const endpoint = `/community/questions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      console.log('🔥 API endpoint:', endpoint);
 
       // ALWAYS fetch fresh data from API - no cache fallback to avoid stale data
-      const response = await this.request<any>('/community/questions');
+      const response = await this.request<any>(endpoint);
       const apiQuestions = response.data?.questions || [];
 
       console.log('🔥 API returned', apiQuestions.length, 'questions');

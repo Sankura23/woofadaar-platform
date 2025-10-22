@@ -30,9 +30,9 @@ export async function PUT(
     const body = await request.json();
     const { content } = body;
 
-    if (!content || content.trim().length < 10) {
+    if (!content || content.trim().length < 3) {
       return NextResponse.json(
-        { success: false, error: 'Answer content must be at least 10 characters long' },
+        { success: false, error: 'Answer content must be at least 3 characters long' },
         { status: 400 }
       );
     }
@@ -74,11 +74,10 @@ export async function PUT(
       where: { id: answerId },
       data: {
         content: content.trim(),
-        updated_at: new Date(),
-        edited_at: new Date()
+        updated_at: new Date()
       },
       include: {
-        user: {
+        User: {
           select: {
             id: true,
             name: true,
@@ -90,20 +89,31 @@ export async function PUT(
     });
 
     // Log the edit for audit purposes
-    await prisma.userEngagement.create({
-      data: {
-        user_id: userId,
-        action_type: 'answer_edited',
-        points_earned: 0, // No points for editing
-        description: `Edited answer to: ${question.title}`,
-        related_id: answerId,
-        related_type: 'answer'
-      }
-    });
+    try {
+      await prisma.userEngagement.create({
+        data: {
+          id: `eng_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          user_id: userId,
+          action_type: 'answer_edited',
+          points_earned: 0, // No points for editing
+          description: `Edited answer to: ${question.title}`,
+          related_id: answerId,
+          related_type: 'answer'
+        }
+      });
+    } catch (engagementError) {
+      console.warn('Could not log engagement for answer edit:', engagementError);
+    }
+
+    // Transform User to user for mobile app compatibility
+    const answerWithCorrectUserField = {
+      ...updatedAnswer,
+      user: updatedAnswer.User  // Copy User to user field
+    };
 
     return NextResponse.json({
       success: true,
-      data: { answer: updatedAnswer }
+      data: { answer: answerWithCorrectUserField }
     });
   } catch (error) {
     console.error('Error editing answer:', error);
@@ -178,16 +188,21 @@ export async function DELETE(
     });
 
     // Log the deletion for audit purposes
-    await prisma.userEngagement.create({
-      data: {
-        user_id: userId,
-        action_type: 'answer_deleted',
-        points_earned: -10, // Deduct points for deletion
-        description: `Deleted answer`,
-        related_id: answerId,
-        related_type: 'answer'
-      }
-    });
+    try {
+      await prisma.userEngagement.create({
+        data: {
+          id: `eng_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          user_id: userId,
+          action_type: 'answer_deleted',
+          points_earned: -10, // Deduct points for deletion
+          description: `Deleted answer`,
+          related_id: answerId,
+          related_type: 'answer'
+        }
+      });
+    } catch (engagementError) {
+      console.warn('Could not log engagement for answer deletion:', engagementError);
+    }
 
     return NextResponse.json({
       success: true,
