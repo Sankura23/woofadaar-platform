@@ -10,7 +10,7 @@ interface SnapScrollOptions {
 export function useSnapScroll(options: SnapScrollOptions = {}) {
   const { threshold = 50, snapDuration = 800 } = options;
   const [isSnapping, setIsSnapping] = useState(false);
-  const snapTimeoutRef = useRef<NodeJS.Timeout>();
+  const snapTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const lastScrollTimeRef = useRef<number>(0);
 
   useEffect(() => {
