@@ -1,0 +1,28 @@
+// This is your Prisma schema file for the landing page
+// It connects to the existing Woofadaar database
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Waitlist model - matches the existing table in the database
+model Waitlist {
+  id                 String   @id
+  email              String   @unique
+  name               String
+  location           String?
+  phone              String?
+  dog_owner          Boolean  @default(false)
+  preferred_language String   @default("en")
+  referral_source    String?
+  interests          String?
+  status             String   @default("active")
+  position           Int?
+  created_at         DateTime @default(now())
+  updated_at         DateTime
+}

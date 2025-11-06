@@ -1,0 +1,37 @@
+WOOFADAAR LANDING PAGE BACKUP
+==============================
+Backup Date: November 7, 2025 - 00:33:57
+Backup Location: backups/20251107_003357_landing_page/
+
+CONTENTS:
+---------
+✓ src/ - All source code (components, app pages, styles)
+✓ public/ - All public assets (images, SVGs, etc.)
+✓ package.json - Dependencies
+✓ package-lock.json - Locked dependencies
+✓ tsconfig.json - TypeScript configuration
+✓ next.config.ts - Next.js configuration
+✓ tailwind.config.ts - Tailwind CSS configuration
+✓ postcss.config.mjs - PostCSS configuration
+✓ .env.local - Environment variables (if exists)
+
+KEY FEATURES IN THIS VERSION:
+-----------------------------
+✓ Complete landing page with all sections
+✓ Waitlist functionality with Supabase integration
+✓ Privacy Policy page (GDPR/CCPA compliant)
+✓ Contact page with email and Instagram links
+✓ Admin dashboard for viewing waitlist entries
+✓ Responsive design for all screen sizes
+✓ Instagram carousel integration
+✓ Footer with SVG logo and optimized layout
+
+TO RESTORE:
+-----------
+1. Copy all files from this backup directory to a new project folder
+2. Run: npm install
+3. Set up .env.local with required variables (see DEPLOYMENT_GUIDE.md)
+4. Run: npm run dev
+
+NEXT.JS VERSION: 15.4.5
+NODE VERSION: Check package.json for requirements
