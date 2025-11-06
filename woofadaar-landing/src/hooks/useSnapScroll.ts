@@ -62,7 +62,7 @@ export function useSnapScroll(options: SnapScrollOptions = {}) {
       });
 
       if (closestSection) {
-        const rect = closestSection.getBoundingClientRect();
+        const rect = (closestSection as HTMLElement).getBoundingClientRect();
         const targetY = window.scrollY + rect.top;
 
         // Smooth scroll to the target section
