@@ -204,7 +204,7 @@ export default function ValueProposition() {
                 <div className="grid lg:grid-cols-2 h-full items-center">
                   {/* Feature Text */}
                   <motion.div
-                    className={`${index === 0 || index === 2 || index === 4 ? "lg:order-2" : ""} px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 flex items-center justify-center`}
+                    className={`${index === 0 || index === 2 || index === 4 ? "lg:order-2" : ""} px-6 sm:px-8 md:px-10 ${index === 1 || index === 3 ? "lg:pl-20 lg:pr-14 xl:pl-28 xl:pr-20" : "lg:px-14 xl:px-20"} flex items-center justify-center`}
                     style={{
                       y: useTransform(
                         scrollYProgress,
@@ -231,7 +231,7 @@ export default function ValueProposition() {
                           {feature.title}
                         </h3>
                       )}
-                      <h4 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl ${feature.textColor} mb-4 sm:mb-6 ${index === 0 || index === 1 || index === 2 || index === 3 || index === 4 ? 'font-bold' : 'font-medium'} leading-tight ${index === 1 ? 'sm:whitespace-nowrap' : ''}`}>
+                      <h4 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl ${feature.textColor} mb-4 sm:mb-6 ${index === 0 || index === 1 || index === 2 || index === 3 || index === 4 ? 'font-bold' : 'font-medium'} leading-tight`}>
                         {feature.subtitle}
                       </h4>
                       <p className={`text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl ${feature.textColor} leading-relaxed whitespace-pre-line`}>

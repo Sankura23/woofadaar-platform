@@ -75,8 +75,8 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
             style={{
               opacity: bigWOpacity,
               scale: 5,
-              top: '37%',
-              left: '32%'
+              top: '32%',
+              left: '28.2%'
             }}
             className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none"
           >
@@ -91,7 +91,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.25, 0.35, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '17.2%'
+                left: '13.2%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -104,7 +104,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.3, 0.4, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '21%'
+                left: '17.4%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -117,7 +117,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.35, 0.45, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '24.1%'
+                left: '20.7%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -130,7 +130,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.4, 0.5, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '27.6%'
+                left: '24.4%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -143,7 +143,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.4, 0.5, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '30.7%'
+                left: '27.6%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -156,7 +156,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.45, 0.55, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '34.5%'
+                left: '31.7%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -169,7 +169,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.5, 0.6, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '37.8%'
+                left: '35.2%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -182,7 +182,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 opacity: useTransform(scrollYProgress, [0.55, 0.65, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
                 top: '37%',
-                left: '41.5%'
+                left: '39.3%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
@@ -194,8 +194,8 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
               style={{
                 opacity: useTransform(scrollYProgress, [0.6, 0.7, 0.9, 0.98], [0, 1, 1, 0]),
                 y: lettersY,
-                top: '37.5%',
-                left: '45%'
+                top: '37.7%',
+                left: '43.2%'
               }}
               className="absolute -translate-x-1/2 -translate-y-1/2"
             >
