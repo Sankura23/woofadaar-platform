@@ -15,6 +15,13 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
     offset: ["start start", "end start"]
   });
 
+  // Mobile hero scroll tracking
+  const mobileHeroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: mobileScrollProgress } = useScroll({
+    target: mobileHeroRef,
+    offset: ["start start", "end start"]
+  });
+
   // Section 2 content scroll tracking
   const section2Ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress: section2Progress } = useScroll({
@@ -38,10 +45,78 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
 
   return (
     <>
-      {/* Fixed Hero Section - Stays in place during scroll */}
+      {/* Mobile Hero Section - Matches desktop */}
+      <section ref={mobileHeroRef} className="h-[400vh] md:hidden relative" style={{ backgroundColor: '#3bbca8' }}>
+        <motion.div
+          style={{
+            opacity: useTransform(mobileScrollProgress, [0.85, 1], [1, 0]),
+            pointerEvents: 'none'
+          }}
+          className="fixed inset-0"
+        >
+          {/* Animated Dog Image */}
+          <motion.div
+            style={{
+              opacity: useTransform(mobileScrollProgress, [0, 0.5, 0.8], [1, 1, 0]),
+              top: '15%'
+            }}
+            className="absolute inset-0 flex items-center justify-center z-10"
+          >
+            <div className="relative w-full h-full scale-[2.2]">
+              <Image
+                src="/assets/Hero Section Dog Image.svg"
+                alt="Dog vector"
+                fill
+                className="object-contain"
+                style={{
+                  objectPosition: 'center 60%'
+                }}
+                priority
+              />
+            </div>
+          </motion.div>
+
+          {/* WOOFADAAR Logo - appears on scroll */}
+          <motion.div
+            className="absolute top-[35%] left-0 right-0 flex justify-center z-[100]"
+            style={{
+              opacity: useTransform(mobileScrollProgress, [0.1, 0.2, 0.85, 0.95], [0, 1, 1, 0]),
+              y: useTransform(mobileScrollProgress, [0.1, 0.2, 0.85, 0.95], [50, 0, 0, -500]),
+            }}
+          >
+            <Image
+              src="/Woofadaar logo white.png"
+              alt="Woofadaar Logo"
+              width={800}
+              height={200}
+              className="w-[340px] h-auto mx-auto"
+              priority
+            />
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40">
+            <motion.div
+              animate={{
+                y: [0, 10, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="w-8 h-12 border-2 border-white rounded-full flex justify-center"
+            >
+              <div className="w-1 h-3 bg-white rounded-full mt-2" />
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Desktop Hero Section - Stays in place during scroll */}
       <section
         ref={containerRef}
-        className="h-[400vh] relative"
+        className="h-[400vh] relative hidden md:block"
       >
         <motion.div
           style={{ opacity: entireSectionOpacity, backgroundColor: '#3bbca8', pointerEvents: 'none' }}
@@ -239,17 +314,17 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
           alt="Background dog"
           width={1200}
           height={1200}
-          className="absolute right-0 bottom-0 pointer-events-none w-full sm:w-3/4 md:w-2/3 lg:w-3/5 max-w-[400px] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] h-auto"
+          className="absolute left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-0 bottom-0 pointer-events-none w-[130%] sm:w-3/4 md:w-2/3 lg:w-3/5 max-w-[500px] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] h-auto"
           style={{
             zIndex: 0
           }}
           priority
         />
         <motion.div
-          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10"
+          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10 self-start mt-24 md:mt-0 md:self-center"
         >
-          <motion.h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-4 sm:mb-6" style={{ pointerEvents: 'none' }}>
-            <div className="whitespace-nowrap mb-2 sm:mb-4">
+          <motion.h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-primary-mutedPurple mb-4 sm:mb-6" style={{ pointerEvents: 'none', textAlign: 'center' }}>
+            <div className="whitespace-nowrap mb-2 sm:mb-4" style={{ textAlign: 'center' }}>
               {"Helping you raise your".split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -277,7 +352,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 </motion.span>
               ))}
             </div>
-            <div className="whitespace-nowrap">
+            <div className="whitespace-nowrap" style={{ textAlign: 'center' }}>
               {"dogs better, together".split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -312,7 +387,8 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
             style={{
               opacity: useTransform(section2Progress, [0.12, 0.16], [0, 1]),
               x: useTransform(section2Progress, [0.12, 0.16], [-30, 0]),
-              pointerEvents: 'none'
+              pointerEvents: 'none',
+              textAlign: 'center'
             }}
           >
             <span className="block sm:inline sm:whitespace-nowrap">Woofadaar is a community that helps you</span><br className="hidden sm:block" />learn, care and grow as a parent.

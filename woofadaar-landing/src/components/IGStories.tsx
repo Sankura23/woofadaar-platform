@@ -29,29 +29,32 @@ export default function IGStories() {
     infinite: true,
     speed: 500,
     slidesToShow: 3,
-    slidesToScroll: 1,
+    slidesToScroll: 2,
     autoplay: true,
     autoplaySpeed: 5000,
     arrows: false,
-    swipe: false,
-    draggable: false,
-    touchMove: false,
+    swipe: true,
+    draggable: true,
+    touchMove: true,
     accessibility: true,
+    centerMode: false,
+    variableWidth: false,
     beforeChange: (current: number, next: number) => {
       setIsDragging(true);
       setCurrentSlide(next);
-      // Preload adjacent slides
+      // Load all posts
       const toLoad = new Set<string>();
-      for (let i = -1; i <= 3; i++) {
-        const index = (next + i + instagramPosts.length) % instagramPosts.length;
-        toLoad.add(instagramPosts[index].id);
-      }
-      setLoadedPosts(prev => new Set([...prev, ...toLoad]));
+      instagramPosts.forEach(post => {
+        toLoad.add(post.id);
+      });
+      setLoadedPosts(toLoad);
     },
     afterChange: () => setIsDragging(false),
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 768, settings: { slidesToShow: 1 } }
+      { breakpoint: 1024, settings: { slidesToShow: 2, slidesToScroll: 1, centerMode: false, variableWidth: false, swipe: true, draggable: true, touchMove: true } },
+      { breakpoint: 768, settings: { slidesToShow: 2, slidesToScroll: 1, centerMode: false, variableWidth: false, infinite: true, swipe: true, draggable: true, touchMove: true } },
+      { breakpoint: 640, settings: { slidesToShow: 2, slidesToScroll: 1, centerMode: false, variableWidth: false, swipe: true, draggable: true, touchMove: true } },
+      { breakpoint: 480, settings: { slidesToShow: 2, slidesToScroll: 1, centerMode: false, variableWidth: false, swipe: true, draggable: true, touchMove: true } }
     ]
   };
 
@@ -69,30 +72,54 @@ export default function IGStories() {
     }
   };
 
-  // Initialize first visible posts
+  // Initialize all posts
   useEffect(() => {
     const initialLoad = new Set<string>();
-    for (let i = 0; i < Math.min(3, instagramPosts.length); i++) {
-      initialLoad.add(instagramPosts[i].id);
-    }
+    instagramPosts.forEach(post => {
+      initialLoad.add(post.id);
+    });
     setLoadedPosts(initialLoad);
   }, []);
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-neutral-milkWhite">
-      <div className="w-full px-4 sm:px-6">
+    <>
+      <style jsx global>{`
+        @media (max-width: 767px) {
+          .instagram-carousel .slick-track {
+            display: flex !important;
+          }
+
+          .instagram-carousel .slick-slide {
+            /* Don't force width - use padding for gaps */
+            padding: 0 8px !important;
+            box-sizing: border-box !important;
+          }
+
+          .instagram-carousel .slick-slide > div {
+            width: 100% !important;
+          }
+
+          .instagram-carousel .slick-list {
+            overflow: hidden !important;
+            margin: 0 -8px !important; /* Compensate for padding */
+          }
+        }
+      `}</style>
+
+      <section className="py-16 sm:py-16 md:py-20 lg:py-24 bg-neutral-milkWhite">
+        <div className="w-full">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-8 sm:mb-12 md:mb-16"
+          className="text-center mb-8 md:mb-16 px-6"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-4 sm:mb-6 font-sans">
-            REAL STORIES, REAL PARENTS
+          <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-0 md:mb-6 font-sans leading-tight">
+            REAL STORIES.<br />REAL PARENTS.
           </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-primary-mutedPurple max-w-4xl mx-auto px-2">
+          <p className="hidden md:block text-lg sm:text-2xl md:text-3xl lg:text-4xl text-primary-mutedPurple max-w-4xl mx-auto px-2 leading-relaxed">
             Honest stories & unfiltered love that makes your heart wag.
           </p>
         </motion.div>
@@ -126,10 +153,10 @@ export default function IGStories() {
             </button>
 
             {/* Slider */}
-            <div className="overflow-hidden relative">
+            <div className="instagram-carousel overflow-hidden relative">
               <Slider ref={sliderRef} {...settings}>
                 {instagramPosts.map((post, index) => (
-                  <div key={post.id} className="px-2 sm:px-4">
+                  <div key={post.id}>
                     <InstagramIframeEmbed
                       post={post}
                       shouldLoad={loadedPosts.has(post.id)}
@@ -148,7 +175,7 @@ export default function IGStories() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center relative z-50"
+          className="text-center relative z-50 px-6"
         >
           <a
             href="https://www.instagram.com/woofadaarofficial/"
@@ -162,6 +189,7 @@ export default function IGStories() {
         </motion.div>
       </div>
     </section>
+    </>
   );
 }
 
@@ -181,8 +209,8 @@ function InstagramIframeEmbed({
   const [hasError, setHasError] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Create iframe URL with parameters
-  const iframeUrl = `${post.url}embed/captioned/?cr=1&v=14&wp=540&rd=https%3A%2F%2Fwoofadaar.com&rp=%2F`;
+  // Create iframe URL with parameters (without captions)
+  const iframeUrl = `${post.url}embed/?cr=1&v=14&wp=540&rd=https%3A%2F%2Fwoofadaar.com&rp=%2F`;
 
   const handleLoad = () => {
     setIsLoading(false);

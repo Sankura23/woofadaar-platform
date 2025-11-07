@@ -16,8 +16,9 @@ const features = [
     textColor: 'text-white'
   },
   {
-    title: 'Verified Expert',
-    titleLine2: 'Sessions',
+    title: 'Verified',
+    titleLine2: 'Expert',
+    titleLine3: 'Sessions',
     icon: '/icons/expert-sessions-icon.svg',
     subtitle: 'When research spirals aren\'t helping, we will.',
     description: 'Behavior, nutrition, training, grooming.\nReal advice from real experts.',
@@ -26,8 +27,8 @@ const features = [
     textColor: 'text-primary-mutedPurple'
   },
   {
-    title: 'Dog Events &',
-    titleLine2: 'Meetups',
+    title: 'Dog Events',
+    titleLine2: '& Meetups',
     icon: '/icons/events-meetups-icon.svg',
     subtitle: 'Because dogs don\'t make friends on calls!',
     description: 'Playdates, meetups, community events.\nFor your dog AND your social life.',
@@ -36,8 +37,8 @@ const features = [
     textColor: 'text-white'
   },
   {
-    title: 'Health Tracking &',
-    titleLine2: 'Wellbeing',
+    title: 'Health Tracking',
+    titleLine2: '& Wellbeing',
     icon: '/icons/health-tracking-icon.svg',
     subtitle: 'Your dog\'s health simplified.',
     description: 'Track, monitor & improve your dog\'s wellbeing in\none simple platform.',
@@ -65,18 +66,142 @@ export default function ValueProposition() {
   });
 
   return (
-    <section
-      ref={containerRef}
-      className="h-[1200vh] relative z-40"
-      style={{ marginTop: '-100vh' }}
-    >
-      {/* Scrolling container that overlaps section 2 */}
-      <motion.div
-        className="relative h-[1200vh] z-30"
-        style={{
-          opacity: useTransform(scrollYProgress, [0, 0.1, 0.95, 0.99], [0, 1, 1, 0])
-        }}
+    <div>
+      {/* Mobile Value Proposition - Simple stacked sections */}
+      <div className="md:hidden">
+        {/* Header Section */}
+        <section className="min-h-screen bg-primary-beige flex items-center justify-center px-2">
+          <div className="text-center">
+            <motion.h2
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold text-primary-mutedPurple mb-6 font-sans"
+            >
+              <motion.span
+                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="block"
+              >
+                Because raising a dog
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="block"
+              >
+                shouldn't feel like a
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="text-functional-error block"
+              >
+                solo mission.
+              </motion.span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              viewport={{ once: true }}
+              className="text-base text-ui-textSecondary max-w-4xl mx-auto font-sans"
+            >
+              From health tracking to community support, we've built the most comprehensive
+              platform for pet parents who want the best for their furry friends.
+            </motion.p>
+          </div>
+        </section>
+
+        {features.map((feature, index) => (
+          <section
+            key={feature.title}
+            className={`min-h-screen ${feature.bgColor} flex items-center relative overflow-hidden`}
+          >
+            {/* Background dog image */}
+            <Image
+              src={feature.dogImage}
+              alt={feature.title}
+              width={1200}
+              height={1200}
+              className={`absolute ${index === 1 ? 'right-0 translate-x-[20%]' : 'left-1/2 -translate-x-1/2'} bottom-0 pointer-events-none w-[130%] max-w-[500px] h-auto`}
+              style={{
+                zIndex: 0
+              }}
+            />
+
+            {/* Text content */}
+            <div className="text-center w-full px-4 sm:px-6 relative z-10 self-start mt-24">
+              {/* Title with Icon */}
+              <div className="mb-4 flex flex-col items-center">
+                <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight mb-1 font-sans`}>
+                  {feature.title}
+                </h2>
+                {feature.titleLine2 && !(feature as any).titleLine3 && (
+                  <div className="relative">
+                    <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
+                      {feature.titleLine2}
+                    </h2>
+                    {feature.icon && (
+                      <Image src={feature.icon} alt="icon" width={55} height={55} className="absolute right-[-55px] top-1/2 -translate-y-1/2" />
+                    )}
+                  </div>
+                )}
+                {(feature as any).titleLine3 && (
+                  <>
+                    <div className="relative mb-1">
+                      <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
+                        {feature.titleLine2}
+                      </h2>
+                      {feature.icon && (
+                        <Image src={feature.icon} alt="icon" width={55} height={55} className="absolute left-[-70px] top-1/2 -translate-y-1/2" />
+                      )}
+                    </div>
+                    <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
+                      {(feature as any).titleLine3}
+                    </h2>
+                  </>
+                )}
+              </div>
+
+              {/* Subtitle */}
+              <h3 className={`text-xl font-bold ${feature.textColor} mb-3 font-sans`}>
+                {feature.subtitle}
+              </h3>
+
+              {/* Description */}
+              <p className={`text-base ${feature.textColor} leading-relaxed whitespace-pre-line font-sans`}>
+                {feature.description}
+              </p>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      {/* Desktop Value Proposition - Complex scroll animations */}
+      <section
+        ref={containerRef}
+        className="h-[1200vh] relative z-40 hidden md:block"
+        style={{ marginTop: '-100vh' }}
       >
+        {/* Scrolling container that overlaps section 2 */}
+        <motion.div
+          className="relative h-[1200vh] z-30"
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.1, 0.95, 0.99], [0, 1, 1, 0]),
+            pointerEvents: useTransform(scrollYProgress,
+              [0, 0.05, 0.95, 0.99],
+              ['none', 'auto', 'auto', 'none']
+            ) as any
+          }}
+        >
         {/* Header Section */}
         <motion.div
           style={{
@@ -267,5 +392,6 @@ export default function ValueProposition() {
         })}
       </motion.div>
     </section>
+    </div>
   );
 }
