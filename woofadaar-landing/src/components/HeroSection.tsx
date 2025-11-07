@@ -314,7 +314,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
           alt="Background dog"
           width={1200}
           height={1200}
-          className="absolute left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-0 bottom-0 pointer-events-none w-[130%] sm:w-3/4 md:w-2/3 lg:w-3/5 max-w-[500px] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] h-auto"
+          className="absolute left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-[-80px] bottom-0 pointer-events-none w-[130%] sm:w-3/4 md:w-2/3 lg:w-3/5 max-w-[500px] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] h-auto"
           style={{
             zIndex: 0
           }}
@@ -383,12 +383,11 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
           </motion.h1>
 
           <motion.p
-            className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-ui-textSecondary mb-6 sm:mb-8 md:mb-10"
+            className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-ui-textSecondary mb-6 sm:mb-8 md:mb-10 text-center md:text-left"
             style={{
               opacity: useTransform(section2Progress, [0.12, 0.16], [0, 1]),
               x: useTransform(section2Progress, [0.12, 0.16], [-30, 0]),
-              pointerEvents: 'none',
-              textAlign: 'center'
+              pointerEvents: 'none'
             }}
           >
             <span className="block sm:inline sm:whitespace-nowrap">Woofadaar is a community that helps you</span><br className="hidden sm:block" />learn, care and grow as a parent.

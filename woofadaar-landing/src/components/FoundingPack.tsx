@@ -97,7 +97,7 @@ export default function FoundingPack({ onJoinWaitlist }: FoundingPackProps) {
             className="h-[40vh] lg:h-full order-2 lg:order-1"
           >
             <div className="relative w-full h-full flex items-end justify-center">
-              <div className="relative w-[90%] sm:w-[85%] md:w-[70%] lg:w-[95%] h-[90%] lg:h-[95%]">
+              <div className="relative w-[110%] sm:w-[100%] md:w-[80%] lg:w-[95%] h-[100%] lg:h-[95%]">
                 <Image
                   src="/images/dogs/founding-pack-dog.svg"
                   alt="Happy Dog"
