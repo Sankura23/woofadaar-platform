@@ -19,16 +19,65 @@ export default function AppComingSoon() {
   });
 
   return (
-    <section
-      ref={containerRef}
-      className="h-[200vh] relative z-40"
-    >
-      <motion.div
-        className="fixed inset-0 bg-primary-beige flex items-center z-30"
-        style={{
-          opacity: useTransform(scrollYProgress, [0, 0.1, 0.5, 0.75], [0, 1, 1, 0])
-        }}
+    <div>
+      {/* Mobile App Coming Soon - Simple layout */}
+      <section className="min-h-screen bg-primary-beige flex flex-col md:hidden py-12 px-6 justify-between">
+        <div className="flex flex-col justify-center">
+          {/* Heading */}
+          <h1 className="text-5xl font-bold leading-none mb-6">
+            <span className="text-primary-mutedPurple">The App.</span><br />
+            <span className="text-primary-mint">Coming Soon.</span>
+          </h1>
+
+          {/* Tagline */}
+          <p className="text-xl text-primary-mutedPurple font-semibold mb-8">
+            We're building the happiest corner for dog parents.
+          </p>
+
+          {/* Features List */}
+          <div className="space-y-4 mb-8">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 text-primary-mutedPurple"
+              >
+                <Image src="/icons/bullet-icon.svg" alt="bullet" width={24} height={24} className="flex-shrink-0" />
+                <p className="text-lg">
+                  {feature}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* iPhone Mockup */}
+        <div className="relative w-full max-w-[280px] mx-auto">
+          <Image
+            src="/images/iphone-mockup.png"
+            alt="Woofadaar App Mockup"
+            width={400}
+            height={800}
+            className="w-full h-auto"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* Desktop App Coming Soon - Scroll animations */}
+      <section
+        ref={containerRef}
+        className="h-[200vh] relative z-40 hidden md:block"
       >
+        <motion.div
+          className="fixed inset-0 bg-primary-beige flex items-center z-30"
+          style={{
+            opacity: useTransform(scrollYProgress, [0, 0.1, 0.5, 0.75], [0, 1, 1, 0]),
+            pointerEvents: useTransform(scrollYProgress,
+              [0, 0.05, 0.7, 0.75],
+              ['none', 'auto', 'auto', 'none']
+            ) as any
+          }}
+        >
         <div className="max-width-container mx-auto section-padding w-full px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 items-center">
             {/* Left Side - iPhone Mockup */}
@@ -101,5 +150,6 @@ export default function AppComingSoon() {
         </div>
       </motion.div>
     </section>
+    </div>
   );
 }

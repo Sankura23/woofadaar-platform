@@ -264,7 +264,7 @@ function InstagramIframeEmbed({
   }
 
   return (
-    <div className="instagram-iframe-container relative bg-white rounded-xl shadow-lg overflow-hidden">
+    <div className="instagram-iframe-container relative bg-white rounded-xl shadow-lg overflow-hidden" style={{ pointerEvents: 'auto' }}>
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
           <div className="text-center">

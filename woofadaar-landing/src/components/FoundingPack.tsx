@@ -18,39 +18,18 @@ export default function FoundingPack({ onJoinWaitlist }: FoundingPackProps) {
 
   return (
     <section className="relative min-h-screen bg-primary-coral overflow-hidden z-50">
-      <div className="w-full min-h-screen py-12 sm:py-16 md:py-0">
-        <div className="grid lg:grid-cols-2 min-h-screen items-center">
-          {/* Left Side - Dog Image */}
+      <div className="w-full min-h-screen py-16 md:py-0">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 min-h-screen">
+          {/* Content - Shown first on mobile, second on desktop */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="h-64 sm:h-80 md:h-96 lg:h-full flex lg:block"
+            className="text-white px-6 sm:px-8 lg:px-12 flex items-center justify-start lg:pl-8 order-1 lg:order-2 flex-1 lg:flex-none"
           >
-            <div className="relative w-full h-full flex items-end justify-center">
-              <div className="relative w-[90%] sm:w-[85%] md:w-[80%] lg:w-[95%] h-[90%] sm:h-[85%] md:h-[90%] lg:h-[95%]">
-                <Image
-                  src="/images/dogs/founding-pack-dog.svg"
-                  alt="Happy Dog"
-                  fill
-                  className="object-contain object-bottom"
-                  priority
-                />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right Side - Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-white px-6 sm:px-8 lg:px-12 flex items-center justify-start lg:pl-8"
-          >
-            <div>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-tight">
+            <div className="w-full">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-tight text-center lg:text-left">
                 Become Part of Our
                 <br />
                 <span>FOUNDING PACK</span>
@@ -82,27 +61,50 @@ export default function FoundingPack({ onJoinWaitlist }: FoundingPackProps) {
                 ))}
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onJoinWaitlist}
-                className="bg-primary-beige text-primary-coral px-8 sm:px-10 md:px-12 py-4 sm:py-5 rounded-full text-lg sm:text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 mb-6 sm:mb-8 relative z-50 cursor-pointer min-h-[48px]"
-                style={{ pointerEvents: 'auto' }}
-              >
-                Join Waitlist
-              </motion.button>
+              <div className="flex flex-col items-center lg:items-start">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={onJoinWaitlist}
+                  className="bg-primary-beige text-primary-coral px-8 sm:px-10 md:px-12 py-4 sm:py-5 rounded-full text-lg sm:text-xl font-bold shadow-xl hover:shadow-2xl transition-all duration-300 mb-6 sm:mb-8 relative z-50 cursor-pointer min-h-[48px]"
+                  style={{ pointerEvents: 'auto' }}
+                >
+                  Join Waitlist
+                </motion.button>
 
-              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Image
+                    src="/icons/star-3.svg"
+                    alt="Heart"
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 sm:w-10 sm:h-10"
+                  />
+                  <p className="text-xl sm:text-2xl font-medium italic">
+                    Your dog will thank you later!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Dog Image - Shown second on mobile, first on desktop */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="h-[40vh] lg:h-full order-2 lg:order-1"
+          >
+            <div className="relative w-full h-full flex items-end justify-center">
+              <div className="relative w-[90%] sm:w-[85%] md:w-[70%] lg:w-[95%] h-[90%] lg:h-[95%]">
                 <Image
-                  src="/icons/star-3.svg"
-                  alt="Heart"
-                  width={36}
-                  height={36}
-                  className="w-9 h-9 sm:w-10 sm:h-10"
+                  src="/images/dogs/founding-pack-dog.svg"
+                  alt="Happy Dog"
+                  fill
+                  className="object-contain object-bottom"
+                  priority
                 />
-                <p className="text-xl sm:text-2xl font-medium italic">
-                  Your dog will thank you later!
-                </p>
               </div>
             </div>
           </motion.div>

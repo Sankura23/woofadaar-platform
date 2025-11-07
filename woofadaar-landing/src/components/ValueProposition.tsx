@@ -131,7 +131,7 @@ export default function ValueProposition() {
               alt={feature.title}
               width={1200}
               height={1200}
-              className={`absolute ${index === 1 ? 'right-0 translate-x-[20%]' : 'left-1/2 -translate-x-1/2'} bottom-0 pointer-events-none w-[130%] max-w-[500px] h-auto`}
+              className={`absolute ${index === 1 ? 'right-0 translate-x-[20%]' : 'left-1/2 -translate-x-1/2'} bottom-0 pointer-events-none ${index === 3 ? 'w-[110%] max-w-[450px]' : 'w-[130%] max-w-[500px]'} h-auto`}
               style={{
                 zIndex: 0
               }}
