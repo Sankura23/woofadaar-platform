@@ -116,8 +116,8 @@ export default function IGStories() {
           viewport={{ once: true }}
           className="text-center mb-8 md:mb-16 px-6"
         >
-          <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-0 md:mb-6 font-sans leading-tight whitespace-nowrap">
-            REAL STORIES. REAL PARENTS.
+          <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-0 md:mb-6 font-sans leading-tight">
+            <span className="block md:inline">REAL STORIES.</span> <span className="block md:inline md:whitespace-nowrap">REAL PARENTS.</span>
           </h2>
           <p className="hidden md:block text-lg sm:text-2xl md:text-3xl lg:text-4xl text-primary-mutedPurple max-w-4xl mx-auto px-2 leading-relaxed">
             Honest stories & unfiltered love that makes<br />your heart wag.

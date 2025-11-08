@@ -18,7 +18,7 @@ export default function FoundingPack({ onJoinWaitlist }: FoundingPackProps) {
 
   return (
     <section className="relative min-h-screen bg-primary-coral overflow-hidden z-50">
-      <div className="w-full min-h-screen py-16 md:py-0">
+      <div className="w-full min-h-screen pt-16 pb-0 md:py-0">
         <div className="flex flex-col lg:grid lg:grid-cols-2 min-h-screen">
           {/* Content - Shown first on mobile, second on desktop */}
           <motion.div
@@ -94,10 +94,10 @@ export default function FoundingPack({ onJoinWaitlist }: FoundingPackProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="h-[40vh] lg:h-full order-2 lg:order-1"
+            className="h-[50vh] lg:h-full order-2 lg:order-1 flex items-end"
           >
             <div className="relative w-full h-full flex items-end justify-center">
-              <div className="relative w-[110%] sm:w-[100%] md:w-[80%] lg:w-[95%] h-[100%] lg:h-[95%]">
+              <div className="relative w-[120%] sm:w-[110%] md:w-[90%] lg:w-[95%] h-full lg:h-[95%]">
                 <Image
                   src="/images/dogs/founding-pack-dog.svg"
                   alt="Happy Dog"
