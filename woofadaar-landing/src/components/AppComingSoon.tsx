@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useRef } from 'react';
 import Image from 'next/image';
 
@@ -13,9 +13,16 @@ const features = [
 
 export default function AppComingSoon() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: rawScrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+  });
+
+  // Smooth the scroll progress to prevent Chrome jumps
+  const scrollYProgress = useSpring(rawScrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
   });
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
 
@@ -10,23 +10,42 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
+  const { scrollYProgress: rawScrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+  });
+
+  // Smooth the scroll progress to prevent Chrome jumps
+  const scrollYProgress = useSpring(rawScrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
   });
 
   // Mobile hero scroll tracking
   const mobileHeroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: mobileScrollProgress } = useScroll({
+  const { scrollYProgress: rawMobileScrollProgress } = useScroll({
     target: mobileHeroRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+  });
+
+  const mobileScrollProgress = useSpring(rawMobileScrollProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
   });
 
   // Section 2 content scroll tracking
   const section2Ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: section2Progress } = useScroll({
+  const { scrollYProgress: rawSection2Progress } = useScroll({
     target: section2Ref,
-    offset: ["start end", "center start"]
+    offset: ["start end", "center start"],
+  });
+
+  const section2Progress = useSpring(rawSection2Progress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
   });
 
 
