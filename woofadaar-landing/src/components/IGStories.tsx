@@ -184,7 +184,7 @@ export default function IGStories() {
           }
 
           .slick-dots {
-            bottom: -30px;
+            bottom: -20px;
           }
 
           .slick-dots li button:before {
@@ -207,7 +207,7 @@ export default function IGStories() {
         }
       `}</style>
 
-      <section className="py-16 sm:py-16 md:py-20 lg:py-24 bg-neutral-milkWhite">
+      <section className="pt-6 pb-12 md:py-20 lg:py-24 bg-neutral-milkWhite">
         <div className="w-full">
         {/* Header */}
         <motion.div
@@ -215,7 +215,7 @@ export default function IGStories() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-8 md:mb-16 px-6"
+          className="text-center mb-24 md:mb-16 px-6"
         >
           <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-0 md:mb-6 font-sans leading-tight">
             <span className="block md:inline">REAL STORIES.</span> <span className="block md:inline md:whitespace-nowrap">REAL PARENTS.</span>
@@ -231,7 +231,7 @@ export default function IGStories() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-8 sm:mb-10 md:mb-12"
+          className="-mb-32 md:mb-12"
         >
           <div className="relative">
             {/* Custom Navigation Arrows */}
