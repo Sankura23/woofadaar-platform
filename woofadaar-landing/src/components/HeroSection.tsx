@@ -300,8 +300,9 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
       {/* Hero Content Section - Normal section */}
       <motion.section
         ref={section2Ref}
-        className="bg-neutral-milkWhite relative overflow-hidden min-h-screen md:h-screen flex flex-col"
+        className="bg-neutral-milkWhite flex flex-col md:flex-row md:items-center relative overflow-hidden"
         style={{
+          height: '100vh',
           opacity: useTransform(scrollYProgress, [0.9, 1], [0, 1]),
           zIndex: 50,
           position: 'relative'
@@ -320,7 +321,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
           priority
         />
         <motion.div
-          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10 pt-24 pb-4 md:pt-0 md:pb-0 md:self-center"
+          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10 pt-24 pb-4 md:pt-0 md:pb-0"
         >
           <motion.h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-primary-mutedPurple mb-4 sm:mb-6" style={{ pointerEvents: 'none', textAlign: 'center' }}>
             <div className="whitespace-nowrap mb-2 sm:mb-4" style={{ textAlign: 'center' }}>
