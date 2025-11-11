@@ -51,15 +51,16 @@ export default function AppComingSoon() {
         </div>
 
         {/* iPhone Mockup */}
-        <div className="relative w-full max-w-[280px] mx-auto">
-          <Image
-            src="/images/iphone-mockup.png"
-            alt="Woofadaar App Mockup"
-            width={400}
-            height={800}
-            className="w-full h-auto"
-            priority
-          />
+        <div className="w-full max-w-xs sm:max-w-sm mx-auto">
+          <div className="relative aspect-[9/19.5] w-full">
+            <Image
+              src="/images/iphone-mockup.png"
+              alt="Woofadaar App Mockup"
+              fill
+              className="object-contain object-bottom"
+              priority
+            />
+          </div>
         </div>
       </section>
 

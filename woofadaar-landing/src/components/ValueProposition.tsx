@@ -123,48 +123,36 @@ export default function ValueProposition() {
         {features.map((feature, index) => (
           <section
             key={feature.title}
-            className={`min-h-screen ${feature.bgColor} flex items-center relative overflow-hidden`}
+            className={`${feature.bgColor} relative flex flex-col min-h-screen`}
           >
-            {/* Background dog image */}
-            <Image
-              src={feature.dogImage}
-              alt={feature.title}
-              width={1200}
-              height={1200}
-              className={`absolute ${index === 1 ? 'right-0 translate-x-[20%]' : 'left-1/2 -translate-x-1/2'} bottom-0 pointer-events-none ${index === 3 ? 'w-[110%] max-w-[450px]' : 'w-[130%] max-w-[500px]'} h-auto`}
-              style={{
-                zIndex: 0
-              }}
-            />
-
             {/* Text content */}
-            <div className="text-center w-full px-4 sm:px-6 relative z-10 self-start mt-24">
+            <div className="text-center w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-12 sm:pt-16 pb-4">
               {/* Title with Icon */}
-              <div className="mb-4 flex flex-col items-center">
-                <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight mb-1 font-sans`}>
+              <div className="mb-4 sm:mb-6 flex flex-col items-center">
+                <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${feature.textColor} leading-tight mb-2 font-sans`}>
                   {feature.title}
                 </h2>
                 {feature.titleLine2 && !(feature as any).titleLine3 && (
                   <div className="relative">
-                    <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
+                    <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
                       {feature.titleLine2}
                     </h2>
                     {feature.icon && (
-                      <Image src={feature.icon} alt="icon" width={55} height={55} className="absolute right-[-55px] top-1/2 -translate-y-1/2" />
+                      <Image src={feature.icon} alt="icon" width={40} height={40} className="absolute right-[-45px] top-1/2 -translate-y-1/2 w-[35px] h-[35px] sm:w-[45px] sm:h-[45px]" />
                     )}
                   </div>
                 )}
                 {(feature as any).titleLine3 && (
                   <>
                     <div className="relative mb-1">
-                      <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
+                      <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
                         {feature.titleLine2}
                       </h2>
                       {feature.icon && (
-                        <Image src={feature.icon} alt="icon" width={55} height={55} className="absolute left-[-70px] top-1/2 -translate-y-1/2" />
+                        <Image src={feature.icon} alt="icon" width={40} height={40} className="absolute left-[-45px] top-1/2 -translate-y-1/2 w-[35px] h-[35px] sm:w-[45px] sm:h-[45px]" />
                       )}
                     </div>
-                    <h2 className={`text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
+                    <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${feature.textColor} leading-tight font-sans`}>
                       {(feature as any).titleLine3}
                     </h2>
                   </>
@@ -172,14 +160,26 @@ export default function ValueProposition() {
               </div>
 
               {/* Subtitle */}
-              <h3 className={`text-xl font-bold ${feature.textColor} mb-3 font-sans`}>
+              <h3 className={`text-lg sm:text-xl font-bold ${feature.textColor} mb-3 sm:mb-4 font-sans`}>
                 {feature.subtitle}
               </h3>
 
               {/* Description */}
-              <p className={`text-base ${feature.textColor} leading-relaxed whitespace-pre-line font-sans`}>
+              <p className={`text-sm sm:text-base ${feature.textColor} leading-relaxed whitespace-pre-line font-sans`}>
                 {feature.description}
               </p>
+            </div>
+
+            {/* Dog image - Absolute positioned to bottom */}
+            <div className="absolute bottom-0 left-0 right-0 w-full max-w-md mx-auto">
+              <div className="relative aspect-[3/4] w-full">
+                <Image
+                  src={feature.dogImage}
+                  alt={feature.title}
+                  fill
+                  className="object-contain object-bottom"
+                />
+              </div>
             </div>
           </section>
         ))}

@@ -300,28 +300,27 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
       {/* Hero Content Section - Normal section */}
       <motion.section
         ref={section2Ref}
-        className="bg-neutral-milkWhite flex items-center relative overflow-hidden"
+        className="bg-neutral-milkWhite relative overflow-hidden min-h-screen md:h-screen flex flex-col"
         style={{
-          height: '100vh',
           opacity: useTransform(scrollYProgress, [0.9, 1], [0, 1]),
           zIndex: 50,
           position: 'relative'
         }}
       >
-        {/* Background dog image */}
+        {/* Background dog image - Desktop only */}
         <Image
           src="/assets/black-white-dog-square.svg"
           alt="Background dog"
           width={1200}
           height={1200}
-          className="absolute left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-[-80px] bottom-0 pointer-events-none w-[130%] sm:w-3/4 md:w-2/3 lg:w-3/5 max-w-[500px] sm:max-w-[600px] md:max-w-[800px] lg:max-w-[1000px] h-auto"
+          className="hidden md:block absolute md:right-[-80px] bottom-0 pointer-events-none md:w-2/3 lg:w-3/5 md:max-w-[800px] lg:max-w-[1000px] h-auto"
           style={{
             zIndex: 0
           }}
           priority
         />
         <motion.div
-          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10 self-start mt-24 md:mt-0 md:self-center"
+          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10 pt-24 pb-4 md:pt-0 md:pb-0 md:self-center"
         >
           <motion.h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-primary-mutedPurple mb-4 sm:mb-6" style={{ pointerEvents: 'none', textAlign: 'center' }}>
             <div className="whitespace-nowrap mb-2 sm:mb-4" style={{ textAlign: 'center' }}>
@@ -393,7 +392,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
             <span className="block sm:inline sm:whitespace-nowrap">Woofadaar is a community that helps you</span><br className="hidden sm:block" />learn, care and grow as a parent.
           </motion.p>
 
-          <div className="relative z-50 flex justify-center md:justify-start" style={{ pointerEvents: 'auto' }}>
+          <div className="relative z-50 flex justify-center md:justify-start mb-8 md:mb-0" style={{ pointerEvents: 'auto' }}>
             <button
               onClick={onJoinWaitlist}
               type="button"
@@ -404,6 +403,19 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
             </button>
           </div>
         </motion.div>
+
+        {/* Dog image - Mobile only, absolute positioned at bottom */}
+        <div className="md:hidden absolute bottom-0 left-0 right-0 w-full max-w-sm mx-auto">
+          <div className="relative aspect-square w-full">
+            <Image
+              src="/assets/black-white-dog-square.svg"
+              alt="Background dog"
+              fill
+              className="object-contain object-bottom"
+              priority
+            />
+          </div>
+        </div>
       </motion.section>
     </>
   );

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Woofadaar - Every Bark Counts | Premium Dog Care App',
   description: 'Join the waitlist for Woofadaar - The ultimate dog care companion app. Track health, connect with vets, find services, and join a community of pet parents.',
   keywords: 'dog care app, pet health tracking, veterinary services, dog community, pet parent app',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes',
+  viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no',
   openGraph: {
     title: 'Woofadaar - Every Bark Counts',
     description: 'The ultimate dog care companion app coming soon. Join our waitlist!',

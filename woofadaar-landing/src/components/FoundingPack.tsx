@@ -94,10 +94,10 @@ export default function FoundingPack({ onJoinWaitlist }: FoundingPackProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="h-[50vh] lg:h-full order-2 lg:order-1 flex items-end"
+            className="lg:h-full order-2 lg:order-1 flex items-end w-full px-6 pb-0 lg:px-0 lg:pb-0"
           >
-            <div className="relative w-full h-full flex items-end justify-center">
-              <div className="relative w-[120%] sm:w-[110%] md:w-[90%] lg:w-[95%] h-full lg:h-[95%]">
+            <div className="relative w-full max-w-xs sm:max-w-sm mx-auto lg:max-w-none lg:mx-0 lg:w-[95%] h-full lg:h-[95%]">
+              <div className="relative aspect-[3/4] lg:aspect-auto lg:h-full w-full">
                 <Image
                   src="/images/dogs/founding-pack-dog.svg"
                   alt="Happy Dog"
