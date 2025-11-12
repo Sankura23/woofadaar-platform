@@ -220,7 +220,7 @@ export default function IGStories() {
           <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-0 md:mb-6 font-sans leading-tight">
             <span className="block md:inline">REAL STORIES.</span> <span className="block md:inline md:whitespace-nowrap">REAL PARENTS.</span>
           </h2>
-          <p className="hidden md:block text-lg sm:text-2xl md:text-3xl lg:text-4xl text-primary-mutedPurple max-w-4xl mx-auto px-2 leading-relaxed">
+          <p className="block text-base sm:text-2xl md:text-3xl lg:text-4xl text-primary-mutedPurple max-w-4xl mx-auto px-2 leading-relaxed mt-4 md:mt-0">
             Honest stories & unfiltered love that makes<br />your heart wag.
           </p>
         </motion.div>
