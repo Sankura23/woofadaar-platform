@@ -167,7 +167,21 @@ export default function ValueProposition() {
 
               {/* Subtitle */}
               <h3 className={`text-lg sm:text-xl font-bold ${feature.textColor} mb-3 font-sans`}>
-                {feature.subtitle}
+                {index === 1 ? (
+                  <>
+                    When research spirals aren't<br />helping, we will.
+                  </>
+                ) : index === 2 ? (
+                  <>
+                    Because dogs don't make<br />friends on calls!
+                  </>
+                ) : index === 4 ? (
+                  <>
+                    The "I wish someone told me<br />this earlier" hub.
+                  </>
+                ) : (
+                  feature.subtitle
+                )}
               </h3>
 
               {/* Description */}
@@ -177,7 +191,7 @@ export default function ValueProposition() {
             </div>
 
             {/* Dog image - Match HeroSection proportions exactly */}
-            <div className="absolute bottom-0 left-0 right-0 w-full max-w-sm mx-auto">
+            <div className={`absolute bottom-0 left-0 right-0 w-full mx-auto ${index === 1 ? 'max-w-md translate-x-8' : 'max-w-sm'}`}>
               <div className="relative aspect-square w-full">
                 <Image
                   src={feature.dogImage}
