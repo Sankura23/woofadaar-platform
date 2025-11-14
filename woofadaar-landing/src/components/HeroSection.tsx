@@ -349,7 +349,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                   key={index}
                   style={{
                     display: 'inline-block',
-                    marginRight: '8px',
+                    marginRight: '16px',
                     opacity: useTransform(
                       section2Progress,
                       [0.01 + index * 0.015, 0.03 + index * 0.015],
@@ -377,7 +377,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                   key={index}
                   style={{
                     display: 'inline-block',
-                    marginRight: '8px',
+                    marginRight: '16px',
                     opacity: useTransform(
                       section2Progress,
                       [0.08 + index * 0.015, 0.10 + index * 0.015],
