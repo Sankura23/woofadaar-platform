@@ -316,17 +316,17 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
         </motion.div>
       </section>
 
-      {/* Hero Content Section - Normal section */}
-      <motion.section
+      {/* Hero Content Section - Tall scrolling section like ValueProposition */}
+      <section
         ref={section2Ref}
-        className="bg-neutral-milkWhite flex flex-col md:flex-row md:items-center relative overflow-hidden"
-        style={{
-          height: '100vh',
-          opacity: useTransform(scrollYProgress, [0.9, 1], [0, 1]),
-          zIndex: 50,
-          position: 'relative'
-        }}
+        className="h-[200vh] relative z-50 hidden md:block"
       >
+        <motion.div
+          className="fixed inset-0 bg-neutral-milkWhite flex flex-col md:flex-row md:items-center overflow-hidden"
+          style={{
+            opacity: useTransform(section2Progress, [0, 0.05, 0.9, 1], [0, 1, 1, 0])
+          }}
+        >
         {/* Background dog image - Desktop only */}
         <Image
           src="/assets/black-white-dog-square.svg"
@@ -423,9 +423,41 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
             </button>
           </div>
         </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Mobile version of section 2 - Simple layout */}
+      <motion.section
+        className="min-h-screen md:hidden bg-neutral-milkWhite flex flex-col md:flex-row md:items-center relative overflow-hidden pt-24 pb-4"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        <motion.div
+          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 px-4 sm:px-6 relative z-10"
+        >
+          <h1 className="text-3xl font-bold text-primary-mutedPurple mb-4 text-center">
+            Helping you raise your dogs better, together
+          </h1>
+
+          <p className="text-base text-ui-textSecondary mb-6 text-center">
+            <span className="block">Woofadaar is a community that helps you</span>learn, care and grow as a parent.
+          </p>
+
+          <div className="relative z-50 flex justify-center mb-8">
+            <button
+              onClick={onJoinWaitlist}
+              type="button"
+              className="bg-primary-mutedPurple text-white px-8 py-4 rounded-full font-bold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer focus:outline-none focus:ring-4 focus:ring-purple-300 min-h-[48px] min-w-[120px]"
+            >
+              Join Waitlist
+            </button>
+          </div>
+        </motion.div>
 
         {/* Dog image - Mobile only, absolute positioned at bottom */}
-        <div className="md:hidden absolute bottom-0 left-0 right-0 w-full max-w-sm mx-auto">
+        <div className="absolute bottom-0 left-0 right-0 w-full max-w-sm mx-auto">
           <div className="relative aspect-square w-full">
             <Image
               src="/assets/black-white-dog-square.svg"
