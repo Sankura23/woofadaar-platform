@@ -340,10 +340,10 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
           priority
         />
         <motion.div
-          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 relative z-10 pt-24 pb-4 md:pt-0 md:pb-0"
+          className="text-center md:text-left max-w-2xl mx-auto md:mx-0 md:ml-12 lg:ml-20 px-4 sm:px-6 md:pr-8 lg:pr-12 relative z-10 pt-24 pb-4 md:pt-0 md:pb-0"
         >
-          <motion.h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-primary-mutedPurple mb-4 sm:mb-6" style={{ pointerEvents: 'none', textAlign: 'center' }}>
-            <div className="whitespace-nowrap mb-2 sm:mb-4" style={{ textAlign: 'center' }}>
+          <motion.h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-4 sm:mb-6 text-center md:text-left" style={{ pointerEvents: 'none' }}>
+            <div className="whitespace-nowrap mb-2 sm:mb-4">
               {"Helping you raise your".split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -371,7 +371,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
                 </motion.span>
               ))}
             </div>
-            <div className="whitespace-nowrap" style={{ textAlign: 'center' }}>
+            <div className="whitespace-nowrap">
               {"dogs better, together".split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -402,7 +402,7 @@ export default function HeroSection({ onJoinWaitlist }: HeroSectionProps) {
           </motion.h1>
 
           <motion.p
-            className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-ui-textSecondary mb-6 sm:mb-8 md:mb-10 text-center md:text-left"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-ui-textSecondary mb-6 sm:mb-8 md:mb-10 text-center md:text-left"
             style={{
               opacity: useTransform(section2Progress, [0.12, 0.16], [0, 1]),
               x: useTransform(section2Progress, [0.12, 0.16], [-30, 0]),
