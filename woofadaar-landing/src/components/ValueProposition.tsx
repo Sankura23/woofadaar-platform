@@ -16,9 +16,8 @@ const features = [
     textColor: 'text-white'
   },
   {
-    title: 'Verified',
-    titleLine2: 'Expert',
-    titleLine3: 'Sessions',
+    title: 'Verified Expert',
+    titleLine2: 'Sessions',
     icon: '/icons/expert-sessions-icon.svg',
     subtitle: 'When research spirals aren\'t helping, we will.',
     description: 'Behavior, nutrition, training, grooming.\nReal advice from real experts.',
@@ -217,7 +216,7 @@ export default function ValueProposition() {
           className="fixed inset-0 bg-primary-beige flex items-center justify-center"
         >
           <div className="max-width-container mx-auto section-padding text-center px-4 sm:px-6">
-            <motion.h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-mutedPurple mb-6 sm:mb-8 flex flex-col items-center">
+            <motion.h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold text-primary-mutedPurple mb-6 sm:mb-8 flex flex-col items-center">
               <div className="mb-2">
                 {"Because raising a dog".split(" ").map((word, index) => (
                   <motion.span
@@ -303,7 +302,7 @@ export default function ValueProposition() {
               </div>
             </motion.h2>
             <motion.p
-              className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-ui-textSecondary max-w-4xl mx-auto px-2 sm:px-4"
+              className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-ui-textSecondary max-w-4xl mx-auto px-2 sm:px-4"
               style={{
                 opacity: useTransform(scrollYProgress, [0.18, 0.22], [0, 1]),
                 x: useTransform(scrollYProgress, [0.18, 0.22], [-30, 0])
@@ -348,25 +347,28 @@ export default function ValueProposition() {
                     <div className="text-center lg:text-left">
                       {feature.titleLine2 ? (
                         <div className="mb-4 sm:mb-6">
-                          <h3 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold ${feature.textColor} leading-tight mb-2`}>
-                            {feature.title}
-                          </h3>
+                          <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3 md:gap-4 mb-2">
+                            <h3 className={`text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold ${feature.textColor} leading-tight`}>
+                              {feature.title}
+                            </h3>
+                            {feature.icon && feature.title.includes('Expert') && <Image src={feature.icon} alt="icon" width={55} height={55} className="sm:w-[80px] sm:h-[80px] md:w-[90px] md:h-[90px] lg:w-[100px] lg:h-[100px]" />}
+                          </div>
                           <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3 md:gap-4">
-                            <h3 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold ${feature.textColor} leading-tight`}>
+                            <h3 className={`text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold ${feature.textColor} leading-tight`}>
                               {feature.titleLine2}
                             </h3>
-                            {feature.icon && <Image src={feature.icon} alt="icon" width={index === 2 ? 60 : 55} height={index === 2 ? 60 : 55} className="sm:w-[80px] sm:h-[80px] md:w-[90px] md:h-[90px] lg:w-[100px] lg:h-[100px]" />}
+                            {feature.icon && !feature.title.includes('Expert') && <Image src={feature.icon} alt="icon" width={index === 2 ? 60 : 55} height={index === 2 ? 60 : 55} className="sm:w-[80px] sm:h-[80px] md:w-[90px] md:h-[90px] lg:w-[100px] lg:h-[100px]" />}
                           </div>
                         </div>
                       ) : (
-                        <h3 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold ${feature.textColor} mb-4 sm:mb-6 leading-tight`}>
+                        <h3 className={`text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold ${feature.textColor} mb-4 sm:mb-6 leading-tight`}>
                           {feature.title}
                         </h3>
                       )}
-                      <h4 className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl ${feature.textColor} mb-4 sm:mb-6 ${index === 0 || index === 1 || index === 2 || index === 3 || index === 4 ? 'font-bold' : 'font-medium'} leading-tight`}>
+                      <h4 className={`text-lg sm:text-xl md:text-2xl lg:text-3xl ${feature.textColor} mb-4 sm:mb-6 ${index === 0 || index === 1 || index === 2 || index === 3 || index === 4 ? 'font-bold' : 'font-medium'} leading-tight`}>
                         {feature.subtitle}
                       </h4>
-                      <p className={`text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl ${feature.textColor} leading-relaxed whitespace-pre-line`}>
+                      <p className={`text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl ${feature.textColor} leading-relaxed whitespace-pre-line`}>
                         {feature.description}
                       </p>
                     </div>
