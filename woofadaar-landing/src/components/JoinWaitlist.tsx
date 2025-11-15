@@ -322,7 +322,7 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
                             className="w-5 h-5 text-primary-mint rounded"
                           />
                           <span className="text-sm text-ui-textPrimary">
-                            Send me weekly dog care tips & updates
+                            Send me weekly dog care tips
                           </span>
                         </label>
                       </div>
