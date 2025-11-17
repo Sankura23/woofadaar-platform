@@ -52,12 +52,12 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                       <ul style="margin: 0; padding: 0 0 0 20px; color: #4a4a4a; font-size: 15px; line-height: 1.8;">
                         <li style="margin-bottom: 8px;">We'll send you early access when we launch</li>
                         <li style="margin-bottom: 8px;">Get exclusive updates on new features & events</li>
-                        <li style="margin-bottom: 8px;">Join a community that gets you and your pup</li>
+                        <li style="margin-bottom: 8px;">Connect with a community of dog parents who truly understand</li>
                       </ul>
                     </div>
 
                     <p style="margin: 24px 0 0 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
-                      In the meantime, follow us on Instagram <a href="https://instagram.com/woofadaar" style="color: #3bbca8; text-decoration: none; font-weight: 600;">@woofadaar</a> to stay connected and see what we're building!
+                      In the meantime, follow us on Instagram <a href="https://www.instagram.com/woofadaarofficial/" style="color: #3bbca8; text-decoration: none; font-weight: 600;">@woofadaarofficial</a> to stay connected and see what we're building!
                     </p>
 
                     <p style="margin: 24px 0 0 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
@@ -72,7 +72,7 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                   <td style="background-color: #f8f8f8; padding: 20px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
                     <p style="margin: 0; color: #888888; font-size: 13px; line-height: 1.6;">
                       You're receiving this because you signed up for the Woofadaar waitlist.<br>
-                      © 2024 Woofadaar. All rights reserved.
+                      © 2025 Woofadaar. All rights reserved.
                     </p>
                   </td>
                 </tr>
@@ -103,9 +103,9 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !email) {
+    if (!name || !email || !phone || !location) {
       return NextResponse.json(
-        { error: 'Name and email are required' },
+        { error: 'Name, email, mobile number, and location are required' },
         { status: 400 }
       );
     }
@@ -149,8 +149,8 @@ export async function POST(request: NextRequest) {
         id: randomBytes(16).toString('hex'),
         email,
         name,
-        phone: phone || null,
-        location: location || null,
+        phone,
+        location,
         dog_owner: !!(dogName || dogBreed || dogAge),
         interests,
         position: count + 1,

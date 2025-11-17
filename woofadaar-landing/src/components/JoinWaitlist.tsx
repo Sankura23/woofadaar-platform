@@ -216,10 +216,11 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
                       {/* Phone */}
                       <div>
                         <label className="block text-sm font-semibold text-ui-textPrimary mb-2">
-                          Mobile Number
+                          Mobile Number *
                         </label>
                         <input
                           type="tel"
+                          required
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                           className="w-full px-4 py-3 rounded-xl border-2 border-ui-border focus:border-primary-mint focus:outline-none transition-colors"
@@ -230,10 +231,11 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
                       {/* Location */}
                       <div>
                         <label className="block text-sm font-semibold text-ui-textPrimary mb-2">
-                          Location
+                          Location *
                         </label>
                         <input
                           type="text"
+                          required
                           value={formData.location}
                           onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                           className="w-full px-4 py-3 rounded-xl border-2 border-ui-border focus:border-primary-mint focus:outline-none transition-colors"
