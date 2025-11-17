@@ -24,17 +24,8 @@ function generateWelcomeEmail(name: string, dogName?: string) {
 
                 <!-- Header -->
                 <tr>
-                  <td style="background: linear-gradient(135deg, #3bbca8 0%, #3b82f6 100%); padding: 40px 30px; text-align: center;">
-                    <table role="presentation" style="margin: 0 auto; border-collapse: collapse;">
-                      <tr>
-                        <td style="padding-right: 12px; vertical-align: middle;">
-                          <span style="font-size: 40px; line-height: 1;">🐕</span>
-                        </td>
-                        <td style="vertical-align: middle;">
-                          <img src="https://woofadaar.com/woofadaar-logo-animated.gif" alt="Woofadaar" style="height: 50px; width: auto; display: block;" />
-                        </td>
-                      </tr>
-                    </table>
+                  <td style="padding: 0; position: relative; height: 120px; overflow: hidden;">
+                    <img src="https://woofadaar.com/woofadaar-logo-animated.gif" alt="Woofadaar" style="width: 100%; height: 120px; object-fit: cover; object-position: center; display: block;" />
                   </td>
                 </tr>
 
@@ -124,6 +115,15 @@ export async function POST(request: NextRequest) {
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate phone number (10 digits, with optional country code)
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      return NextResponse.json(
+        { error: 'Please enter a valid 10-digit mobile number' },
         { status: 400 }
       );
     }

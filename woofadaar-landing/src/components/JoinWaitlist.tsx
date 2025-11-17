@@ -60,6 +60,14 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
     setIsSubmitting(true);
     setError('');
 
+    // Validate phone number (10 digits)
+    const phoneDigits = formData.phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      setError('Please enter a valid 10-digit mobile number');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/waitlist', {
         method: 'POST',
