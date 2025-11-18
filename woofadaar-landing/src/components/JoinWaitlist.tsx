@@ -68,6 +68,13 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
       return;
     }
 
+    // Validate excitement field
+    if (!formData.excitement) {
+      setError('Please select what you are most excited about');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/waitlist', {
         method: 'POST',
@@ -300,7 +307,7 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
                       {/* What are you most excited about? */}
                       <div>
                         <label className="block text-sm font-semibold text-ui-textPrimary mb-2">
-                          What are you most excited about?
+                          What are you most excited about? *
                         </label>
                         <div className="space-y-2">
                           {excitementOptions.map((option) => (
@@ -312,6 +319,7 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
                                 type="radio"
                                 name="excitement"
                                 value={option}
+                                required
                                 checked={formData.excitement === option}
                                 onChange={(e) => setFormData({ ...formData, excitement: e.target.value })}
                                 className="w-5 h-5 text-primary-mint"

@@ -103,9 +103,9 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !email || !phone || !location) {
+    if (!name || !email || !phone || !location || !excitement) {
       return NextResponse.json(
-        { error: 'Name, email, mobile number, and location are required' },
+        { error: 'Please fill in all required fields' },
         { status: 400 }
       );
     }
@@ -169,14 +169,16 @@ export async function POST(request: NextRequest) {
 
     // Send welcome email (don't fail the request if email fails)
     try {
-      await resend.emails.send({
+      const emailResult = await resend.emails.send({
         from: 'Woofadaar <hello@woofadaar.com>',
         to: [email],
         subject: 'Welcome to Woofadaar! 🐕',
         html: generateWelcomeEmail(name, dogName),
       });
+      console.log('Email sent successfully:', emailResult);
     } catch (emailError) {
       console.error('Failed to send welcome email:', emailError);
+      console.error('Email error details:', JSON.stringify(emailError, null, 2));
       // Continue anyway - user is still on waitlist
     }
 
