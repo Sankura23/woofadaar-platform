@@ -63,8 +63,8 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                     </p>
 
                     <p style="margin: 24px 0 0 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
-                      Tail wags and wet nose kisses,<br>
-                      <strong style="color: #6B5B73;">The Woofadaar Team 🐾</strong>
+                      Woofs & Regards,<br>
+                      <strong style="color: #6B5B73;">Team Woofadaar</strong>
                     </p>
                   </td>
                 </tr>
