@@ -41,7 +41,7 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                     </p>
 
                     <p style="margin: 0 0 24px 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
-                      You're now on the waitlist for early access to Woofadaar — the all-in-one platform for dog parents who want the best for their furry friends.
+                      You're now on the waitlist for early access to Woofadaar, the all-in-one platform for dog parents who want the best for their furry friends.
                     </p>
 
                     <!-- What's Next Section -->
