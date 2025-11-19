@@ -183,7 +183,7 @@ export default function JoinWaitlist({ isOpen, onClose }: JoinWaitlistProps) {
                       </div>
                     </div>
                     <p className="text-xs sm:text-sm text-ui-textSecondary mt-6 px-4">
-                      Welcome to the Woofadaar family! 🐕
+                      Welcome to Woofadaar family, {formData.name.split(' ')[0]}! 🎉
                     </p>
                   </motion.div>
                 ) : (
