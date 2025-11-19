@@ -25,7 +25,7 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                 <!-- Header -->
                 <tr>
                   <td style="padding: 0; position: relative; height: 150px; overflow: hidden; background-color: #3bbca8;">
-                    <img src="https://woofadaar.com/woofadaar-logo-animated.gif" alt="Woofadaar" style="width: 100%; height: 150px; object-fit: cover; object-position: center; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" />
+                    <img src="https://woofadaar.com/woofadaar-logo-animated.gif" alt="Woofadaar" style="width: 100%; height: 150px; object-fit: cover; object-position: center; display: block;" />
                   </td>
                 </tr>
 
