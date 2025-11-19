@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-function generateWelcomeEmail(name: string, dogName?: string) {
+function generateWelcomeEmail(name: string, waitlistId: string, dogName?: string) {
   const firstName = name.split(' ')[0];
 
   return `
@@ -33,7 +33,7 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                 <tr>
                   <td style="padding: 40px 30px;">
                     <h2 style="margin: 0 0 20px 0; color: #6B5B73; font-size: 24px; font-weight: 600;">
-                      Welcome to the Pack, ${firstName}! 🎉
+                      Welcome to Woofadaar family, ${firstName}! 🎉
                     </h2>
 
                     <p style="margin: 0 0 16px 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
@@ -74,6 +74,7 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                   <td style="background-color: #f8f8f8; padding: 20px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
                     <p style="margin: 0; color: #888888; font-size: 13px; line-height: 1.6;">
                       You're receiving this because you signed up for the Woofadaar waitlist.<br>
+                      <a href="https://woofadaar.com/unsubscribe?id=${waitlistId}" style="color: #888888; text-decoration: underline;">Unsubscribe</a><br>
                       © 2025 Woofadaar. All rights reserved.
                     </p>
                   </td>
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
         from: 'Woofadaar <hello@woofadaar.com>',
         to: [email],
         subject: 'Welcome to Woofadaar! 🐕',
-        html: generateWelcomeEmail(name, dogName),
+        html: generateWelcomeEmail(name, waitlistEntry.id, dogName),
       });
       console.log('Email sent successfully:', emailResult);
     } catch (emailError) {
