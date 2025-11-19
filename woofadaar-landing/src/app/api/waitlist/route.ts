@@ -47,13 +47,15 @@ function generateWelcomeEmail(name: string, dogName?: string) {
                     <!-- What's Next Section -->
                     <div style="background-color: #FFF7E7; border-radius: 12px; padding: 24px; margin: 24px 0;">
                       <h3 style="margin: 0 0 16px 0; color: #6B5B73; font-size: 18px; font-weight: 600;">
-                        What happens next? ✨
+                        What happens next? You've unlocked early access to:
                       </h3>
-                      <ul style="margin: 0; padding: 0 0 0 20px; color: #4a4a4a; font-size: 15px; line-height: 1.8;">
-                        <li style="margin-bottom: 8px;">We'll send you early access when we launch</li>
-                        <li style="margin-bottom: 8px;">Get exclusive updates on new features & events</li>
-                        <li style="margin-bottom: 8px;">Connect with a community of dog parents who truly understand</li>
-                      </ul>
+                      <div style="margin: 0; color: #4a4a4a; font-size: 15px; line-height: 2;">
+                        <div style="margin-bottom: 8px;">✨ App launch</div>
+                        <div style="margin-bottom: 8px;">✨ Exclusive early-bird member perks</div>
+                        <div style="margin-bottom: 8px;">✨ Exclusive invites to meetups & events</div>
+                        <div style="margin-bottom: 8px;">✨ Expert dog care tips</div>
+                        <div style="margin-bottom: 0;">✨ And sneak peeks into all the exciting things we're building behind the scenes</div>
+                      </div>
                     </div>
 
                     <p style="margin: 24px 0 0 0; color: #4a4a4a; font-size: 16px; line-height: 1.6;">
