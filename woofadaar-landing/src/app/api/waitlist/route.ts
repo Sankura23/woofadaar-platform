@@ -179,6 +179,23 @@ export async function POST(request: NextRequest) {
         html: generateWelcomeEmail(name, waitlistEntry.id, dogName),
       });
       console.log('Email sent successfully:', emailResult);
+
+      // Send notification to admin
+      await resend.emails.send({
+        from: 'Woofadaar <hello@woofadaar.com>',
+        to: ['hello@woofadaar.com'],
+        subject: `New Waitlist Signup: ${name}`,
+        html: `
+          <h2>New Waitlist Signup!</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone}</p>
+          <p><strong>Location:</strong> ${location}</p>
+          <p><strong>Dog Name:</strong> ${dogName || 'Not provided'}</p>
+          <p><strong>Excitement:</strong> ${excitement}</p>
+          <p><strong>Time:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+        `,
+      });
     } catch (emailError) {
       console.error('Failed to send welcome email:', emailError);
       console.error('Email error details:', JSON.stringify(emailError, null, 2));
