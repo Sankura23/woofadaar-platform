@@ -64,7 +64,7 @@ async function ensureSheetHeaders(sheets: any) {
       spreadsheetId: SHEET_ID,
       range: 'Sheet1!A1:M1',
       valueInputOption: 'RAW',
-      resource: {
+      requestBody: {
         values: [HEADERS],
       },
     });
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
       range: 'Sheet1!A:M',
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
-      resource: {
+      requestBody: {
         values: rows,
       },
     });
