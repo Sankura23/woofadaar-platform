@@ -43,7 +43,9 @@ async function authenticateGoogleSheets() {
     throw new Error('GOOGLE_SERVICE_ACCOUNT_KEY not found in environment');
   }
 
-  const credentials = JSON.parse(GOOGLE_CREDENTIALS);
+  // Decode base64 to JSON string, then parse
+  const credentialsJson = Buffer.from(GOOGLE_CREDENTIALS, 'base64').toString('utf-8');
+  const credentials = JSON.parse(credentialsJson);
 
   const auth = new google.auth.GoogleAuth({
     credentials,
