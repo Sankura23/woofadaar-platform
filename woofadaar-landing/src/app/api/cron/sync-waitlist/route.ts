@@ -105,26 +105,35 @@ export async function GET(request: NextRequest) {
       throw new Error('GOOGLE_SHEET_ID not found');
     }
 
-    const syncState = await loadSyncState();
+    const sheets = await authenticateGoogleSheets();
+    await ensureSheetHeaders(sheets);
+
+    // Get all waitlist entries from database
     const allEntries = await prisma.waitlist.findMany({
       orderBy: { created_at: 'asc' },
     });
 
-    const newEntries = allEntries.filter(
-      entry => !syncState.lastSyncedIds.includes(entry.id)
+    // Get existing IDs from Google Sheet (column A)
+    const existingData = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range: 'Sheet1!A:A', // Just the ID column
+    });
+
+    const existingIds = new Set(
+      (existingData.data.values || []).slice(1).map(row => row[0]) // Skip header
     );
+
+    // Filter to only new entries
+    const newEntries = allEntries.filter(entry => !existingIds.has(entry.id));
 
     if (newEntries.length === 0) {
       return NextResponse.json({
         success: true,
         message: 'No new entries to sync',
         synced: 0,
-        total: syncState.lastSyncedIds.length,
+        total: existingIds.size,
       });
     }
-
-    const sheets = await authenticateGoogleSheets();
-    await ensureSheetHeaders(sheets);
 
     const rows = newEntries.map(formatWaitlistEntry);
 
@@ -138,14 +147,11 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    syncState.lastSyncedIds.push(...newEntries.map((e: any) => e.id));
-    await saveSyncState(syncState);
-
     return NextResponse.json({
       success: true,
       message: `Successfully synced ${newEntries.length} entries`,
       synced: newEntries.length,
-      total: syncState.lastSyncedIds.length,
+      total: existingIds.size + newEntries.length,
     });
 
   } catch (error: any) {
