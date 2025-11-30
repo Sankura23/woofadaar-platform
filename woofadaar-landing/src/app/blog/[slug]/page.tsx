@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import { getBlogPostBySlug, getAllBlogPosts } from '@/lib/blog';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ShareButton from '@/components/ShareButton';
 
 export async function generateStaticParams() {
   const posts = getAllBlogPosts();
@@ -139,17 +140,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* Share Section */}
         <div className="border-t border-ui-border pt-8 mb-16">
           <p className="text-sm text-ui-textTertiary mb-4">Share this article</p>
-          <div className="flex gap-3">
-            <button className="px-6 py-3 bg-primary-mint/10 text-primary-mint rounded-full font-semibold hover:bg-primary-mint hover:text-white transition-colors">
-              Twitter
-            </button>
-            <button className="px-6 py-3 bg-primary-mint/10 text-primary-mint rounded-full font-semibold hover:bg-primary-mint hover:text-white transition-colors">
-              Facebook
-            </button>
-            <button className="px-6 py-3 bg-primary-mint/10 text-primary-mint rounded-full font-semibold hover:bg-primary-mint hover:text-white transition-colors">
-              WhatsApp
-            </button>
-          </div>
+          <ShareButton title={post.title} text={post.subtitle} />
         </div>
 
         {/* CTA Section */}

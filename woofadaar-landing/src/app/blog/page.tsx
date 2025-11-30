@@ -26,19 +26,19 @@ export default function BlogPage() {
               href={`/blog/${post.slug}`}
               className={`group block ${index === 0 ? 'md:col-span-2' : ''}`}
             >
-              <article className={`bg-neutral-milkWhite rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 ${index === 0 ? 'grid md:grid-cols-2' : ''}`}>
-                {/* Image */}
-                <div className={`relative ${index === 0 ? 'aspect-square md:aspect-auto md:h-full' : 'aspect-[16/10]'} overflow-hidden`}>
+              <article className={`bg-neutral-milkWhite rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 ${index === 0 ? 'flex flex-col md:grid md:grid-cols-2' : ''}`}>
+                {/* Image - on mobile show image first (full width), on desktop show side by side */}
+                <div className={`relative ${index === 0 ? 'aspect-[4/3] md:aspect-auto md:h-full order-first' : 'aspect-[16/10]'} overflow-hidden`}>
                   <Image
                     src={post.image}
                     alt={post.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-right group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
 
                 {/* Content */}
-                <div className={`p-6 ${index === 0 ? 'sm:p-10 flex flex-col justify-center' : 'sm:p-8'}`}>
+                <div className={`p-6 ${index === 0 ? 'sm:p-10 flex flex-col justify-center order-last' : 'sm:p-8'}`}>
                   {/* Tag */}
                   <span className="inline-block px-3 py-1 bg-primary-mint/10 text-primary-mint rounded-full text-xs font-semibold mb-4 w-fit">
                     Dog Parenting
