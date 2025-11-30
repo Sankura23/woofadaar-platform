@@ -27,13 +27,21 @@ export default function BlogPage() {
               className={`group block ${index === 0 ? 'md:col-span-2' : ''}`}
             >
               <article className={`bg-neutral-milkWhite rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 ${index === 0 ? 'flex flex-col md:grid md:grid-cols-2' : ''}`}>
-                {/* Image - on mobile show image first (full width), on desktop show side by side */}
+                {/* Image - different images for mobile vs desktop */}
                 <div className={`relative ${index === 0 ? 'aspect-[4/3] md:aspect-auto md:h-full order-first' : 'aspect-[16/10]'} overflow-hidden`}>
+                  {/* Mobile image */}
+                  <Image
+                    src={post.imageMobile || post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500 md:hidden"
+                  />
+                  {/* Desktop image */}
                   <Image
                     src={post.image}
                     alt={post.title}
                     fill
-                    className="object-cover object-right group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-right group-hover:scale-105 transition-transform duration-500 hidden md:block"
                   />
                 </div>
 

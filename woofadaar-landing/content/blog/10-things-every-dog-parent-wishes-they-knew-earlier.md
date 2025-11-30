@@ -5,6 +5,7 @@ description: "A practical list of the top 10 things dog parents learn the hard w
 date: "2024-11-27"
 author: "Woofadaar Team"
 image: "/blog/10-things-thumbnail.png"
+imageMobile: "/blog/10-things-thumbnail-mobile.png"
 slug: "10-things-every-dog-parent-wishes-they-knew-earlier"
 ---
 

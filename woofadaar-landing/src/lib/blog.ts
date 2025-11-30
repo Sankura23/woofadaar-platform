@@ -12,6 +12,7 @@ export interface BlogPost {
   date: string;
   author: string;
   image: string;
+  imageMobile?: string;
   content: string;
 }
 
@@ -33,6 +34,7 @@ export function getAllBlogPosts(): BlogPost[] {
         date: data.date,
         author: data.author,
         image: data.image,
+        imageMobile: data.imageMobile,
         content,
       };
     });
