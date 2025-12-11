@@ -49,7 +49,7 @@
     "isomorphic-dompurify": "^2.26.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.535.0",
-    "next": "15.4.5",
+    "next": "15.4.8",
     "pg": "^8.16.3",
     "qrcode": "^1.5.4",
     "razorpay": "^2.9.6",
