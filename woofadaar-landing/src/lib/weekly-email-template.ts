@@ -179,27 +179,12 @@ ${content.story.title ? `<h2 style="margin: 0 0 16px 0; color: #2d2d2d; font-siz
         <!-- Main Container -->
         <table role="presentation" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08);">
 
-          <!-- Header Image with Christmas Elements -->
+          <!-- Header Image -->
           <tr>
-            <td style="padding: 0; background: linear-gradient(135deg, #1a5c4c 0%, #3bbca8 50%, #1a5c4c 100%); position: relative;">
-              <!-- Snowflake decorations -->
-              <table role="presentation" style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <td style="text-align: left; vertical-align: top; padding: 8px 12px; font-size: 20px;">
-                    ❄️
-                  </td>
-                  <td style="text-align: center;">
-                    <a href="https://woofadaar.com" style="display: block;">
-                      <img src="https://woofadaar.com/woofadaar-logo-animated.gif" alt="Woofadaar" style="width: 100%; max-width: 400px; height: 120px; object-fit: cover; object-position: center; display: block; margin: 0 auto;" />
-                    </a>
-                  </td>
-                  <td style="text-align: right; vertical-align: top; padding: 8px 12px; font-size: 20px;">
-                    ❄️
-                  </td>
-                </tr>
-              </table>
-              <!-- Christmas trim at bottom -->
-              <div style="height: 4px; background: linear-gradient(90deg, #c41e3a 0%, #ffd700 25%, #c41e3a 50%, #ffd700 75%, #c41e3a 100%);"></div>
+            <td style="padding: 0; background-color: #3bbca8;">
+              <a href="https://woofadaar.com" style="display: block;">
+                <img src="https://woofadaar.com/woofadaar-logo-animated.gif" alt="Woofadaar" style="width: 100%; height: 140px; object-fit: cover; object-position: center; display: block;" />
+              </a>
             </td>
           </tr>
 
